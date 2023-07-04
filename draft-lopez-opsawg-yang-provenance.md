@@ -31,10 +31,15 @@ author:
   email: "diego.r.lopez@telefonica.com"
 
 normative:
+ RFC8785:
+ RFC8949:
  RFC9052:
+ XMLSig:
+  title: XML Signature Syntax and Processing Version 2.0
+  target: https://www.w3.org/TR/xmldsig-core2/
 
 informative:
- DATA-MANIFEST: draft-ietf-opsawg-collected-data-manifest
+ I-D.ietf-opsawg-collected-data-manifest:
 
 --- abstract
 
@@ -97,7 +102,7 @@ module: ietf-data-collection-manifest
            +--ro subscription* [id]
               +--ro id
               |       sn:subscription-id
-~~~ 
+~~~
 
 # Provenance Signature Strings
 
@@ -110,7 +115,7 @@ unprotected /algorithm-parameters/
 signature /using as EAAD the content of the (meta-)data without the signature leaf/
 ]
 ~~~
- 
+
 Where:
  
 * The COSE_Sign1 procedure yields a string when building the signature and expect a string for checking it, hence the proposed type for signature leaves.
@@ -118,7 +123,7 @@ Signature algorithm and parameters will follow COSE conventions and registries.
 
 * The kid (Key ID) has to be locally interpreted by the element evaluating the signature. URIs and RFC822-style identifiers can be considered typical kids to be used.
 
-## Caonicalization
+## Canonicalization
 
 Signature generation and verification require a canonicalization method to be applied, that depends on the serialization used. We can consider three types of serialization:
 
@@ -133,7 +138,7 @@ Signature generation and verification require a canonicalization method to be ap
 
 # Security Considerations
 
-The provenance assessment mechanism described in this document relies in COSE {{RFC9052}} and the deterministic encoding or canonicalization described by {{RFC8949}}, {{RFC 8785}} and {{XMLCanon10}}. The security considerations made in these references are fully applicable here.
+The provenance assessment mechanism described in this document relies in COSE {{RFC9052}} and the deterministic encoding or canonicalization described by {{RFC8949}}, {{RFC8785}} and {{XMLSig}}. The security considerations made in these references are fully applicable here.
 
 The verification step depends on the association of the Key ID with the proper public key. This is a local matter for the verifier and its specification is out of the scope of this document. The use of certificates, PKI mechanisms, or any other secure distribution of id-public key mapping is advised.
 
