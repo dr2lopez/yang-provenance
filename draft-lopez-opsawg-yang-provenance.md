@@ -5,7 +5,7 @@ category: info
 
 docname: draft-lopez-opsawg-yang-provenance-latest
 submissiontype: IETF  # also: "independent", "IAB", or "IRTF"
-number:
+number: 00
 date:
 consensus: true
 v: 3
@@ -33,12 +33,11 @@ author:
 normative:
 
 informative:
-
+- draft-ietf-opsawg-collected-data-manifest
 
 --- abstract
 
-TODO Abstract
-
+This document defines a mechanism based on COSE signature to provide and verify the provenance of YANG data. Data provenance allows to verify the orign and integrity of a dataset whenever those data are going to be processed and/or applied in workflows that are not directly attached to the original data stream, so online methods for assessing their origin and integrity (typically related to the application of crytpo-enabled data transport). As the application of evidence-based OAM and the use of tools such as AI/ML grows, provenance validation becomes more relevant. The use of compact signatures facilitates the inclusion of provenance strings in any YANG schema requiring them.
 
 --- middle
 
