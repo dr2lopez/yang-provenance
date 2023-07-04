@@ -5,7 +5,7 @@ category: info
 
 docname: draft-lopez-opsawg-yang-provenance-latest
 submissiontype: IETF  # also: "independent", "IAB", or "IRTF"
-number: 00
+number:
 date:
 consensus: true
 v: 3
