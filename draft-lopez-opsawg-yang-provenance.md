@@ -38,7 +38,7 @@ informative:
 
 --- abstract
 
-This document defines a mechanism based on COSE signature to provide and verify the provenance of YANG data, so it is possible to verify the orign and integrity of a dataset, even when those data are going to be processed and/or applied in workflows that are not able to use a crypto-enhanced data transport in a direct access to original data stream. As the application of evidence-based OAM and the use of tools such as AI/ML grows, provenance validation becomes more relevant in all scenarios. The use of compact signatures facilitates the inclusion of provenance strings in any YANG schema requiring them.
+This document defines a mechanism based on COSE signatures to provide and verify the provenance of YANG data, so it is possible to verify the orign and integrity of a dataset, even when those data are going to be processed and/or applied in workflows that are not able to use a crypto-enhanced data transport in a direct access to original data stream. As the application of evidence-based OAM and the use of tools such as AI/ML grows, provenance validation becomes more relevant in all scenarios. The use of compact signatures facilitates the inclusion of provenance strings in any YANG schema requiring them.
 
 --- middle
 
@@ -54,10 +54,88 @@ This document provides a mechanism for including digital signatures within YANG 
 
 {::boilerplate bcp14-tagged}
 
+The term "data provenance" refers to a documented trail accounting for the origin of a piece of data and where it has moved from to where it is presently. The signature mechanism provided here can be recursively applied to allow this accounting for YANG data.
+
+# Provenance Elements
+
+This must be ellaborated from the example for the data manifest. Leave them as example.
+
+The proposal implies including new optional leaves containing signatures in platform-manifest, for the platform, and in data-collection-manifest, for the collector, as follows (the new leaves are marked with an asterisk):
+ 
+~~~
+module: ietf-platform-manifest
+  +--ro platforms
+     +--ro platform* [id]
+        +--ro id                      string
+       +--ro platform-provenance?    string       *  
+        +--ro name?                   string
+        +--ro vendor?                 string
+        +--ro vendor-pen?             uint32
+        +--ro software-version?       string
+        +--ro software-flavor?        string
+        +--ro os-version?             string
+        +--ro os-type?                string
+        +--ro yang-push-streams
+        |  +--ro stream* [name]
+        |     +--ro name
+        |     +--ro description?
+        +--ro yang-library
+        + . . .
+        .
+        .
+        .
+~~~
+
+~~~ 
+module: ietf-data-collection-manifest
+  +--ro data-collections
+     +--ro data-collection* [platform-id]
+        +--ro platform-id
+       +--collector-provenance?    string            *
+        |       -> /p-mf:platforms/platform/id
+        +--ro yang-push-subscriptions
+           +--ro subscription* [id]
+              +--ro id
+              |       sn:subscription-id
+~~~ 
+
+# Provenance Signature Strings
+
+The signature strings are COSE single signature messages with \[nil\] payload and the following structure (as defined by RFC 9052):
+ 
+~~~
+COSE_Sign1 = [
+protected /algorithm-identifier, kid, serialization-method/
+unprotected /algorithm-parameters/
+signature /using as EAAD the content of the (meta-)data without the signature leaf/
+]
+~~~
+ 
+Where:
+ 
+* The COSE_Sign1 procedure yields a string when building the signature and expect a string for checking it, hence the proposed type for signature leaves.
+Signature algorithm and parameters will follow COSE conventions and registries.
+
+* The kid (Key ID) has to be locally interpreted by the element evaluating the signature. URIs and RFC822-style identifiers can be considered typical kids to be used.
+
+## Caonicalization
+
+Signature generation and verification require a canonicalization method to be applied, that depends on the serialization used. We can consider three types of serialization:
+
+* CBOR, what would imply the use of the length-first core deterministic encoding, as defined by RFC 8949
+
+* JSON, what would imply the use of the JSON Canonicalization Scheme (JCS), as defined by RFC 8785
+
+* XML, what would imply the use of the Exclusive XML Canonicalization 1.0, as defined by W3C XML signature processing.
+
+* EAAD refers to the COSE feature of allowing the use of external application authenticated data to be combined with the signature payload. To keep a concise signature and avoid the need for wrapping YANG constructs in COSE envelopes, we propose to use the whole YANG (meta-)data being signed as EAAD, keeping a nil payload.
+
 
 # Security Considerations
 
-TODO Security
+The provenance assessment mechanism described in this document relies in COSE {{RFC9052}} and the deterministic encoding or canonicalization described by {{RFC8949}}, {{RFC 8785}} and {{XMLCanon10}}. The security considerations made in these references are fully applicable here.
+
+The verification step depends on the association of the Key ID with the proper public key. This is a local matter for the verifier and its specification is out of the scope of this document. The use of certificates, PKI mechanisms, or any other secure distribution of id-public key mapping is advised.
 
 
 # IANA Considerations
@@ -69,5 +147,4 @@ This document has no IANA actions.
 
 # Acknowledgments
 {:numbered="false"}
-
-TODO acknowledge.
+This document is based on work partially funded by the EU H2020 project SPIRS (grant 952622), and the EU Horizon Europe projects PRIVATEER (grant 101096110), HORSE (grant 101096342) and ACROSS (grant 101097122).
