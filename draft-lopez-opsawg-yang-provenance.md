@@ -33,7 +33,7 @@ author:
 normative:
 
 informative:
-draft-ietf-opsawg-collected-data-manifest
+draft-ietf-opsawg-collected-data-manifest:
 
 --- abstract
 
