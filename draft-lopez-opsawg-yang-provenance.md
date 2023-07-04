@@ -91,7 +91,7 @@ module: ietf-platform-manifest
         .
 ~~~
 
-~~~ 
+~~~
 module: ietf-data-collection-manifest
   +--ro data-collections
      +--ro data-collection* [platform-id]
@@ -107,7 +107,7 @@ module: ietf-data-collection-manifest
 # Provenance Signature Strings
 
 The signature strings are COSE single signature messages with \[nil\] payload and the following structure (as defined by RFC 9052):
- 
+
 ~~~
 COSE_Sign1 = [
 protected /algorithm-identifier, kid, serialization-method/
@@ -117,7 +117,7 @@ signature /using as EAAD the content of the (meta-)data without the signature le
 ~~~
 
 Where:
- 
+
 * The COSE_Sign1 procedure yields a string when building the signature and expect a string for checking it, hence the proposed type for signature leaves.
 Signature algorithm and parameters will follow COSE conventions and registries.
 
