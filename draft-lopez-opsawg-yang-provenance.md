@@ -1,6 +1,6 @@
 ---
-title: "TODO - Your title"
-abbrev: "TODO - Abbreviation"
+title: "Applying COSE Signatures for YANG Data Provenance"
+abbrev: "yang-data-provenance"
 category: info
 
 docname: draft-lopez-opsawg-yang-provenance-latest
@@ -12,9 +12,10 @@ v: 3
 area: "Operations and Management"
 workgroup: "Operations and Management Area Working Group"
 keyword:
- - next generation
- - unicorn
- - sparkling distributed ledger
+ - provenance
+ - signature
+ - COSE
+ - metadata
 venue:
   group: "Operations and Management Area Working Group"
   type: "Working Group"
@@ -25,8 +26,8 @@ venue:
 
 author:
  -
-    fullname: Your Name Here
-    organization: Your Organization Here
+    fullname: Diego Lopez
+    organization: Telefonica
     email: "diego.r.lopez@telefonica.com"
 
 normative:
