@@ -66,13 +66,13 @@ The term "data provenance" refers to a documented trail accounting for the origi
 This must be ellaborated from the example for the data manifest. Leave them as example.
 
 The proposal implies including new optional leaves containing signatures in platform-manifest, for the platform, and in data-collection-manifest, for the collector, as follows (the new leaves are marked with an asterisk):
- 
+
 ~~~
 module: ietf-platform-manifest
   +--ro platforms
      +--ro platform* [id]
         +--ro id                      string
-       +--ro platform-provenance?    string       *  
+       +--ro platform-provenance?    string       *
         +--ro name?                   string
         +--ro vendor?                 string
         +--ro vendor-pen?             uint32
