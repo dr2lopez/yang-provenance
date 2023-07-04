@@ -26,15 +26,15 @@ venue:
 
 author:
  -
-    fullname: Diego Lopez
-    organization: Telefonica
-    email: "diego.r.lopez@telefonica.com"
+  fullname: Diego Lopez
+  organization: Telefonica
+  email: "diego.r.lopez@telefonica.com"
 
 normative:
  RFC9052:
 
 informative:
- DATA-MANIFEST: {{?draft-ietf-opsawg-collected-data-manifest}}
+ DATA-MANIFEST: draft-ietf-opsawg-collected-data-manifest
 
 --- abstract
 
@@ -48,7 +48,7 @@ OAM automation, generally based on  closed-loop principles, requires at least tw
 
 When datasets are made available as an online data flow, provenance can be assessed by properties of the data transport protocol, as long as some kind of crypto-enhanced protocol is used, with TLS, SSH and IPsec as the main examples. But when these datasets are stored, go through some pre-processing stage, or even crypto-enhanced data transport is not available, provenance must be assessed by other means.
 
-This document provides a mechanism for including digital signatures within YANG data. It applies COSE {{RC9052}}, to make the signature compact and easy to calculate. This mechanism is potentially applicable to any serialization of the YANG data supporting a clear method for canoicalization (as discussed below), but this document consider three essential ones: CBOR, JSON and XML.
+This document provides a mechanism for including digital signatures within YANG data. It applies COSE {{RFC9052}}, to make the signature compact and easy to calculate. This mechanism is potentially applicable to any serialization of the YANG data supporting a clear method for canoicalization (as discussed below), but this document consider three essential ones: CBOR, JSON and XML.
 
 # Conventions and Definitions
 
