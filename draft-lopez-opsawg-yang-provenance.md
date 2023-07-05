@@ -39,7 +39,7 @@ normative:
   target: https://www.w3.org/TR/xmldsig-core2/
 
 informative:
- I-D.ietf-opsawg-collected-data-manifest:
+ YANGmanifest: I-D.ietf-opsawg-collected-data-manifest
 
 --- abstract
 
@@ -52,6 +52,8 @@ This document defines a mechanism based on COSE signatures to provide and verify
 OAM automation, generally based on  closed-loop principles, requires at least two datasets to be used. Using the common terms in Autmatics, we need those from the plant (the network device or segment under control) and those to be used as reference (the desired values of the relevant data). The usual automation behavior compares these values and takes a decision, by wahatever the method (algortihmic, rule-based, an AI model tuned by ML...) to decide on a control action according to this comparison. Assurance on the origin and integrity of these datasets, what we refer in this document as "provenance", becomes essential to guarantee a proper behavior of closed-loop automation.
 
 When datasets are made available as an online data flow, provenance can be assessed by properties of the data transport protocol, as long as some kind of crypto-enhanced protocol is used, with TLS, SSH and IPsec as the main examples. But when these datasets are stored, go through some pre-processing stage, or even crypto-enhanced data transport is not available, provenance must be assessed by other means.
+
+The original use case for this provenance mechanism is associated with {{YANGmanifest}}, in order to provide a proof of the origin and integrity of the provided metadata. The examples in this document use the modules described there. An analysis of other potential use cases motivated to deal with the provenance mechanism described here in an independent mechanims. Provenance verification by signatures incorporated in the YANG data elements can be applied to any usage of such data not relying on a online flow, with the use of data stores (such as data lakes or time-series databases) and the application of recorded data for ML training or validation as the most relevant examples.
 
 This document provides a mechanism for including digital signatures within YANG data. It applies COSE {{RFC9052}}, to make the signature compact and easy to calculate. This mechanism is potentially applicable to any serialization of the YANG data supporting a clear method for canoicalization (as discussed below), but this document consider three essential ones: CBOR, JSON and XML.
 
