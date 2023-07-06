@@ -65,46 +65,73 @@ The term "data provenance" refers to a documented trail accounting for the origi
 
 # Provenance Elements
 
-This must be ellaborated from the example for the data manifest. Leave them as example.
+To provide provenance for a YANG element, a new leaf element MUST be included, containing the COSE signature bitstring built according to the procedure defined in the following section. The provenance leaf MUST be of type provenance-signature, defined as follows:
 
-The proposal implies including new optional leaves containing signatures in platform-manifest, for the platform, and in data-collection-manifest, for the collector, as follows (the new leaves are marked with an asterisk):
+~~~
+typedef provenance-signature {
+     type binary;
+     description
+      "The provenance-signature type represents a digital signature
+       associated to the enclosing element. The signature is based
+       on COSE and generated using a cannonicalized version of the
+       encosing element.";
+     reference
+      "draft-lopez-opsawg-yang-provenance";
+}
+~~~
 
+When using it, a provenance-signature leaf MAY appear at any position in the enclosing element, but only one of them MUST be defined for the enclosing element. If the enclosing element contains other non-leaf elements, they MAY provide their own provenance-signature leaf, according to the same rule.
+
+As example, let us consider the two modules proposed in {{YANGmanifest}}. For the platform-manifest module, the provenance for a platforn would be provided by the optional platform-provenance leaf shown below:
 ~~~
 module: ietf-platform-manifest
   +--ro platforms
      +--ro platform* [id]
-        +--ro id                      string
-       +--ro platform-provenance?    string       *
-        +--ro name?                   string
-        +--ro vendor?                 string
-        +--ro vendor-pen?             uint32
-        +--ro software-version?       string
-        +--ro software-flavor?        string
-        +--ro os-version?             string
-        +--ro os-type?                string
-        +--ro yang-push-streams
-        |  +--ro stream* [name]
-        |     +--ro name
-        |     +--ro description?
-        +--ro yang-library
-        + . . .
-        .
-        .
-        .
+       +--ro platform-provenance?    provenance-signature
+       +--ro id                      string
+       +--ro name?                   string
+       +--ro vendor?                 string
+       +--ro vendor-pen?             uint32
+       +--ro software-version?       string
+       +--ro software-flavor?        string
+       +--ro os-version?             string
+       +--ro os-type?                string
+       +--ro yang-push-streams
+       |  +--ro stream* [name]
+       |     +--ro name
+       |     +--ro description?
+       +--ro yang-library
+       + . . .
+       .
+       .
+       .
 ~~~
+
+For data collections, the provenance of each one would be provided by the optional collector-provenance leaf, as shown belo
 
 ~~~
 module: ietf-data-collection-manifest
   +--ro data-collections
      +--ro data-collection* [platform-id]
-        +--ro platform-id
-       +--collector-provenance?    string            *
-        |       -> /p-mf:platforms/platform/id
-        +--ro yang-push-subscriptions
-           +--ro subscription* [id]
-              +--ro id
-              |       sn:subscription-id
+     +--ro platform-id
+     |       -> /p-mf:platforms/platform/id
+     +--ro collector-provenance?   provenance-signature 
+     +--ro yang-push-subscriptions
+       +--ro subscription* [id]
+         +--ro id
+         |      sn:subscription-id
+         +
+         .
+         .
+         .
+     + . . .
+     |
+     .
+     .
+     .
 ~~~
+
+In both cases, and for the sake of brevity, the provenance element appears at the top of the enclosing element, but it is worth noting to remark they MAY appear anywhere within it.
 
 # Provenance Signature Strings
 
@@ -124,6 +151,10 @@ Where:
 Signature algorithm and parameters will follow COSE conventions and registries.
 
 * The kid (Key ID) has to be locally interpreted by the element evaluating the signature. URIs and RFC822-style identifiers can be considered typical kids to be used.
+
+## Signature Verification
+
+Do we need to address it?
 
 ## Canonicalization
 
