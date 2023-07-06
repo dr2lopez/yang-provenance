@@ -115,7 +115,7 @@ module: ietf-data-collection-manifest
      +--ro data-collection* [platform-id]
      +--ro platform-id
      |       -> /p-mf:platforms/platform/id
-     +--ro collector-provenance?   provenance-signature 
+     +--ro collector-provenance?   provenance-signature
      +--ro yang-push-subscriptions
        +--ro subscription* [id]
          +--ro id
