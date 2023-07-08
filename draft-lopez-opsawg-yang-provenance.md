@@ -31,9 +31,14 @@ author:
   email: "diego.r.lopez@telefonica.com"
 
 normative:
+ RFC3986:
+ RFC5322:
+ RFC7950:
+ RFC7951:
  RFC8785:
  RFC8949:
  RFC9052:
+ RFC9254:
  XMLSig:
   title: XML Signature Syntax and Processing Version 2.0
   target: https://www.w3.org/TR/xmldsig-core2/
@@ -74,7 +79,7 @@ typedef provenance-signature {
       "The provenance-signature type represents a digital signature
        associated to the enclosing element. The signature is based
        on COSE and generated using a cannonicalized version of the
-       encosing element.";
+       enclosing element.";
      reference
       "draft-lopez-opsawg-yang-provenance";
 }
@@ -83,6 +88,7 @@ typedef provenance-signature {
 When using it, a provenance-signature leaf MAY appear at any position in the enclosing element, but only one of them MUST be defined for the enclosing element. If the enclosing element contains other non-leaf elements, they MAY provide their own provenance-signature leaf, according to the same rule.
 
 As example, let us consider the two modules proposed in {{YANGmanifest}}. For the platform-manifest module, the provenance for a platforn would be provided by the optional platform-provenance leaf shown below:
+
 ~~~
 module: ietf-platform-manifest
   +--ro platforms
@@ -131,11 +137,11 @@ module: ietf-data-collection-manifest
      .
 ~~~
 
-In both cases, and for the sake of brevity, the provenance element appears at the top of the enclosing element, but it is worth noting to remark they MAY appear anywhere within it.
+In both cases, and for the sake of brevity, the provenance element appears at the top of the enclosing element, but it is worth remarking they may appear anywhere within it.
 
 # Provenance Signature Strings
 
-The signature strings are COSE single signature messages with \[nil\] payload and the following structure (as defined by RFC 9052):
+Signature strings are COSE single signature messages with \[nil\] payload, according to COSE conventions and registries, and with the following structure (as defined by {{RFC9052, Section 4.2}}):
 
 ~~~
 COSE_Sign1 = [
@@ -145,40 +151,53 @@ signature /using as EAAD the content of the (meta-)data without the signature le
 ]
 ~~~
 
-Where:
+The COSE_Sign1 procedure yields a bitstring when building the signature and expects a bitstring for checking it, hence the proposed type for signature leaves. The structure of the COSE_Sign1 consists of:
 
-* The COSE_Sign1 procedure yields a string when building the signature and expect a string for checking it, hence the proposed type for signature leaves.
-Signature algorithm and parameters will follow COSE conventions and registries.
+* The algorithm-identifier MUST follow COSE conventions and regisitries.
 
-* The kid (Key ID) has to be locally interpreted by the element evaluating the signature. URIs and RFC822-style identifiers can be considered typical kids to be used.
+* The kid (Key ID) has to be locally agreed, used and interpreted by the signer and the signature validator. URIs {{RFC3986}} and RFC822-style {{RFC5322}} identifiers are typical values to be used as kid.
 
-## Signature Verification
+* The serialization-method is a string identifying the YANG serialization in use. It MUST be one of the three possible values "xml" (for XML serialization {{RFC7950}}), "json" (for JSON serialization {{RFC7951}}) or "cbor" (for CBOR serialization {{RFC9254}}).
 
-Do we need to address it?
+* The value algorithm-parameters MUST follow the COSE conventions for providing relevant parameters to the signing algorithm.
+
+* The signature for the enclosing element, to be produced and verified according to the procedure described below.
+
+## Signature and Verification Procedures
+
+To keep a concise signature and avoid the need for wrapping YANG constructs in COSE envelopes, the whole signature MUST be built and verified by means of externally supplied data, as defined in {{RFC9052, Section 4.3}}, with a \[nil\] payload.
+
+The byte strings to be used as input to the signature and verification procedures MUST be built by:
+
+* Taking the whole element enclosing the signature leaf.
+
+* Eliminating the signature leaf element.
+ 
+* Applying the corresponding canonicalization method as described in the following section.
 
 ## Canonicalization
 
-Signature generation and verification require a canonicalization method to be applied, that depends on the serialization used. We can consider three types of serialization:
+Signature generation and verification require a canonicalization method to be applied, that depends on the serialization used. According to the three types of serialization defined, the following canonicalization methods MUST be applied:
 
-* CBOR, what would imply the use of the length-first core deterministic encoding, as defined by RFC 8949
+* For CBOR, length-first core deterministic encoding, as defined by {{RFC8949}}.
 
-* JSON, what would imply the use of the JSON Canonicalization Scheme (JCS), as defined by RFC 8785
+* For JSON, JSON Canonicalization Scheme (JCS), as defined by {{RFC8785}}.
 
-* XML, what would imply the use of the Exclusive XML Canonicalization 1.0, as defined by W3C XML signature processing.
-
-* EAAD refers to the COSE feature of allowing the use of external application authenticated data to be combined with the signature payload. To keep a concise signature and avoid the need for wrapping YANG constructs in COSE envelopes, we propose to use the whole YANG (meta-)data being signed as EAAD, keeping a nil payload.
+* For XML, Exclusive XML Canonicalization 1.0, as defined by {{XMLSig}}.
 
 
 # Security Considerations
 
 The provenance assessment mechanism described in this document relies in COSE {{RFC9052}} and the deterministic encoding or canonicalization described by {{RFC8949}}, {{RFC8785}} and {{XMLSig}}. The security considerations made in these references are fully applicable here.
 
-The verification step depends on the association of the Key ID with the proper public key. This is a local matter for the verifier and its specification is out of the scope of this document. The use of certificates, PKI mechanisms, or any other secure distribution of id-public key mapping is advised.
+The verification step depends on the association of the kid (Key ID) with the proper public key. This is a local matter for the verifier and its specification is out of the scope of this document. The use of certificates, PKI mechanisms, or any other secure distribution of id-public key mappings is RECOMMENDED.
 
 
 # IANA Considerations
 
-This document has no IANA actions.
+The provenance-signature type might need registration.
+
+Others?
 
 
 --- back
