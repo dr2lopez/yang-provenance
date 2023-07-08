@@ -1,4 +1,4 @@
-# TODO - Your title
+# Applying COSE Signatures for YANG Data Provenance
 
 This is the working area for the individual Internet-Draft, "TODO - Your title".
 
