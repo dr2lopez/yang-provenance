@@ -1,6 +1,6 @@
 # Applying COSE Signatures for YANG Data Provenance
 
-This is the working area for the individual Internet-Draft, "TODO - Your title".
+This is the working area for the individual Internet-Draft, "opsawg-yang-provenance".
 
 * [Editor's Copy](https://dr2lopez.github.io/yang-provenance/#go.draft-lopez-opsawg-yang-provenance.html)
 * [Datatracker Page](https://datatracker.ietf.org/doc/draft-lopez-opsawg-yang-provenance)
