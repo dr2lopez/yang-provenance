@@ -172,7 +172,7 @@ The byte strings to be used as input to the signature and verification procedure
 * Taking the whole element enclosing the signature leaf.
 
 * Eliminating the signature leaf element.
- 
+
 * Applying the corresponding canonicalization method as described in the following section.
 
 ## Canonicalization
