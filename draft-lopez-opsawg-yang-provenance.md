@@ -23,14 +23,13 @@ venue:
   arch: "https://mailarchive.ietf.org/arch/browse/opsawg/"
   github: "dr2lopez/yang-provenance"
   latest: "https://dr2lopez.github.io/yang-provenance/draft-lopez-opsawg-yang-provenance.html"
-
 author:
- -name: Diego Lopez
-  organization: Telefonica
-  email: "diego.r.lopez@telefonica.com"
- -name: Antonio Pastor
-  organization: Telefonica
-  email: "antonio.pastorperales@telefonica.com"
+ - name: Diego Lopez
+   organization: Telefonica
+   email: "diego.r.lopez@telefonica.com"
+ - name: Antonio Pastor
+   organization: Telefonica
+   email: "antonio.pastorperales@telefonica.com"
 
 normative:
  RFC3986:
