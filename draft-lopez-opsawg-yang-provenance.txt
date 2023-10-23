@@ -3,9 +3,9 @@
 
 
 Operations and Management Area Working Group                    D. Lopez
-Internet-Draft                                                Telefonica
-Intended status: Informational                               8 July 2023
-Expires: 9 January 2024
+Internet-Draft                                                 A. Pastor
+Intended status: Informational                                Telefonica
+Expires: 25 April 2024                                   23 October 2023
 
 
            Applying COSE Signatures for YANG Data Provenance
@@ -15,13 +15,14 @@ Abstract
 
    This document defines a mechanism based on COSE signatures to provide
    and verify the provenance of YANG data, so it is possible to verify
-   the orign and integrity of a dataset, even when those data are going
+   the origin and integrity of a dataset, even when those data are going
    to be processed and/or applied in workflows where a crypto-enabled
    data transport directly from the original data stream is not
-   available.  As the application of evidence-based OAM and the use of
-   tools such as AI/ML grow, provenance validation becomes more relevant
-   in all scenarios.  The use of compact signatures facilitates the
-   inclusion of provenance strings in any YANG schema requiring them.
+   available.  As the application of evidence-based OAM automation and
+   the use of tools such as AI/ML grow, provenance validation becomes
+   more relevant in all scenarios.  The use of compact signatures
+   facilitates the inclusion of provenance strings in any YANG schema
+   requiring them.
 
 About This Document
 
@@ -57,7 +58,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 9 January 2024.
+   This Internet-Draft will expire on 25 April 2024.
 
 Copyright Notice
 
@@ -87,7 +88,7 @@ Table of Contents
      7.1.  Normative References
      7.2.  Informative References
    Acknowledgments
-   Author's Address
+   Authors' Addresses
 
 1.  Introduction
 
@@ -105,24 +106,25 @@ Table of Contents
 
    When datasets are made available as an online data flow, provenance
    can be assessed by properties of the data transport protocol, as long
-   as some kind of cryptographic protocol is used, with TLS, SSH and
-   IPsec as the main examples.  But when these datasets are stored, go
-   through some pre-processing or aggregation stages, or even
-   cryptographic data transport is not available, provenance must be
-   assessed by other means.
+   as some kind of cryptographic protocol is used for source
+   authentication, with TLS, SSH and IPsec as the main examples.  But
+   when these datasets are stored, go through some pre-processing or
+   aggregation stages, or even cryptographic data transport is not
+   available, provenance must be assessed by other means.
 
    The original use case for this provenance mechanism is associated
    with [YANGmanifest], in order to provide a proof of the origin and
-   integrity of the provided metadata.  The examples in this document
-   use the modules described there.  An analysis of other potential use
-   cases motivated to deal with the provenance mechanism described here
-   suggested the interest of defininig an independent, generally
-   applicable mechanim.  Provenance verification by signatures
-   incorporated in the YANG data elements can be applied to any usage of
-   such data not relying on an online flow, with the use of data stores
-   (such as data lakes or time-series databases) and the application of
-   recorded data for ML training or validation as the most relevant
-   examples.
+   integrity of the provided metadata, but soon it became clear that it
+   could be extended to any YANG datamodel to support provenance
+   evidence.  The examples in this document use the modules described
+   there.  An analysis of other potential use cases motivated to deal
+   with the provenance mechanism described here suggested the interest
+   of defining an independent, generally applicable mechanism.
+   Provenance verification by signatures incorporated in the YANG data
+   elements can be applied to any usage of such data not relying on an
+   online flow, with the use of data stores (such as data lakes or time-
+   series databases) and the application of recorded data for ML
+   training or validation as the most relevant examples.
 
    This document provides a mechanism for including digital signatures
    within YANG data.  It applies COSE [RFC9052] to make the signature
@@ -170,7 +172,7 @@ Table of Contents
 
    As example, let us consider the two modules proposed in
    [YANGmanifest].  For the platform-manifest module, the provenance for
-   a platforn would be provided by the optional platform-provenance leaf
+   a platform would be provided by the optional platform-provenance leaf
    shown below:
 
    module: ietf-platform-manifest
@@ -241,7 +243,7 @@ Table of Contents
    of:
 
    *  The algorithm-identifier, which MUST follow COSE conventions and
-      regisitries.
+      registries.
 
    *  The kid (Key ID), to be locally agreed, used and interpreted by
       the signer and the signature validator.  URIs [RFC3986] and
@@ -374,9 +376,9 @@ Table of Contents
               Claise, B., Quilbeuf, J., Lopez, D., Martinez-Casanueva,
               I. D., and T. Graf, "A Data Manifest for Contextualized
               Telemetry Data", Work in Progress, Internet-Draft, draft-
-              ietf-opsawg-collected-data-manifest-00, 31 May 2023,
+              ietf-opsawg-collected-data-manifest-01, 10 July 2023,
               <https://datatracker.ietf.org/doc/html/draft-ietf-opsawg-
-              collected-data-manifest-00>.
+              collected-data-manifest-01>.
 
 Acknowledgments
 
@@ -385,8 +387,13 @@ Acknowledgments
    PRIVATEER (grant 101096110), HORSE (grant 101096342) and ACROSS
    (grant 101097122).
 
-Author's Address
+Authors' Addresses
 
    Diego Lopez
    Telefonica
    Email: diego.r.lopez@telefonica.com
+
+
+   Antonio Pastor
+   Telefonica
+   Email: antonio.pastorperales@telefonica.com
