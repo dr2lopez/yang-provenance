@@ -123,10 +123,10 @@ Table of Contents
 
    Provenance verification by signatures incorporated in the YANG data
    elements can be applied to any data processing pipeline, whether they
-   rely on an online flow or use some kind of data store (such as data
-   lakes or time-series databases).  The application of recorded data
-   for ML training or validation constitute the most relevant examples
-   of these scenarios.
+   rely on an online flow or use some kind of data store, such as data
+   lakes or time-series databases.  The application of recorded data for
+   ML training or validation constitute the most relevant examples of
+   these scenarios.
 
    This document provides a mechanism for including digital signatures
    within YANG data.  It applies COSE [RFC9052] to make the signature
