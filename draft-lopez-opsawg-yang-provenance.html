@@ -1188,8 +1188,8 @@ svg :is([fill="white"], [fill^="#fff"]) {
       </h2>
 <p id="section-1-1">OAM automation, generally based on  closed-loop principles, requires at least two datasets to be used. Using the common terms in Control Theory, we need those from the plant (the network device or segment under control) and those to be used as reference (the desired values of the relevant data). The usual automation behavior compares these values and takes a decision, by whatever the method (algorithmic, rule-based, an AI model tuned by ML...) to decide on a control action according to this comparison. Assurance of the origin and integrity of these datasets, what we refer in this document as "provenance", becomes essential to guarantee a proper behavior of closed-loop automation.<a href="#section-1-1" class="pilcrow">¶</a></p>
 <p id="section-1-2">When datasets are made available as an online data flow, provenance can be assessed by properties of the data transport protocol, as long as some kind of cryptographic protocol is used for source authentication, with TLS, SSH and IPsec as the main examples. But when these datasets are stored, go through some pre-processing or aggregation stages, or even cryptographic data transport is not available, provenance must be assessed by other means.<a href="#section-1-2" class="pilcrow">¶</a></p>
-<p id="section-1-3">The original use case for this provenance mechanism is associated with <span>[<a href="#YANGmanifest" class="cite xref">YANGmanifest</a>]</span>, in order to provide a proof of the origin and integrity of the provided metadata, but soon it became clear that it could be extended to any YANG datamodel to support provenance evidence. The examples in this document use the modules described there. An analysis of other potential use cases motivated to deal with the provenance mechanism described here suggested the interest of defining an independent, generally applicable mechanism. Provenance verification by signatures incorporated in the YANG data elements can be applied to any usage of such data not relying on an online flow, with the use of data stores (such as data lakes or time-series databases) and the application of recorded data for ML training or validation as the most relevant examples.<a href="#section-1-3" class="pilcrow">¶</a></p>
-<p id="section-1-4">This document provides a mechanism for including digital signatures within YANG data. It applies COSE <span>[<a href="#RFC9052" class="cite xref">RFC9052</a>]</span> to make the signature compact and reduce the resources required for calculating it. This mechanism is potentially applicable to any serialization of the YANG data supporting a clear method for canonicalization, but this document considers three base ones: CBOR, JSON and XML.<a href="#section-1-4" class="pilcrow">¶</a></p>
+<p id="section-1-3">The original use case for this provenance mechanism is associated with <span>[<a href="#YANGmanifest" class="cite xref">YANGmanifest</a>]</span>, in order to provide a proof of the origin and integrity of the provided metadata, and therefore the examples in this document use the modules described there, but it soon became clear that it could be extended to any YANG datamodel to support provenance evidence. An analysis of other potential use cases suggested the interest of defining an independent, generally applicable mechanism. Provenance verification by signatures incorporated in the YANG data elements can be applied to any data processing pipeline not relying on an online flow, with the use of data stores (such as data lakes or time-series databases) and the application of recorded data for ML training or validation as the most relevant examples.<a href="#section-1-3" class="pilcrow">¶</a></p>
+<p id="section-1-4">This document provides a mechanism for including digital signatures within YANG data. It applies COSE <span>[<a href="#RFC9052" class="cite xref">RFC9052</a>]</span> to make the signature compact and reduce the resources required for calculating it. This mechanism is applicable to any serialization of the YANG data supporting a clear method for canonicalization, but this document considers three base ones: CBOR, JSON and XML.<a href="#section-1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="conventions-and-definitions">
@@ -1220,11 +1220,12 @@ typedef provenance-signature {
        on COSE and generated using a cannonicalized version of the
        enclosing element.";
      reference
-      "draft-lopez-opsawg-yang-provenance";
+      "RFC 9052: CBOR Object Signing and Encryption (COSE): Structures and Process
+       draft-lopez-opsawg-yang-provenance";
 }
 </pre><a href="#section-3-2" class="pilcrow">¶</a>
 </div>
-<p id="section-3-3">When using it, a provenance-signature leaf <span class="bcp14">MAY</span> appear at any position in the enclosing element, but only one such leaf <span class="bcp14">MUST</span> be defined for the enclosing element. If the enclosing element contains other non-leaf elements, they <span class="bcp14">MAY</span> provide their own provenance-signature leaf, according to the same rule.<a href="#section-3-3" class="pilcrow">¶</a></p>
+<p id="section-3-3">When using it, a provenance-signature leaf <span class="bcp14">MAY</span> appear at any position in the enclosing element, but only one such leaf <span class="bcp14">MUST</span> be defined for the enclosing element. If the enclosing element contains other non-leaf elements, they <span class="bcp14">MAY</span> provide their own provenance-signature leaf, according to the same rule. In this case, the provenance-signature leaves in the childrem elements are applicable to the specific child element where they are enclosed, while the provenance-signature leaf enclosed in the top-most element is applicable to the whole element contents, including the children provenance-signature leaf themselves. This allows for recursive provenance validation, data aggregation, and the application of provenance verification of relevant children elements at different stages of any data processing pipeline.<a href="#section-3-3" class="pilcrow">¶</a></p>
 <p id="section-3-4">As example, let us consider the two modules proposed in <span>[<a href="#YANGmanifest" class="cite xref">YANGmanifest</a>]</span>. For the platform-manifest module, the provenance for a platform would be provided by the optional platform-provenance leaf shown below:<a href="#section-3-4" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-3-5">
 <pre>
@@ -1276,6 +1277,23 @@ module: ietf-data-collection-manifest
 </pre><a href="#section-3-7" class="pilcrow">¶</a>
 </div>
 <p id="section-3-8">In both cases, and for the sake of brevity, the provenance element appears at the top of the enclosing element, but it is worth remarking they may appear anywhere within it.<a href="#section-3-8" class="pilcrow">¶</a></p>
+<p id="section-3-9">Note that, in application of the recursion mechanism described above, a provenance element could be included at the top of any of the collections, supporting the verification of the provenance of the collection itself (as provided by a specific collector) without interfering with the verification of the provenance of each of the collection elements. As an example, in the case of the platform manifests it would look like:<a href="#section-3-9" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-3-10">
+<pre>
+module: ietf-platform-manifest
+  +--ro platforms
+     +--ro platform-collection-provenance? provenance-signature
+     +--ro platform* [id]
+       +--ro platform-provenance?          provenance-signature
+       +--ro id                            string
+       +--ro name?                         string
+       +--ro vendor?                       string
+       + . . .
+       .
+       .
+       .
+</pre><a href="#section-3-10" class="pilcrow">¶</a>
+</div>
 </section>
 </div>
 <div id="provenance-signature-strings">
