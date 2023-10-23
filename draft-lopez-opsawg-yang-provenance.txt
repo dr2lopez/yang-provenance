@@ -119,12 +119,14 @@ Table of Contents
    clear that it could be extended to any YANG datamodel to support
    provenance evidence.  An analysis of other potential use cases
    suggested the interest of defining an independent, generally
-   applicable mechanism.  Provenance verification by signatures
-   incorporated in the YANG data elements can be applied to any data
-   processing pipeline not relying on an online flow, with the use of
-   data stores (such as data lakes or time-series databases) and the
-   application of recorded data for ML training or validation as the
-   most relevant examples.
+   applicable mechanism.
+
+   Provenance verification by signatures incorporated in the YANG data
+   elements can be applied to any data processing pipeline, whether they
+   rely on an online flow or use some kind of data store (such as data
+   lakes or time-series databases).  The application of recorded data
+   for ML training or validation constitute the most relevant examples
+   of these scenarios.
 
    This document provides a mechanism for including digital signatures
    within YANG data.  It applies COSE [RFC9052] to make the signature
@@ -236,7 +238,7 @@ typedef provenance-signature {
    Note that, in application of the recursion mechanism described above,
    a provenance element could be included at the top of any of the
    collections, supporting the verification of the provenance of the
-   collection itself (as provided by a specific collector) without
+   collection itself (as provided by a specific collector), without
    interfering with the verification of the provenance of each of the
    collection elements.  As an example, in the case of the platform
    manifests it would look like:
