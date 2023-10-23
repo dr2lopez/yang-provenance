@@ -25,10 +25,12 @@ venue:
   latest: "https://dr2lopez.github.io/yang-provenance/draft-lopez-opsawg-yang-provenance.html"
 
 author:
- -
-  fullname: Diego Lopez
+ -name: Diego Lopez
   organization: Telefonica
   email: "diego.r.lopez@telefonica.com"
+ -name: Antonio Pastor
+  organization: Telefonica
+  email: "antonio.pastorperales@telefonica.com"
 
 normative:
  RFC3986:
@@ -48,7 +50,7 @@ informative:
 
 --- abstract
 
-This document defines a mechanism based on COSE signatures to provide and verify the provenance of YANG data, so it is possible to verify the orign and integrity of a dataset, even when those data are going to be processed and/or applied in workflows where a crypto-enabled data transport directly from the original data stream is not available. As the application of evidence-based OAM and the use of tools such as AI/ML grow, provenance validation becomes more relevant in all scenarios. The use of compact signatures facilitates the inclusion of provenance strings in any YANG schema requiring them.
+This document defines a mechanism based on COSE signatures to provide and verify the provenance of YANG data, so it is possible to verify the origin and integrity of a dataset, even when those data are going to be processed and/or applied in workflows where a crypto-enabled data transport directly from the original data stream is not available. As the application of evidence-based OAM automation and the use of tools such as AI/ML grow, provenance validation becomes more relevant in all scenarios. The use of compact signatures facilitates the inclusion of provenance strings in any YANG schema requiring them.
 
 --- middle
 
@@ -56,9 +58,9 @@ This document defines a mechanism based on COSE signatures to provide and verify
 
 OAM automation, generally based on  closed-loop principles, requires at least two datasets to be used. Using the common terms in Control Theory, we need those from the plant (the network device or segment under control) and those to be used as reference (the desired values of the relevant data). The usual automation behavior compares these values and takes a decision, by whatever the method (algorithmic, rule-based, an AI model tuned by ML...) to decide on a control action according to this comparison. Assurance of the origin and integrity of these datasets, what we refer in this document as "provenance", becomes essential to guarantee a proper behavior of closed-loop automation.
 
-When datasets are made available as an online data flow, provenance can be assessed by properties of the data transport protocol, as long as some kind of cryptographic protocol is used, with TLS, SSH and IPsec as the main examples. But when these datasets are stored, go through some pre-processing or aggregation stages, or even cryptographic data transport is not available, provenance must be assessed by other means.
+When datasets are made available as an online data flow, provenance can be assessed by properties of the data transport protocol, as long as some kind of cryptographic protocol is used for source authentication, with TLS, SSH and IPsec as the main examples. But when these datasets are stored, go through some pre-processing or aggregation stages, or even cryptographic data transport is not available, provenance must be assessed by other means.
 
-The original use case for this provenance mechanism is associated with {{YANGmanifest}}, in order to provide a proof of the origin and integrity of the provided metadata. The examples in this document use the modules described there. An analysis of other potential use cases motivated to deal with the provenance mechanism described here suggested the interest of defininig an independent, generally applicable mechanim. Provenance verification by signatures incorporated in the YANG data elements can be applied to any usage of such data not relying on an online flow, with the use of data stores (such as data lakes or time-series databases) and the application of recorded data for ML training or validation as the most relevant examples.
+The original use case for this provenance mechanism is associated with {{YANGmanifest}}, in order to provide a proof of the origin and integrity of the provided metadata, but soon it became clear that it could be extended to any YANG datamodel to support provenance evidence. The examples in this document use the modules described there. An analysis of other potential use cases motivated to deal with the provenance mechanism described here suggested the interest of defining an independent, generally applicable mechanism. Provenance verification by signatures incorporated in the YANG data elements can be applied to any usage of such data not relying on an online flow, with the use of data stores (such as data lakes or time-series databases) and the application of recorded data for ML training or validation as the most relevant examples.
 
 This document provides a mechanism for including digital signatures within YANG data. It applies COSE {{RFC9052}} to make the signature compact and reduce the resources required for calculating it. This mechanism is potentially applicable to any serialization of the YANG data supporting a clear method for canonicalization, but this document considers three base ones: CBOR, JSON and XML.
 
@@ -87,7 +89,7 @@ typedef provenance-signature {
 
 When using it, a provenance-signature leaf MAY appear at any position in the enclosing element, but only one such leaf MUST be defined for the enclosing element. If the enclosing element contains other non-leaf elements, they MAY provide their own provenance-signature leaf, according to the same rule.
 
-As example, let us consider the two modules proposed in {{YANGmanifest}}. For the platform-manifest module, the provenance for a platforn would be provided by the optional platform-provenance leaf shown below:
+As example, let us consider the two modules proposed in {{YANGmanifest}}. For the platform-manifest module, the provenance for a platform would be provided by the optional platform-provenance leaf shown below:
 
 ~~~
 module: ietf-platform-manifest
@@ -154,7 +156,7 @@ signature /using as external data the content
 
 The COSE_Sign1 procedure yields a bitstring when building the signature and expects a bitstring for checking it, hence the proposed type for signature leaves. The structure of the COSE_Sign1 consists of:
 
-* The algorithm-identifier, which MUST follow COSE conventions and regisitries.
+* The algorithm-identifier, which MUST follow COSE conventions and registries.
 
 * The kid (Key ID), to be locally agreed, used and interpreted by the signer and the signature validator. URIs {{RFC3986}} and RFC822-style {{RFC5322}} identifiers are typical values to be used as kid.
 
