@@ -5,7 +5,9 @@
 Operations and Management Area Working Group                    D. Lopez
 Internet-Draft                                                 A. Pastor
 Intended status: Informational                                Telefonica
-Expires: 25 April 2024                                   23 October 2023
+Expires: 31 August 2024                                    A. Huang Feng
+                                                               INSA-Lyon
+                                                        28 February 2024
 
 
            Applying COSE Signatures for YANG Data Provenance
@@ -58,11 +60,11 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 25 April 2024.
+   This Internet-Draft will expire on 31 August 2024.
 
 Copyright Notice
 
-   Copyright (c) 2023 IETF Trust and the persons identified as the
+   Copyright (c) 2024 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -82,11 +84,18 @@ Table of Contents
    4.  Provenance Signature Strings
      4.1.  Signature and Verification Procedures
      4.2.  Canonicalization
-   5.  Security Considerations
-   6.  IANA Considerations
-   7.  References
-     7.1.  Normative References
-     7.2.  Informative References
+   5.  YANG module
+   6.  Signature of NETCONF Event Notifications and YANG-Push
+           Notifications
+     6.1.  YANG Tree Diagram
+     6.2.  YANG Module
+   7.  Security Considerations
+   8.  IANA Considerations
+     8.1.  IETF XML Registry
+     8.2.  YANG Module Name
+   9.  References
+     9.1.  Normative References
+     9.2.  Informative References
    Acknowledgments
    Authors' Addresses
 
@@ -172,7 +181,7 @@ typedef provenance-signature {
    the enclosing element.  If the enclosing element contains other non-
    leaf elements, they MAY provide their own provenance-signature leaf,
    according to the same rule.  In this case, the provenance-signature
-   leaves in the childrem elements are applicable to the specific child
+   leaves in the children elements are applicable to the specific child
    element where they are enclosed, while the provenance-signature leaf
    enclosed in the top-most element is applicable to the whole element
    contents, including the children provenance-signature leaf
@@ -328,7 +337,171 @@ typedef provenance-signature {
    *  For XML, Exclusive XML Canonicalization 1.0, as defined by
       [XMLSig].
 
-5.  Security Considerations
+5.  YANG module
+
+   This module defines a provenance-signature type to be used in other
+   YANG modules.
+
+   <CODE BEGINS> file "ietf-yang-provenance@2024-02-28.yang"
+   module ietf-yang-provenance {
+     yang-version 1.1;
+     namespace
+       "urn:ietf:params:xml:ns:yang:ietf-yang-provenance";
+     prefix iyangprov;
+
+     organization "IETF OPSAWG (Operations and Management Area Working Group)";
+     contact
+       "WG Web:   <https://datatracker.ietf.org/wg/opsawg/>
+        WG List:  <mailto:opsawg@ietf.org>
+
+        Authors:  Alex Huang Feng
+                  <mailto:alex.huang-feng@insa-lyon.fr>
+                  Diego Lopez
+                  <mailto:diego.r.lopez@telefonica.com>
+                  Antonio Pastor
+                  <mailto:antonio.pastorperales@telefonica.com>";
+
+     description
+       "Defines a binary provenance-signature type to be used in other YANG
+       modules.
+
+       Copyright (c) 2024 IETF Trust and the persons identified as
+       authors of the code.  All rights reserved.
+
+       Redistribution and use in source and binary forms, with or without
+       modification, is permitted pursuant to, and subject to the license
+       terms contained in, the Revised BSD License set forth in Section
+       4.c of the IETF Trust's Legal Provisions Relating to IETF Documents
+       (https://trustee.ietf.org/license-info).
+
+       This version of this YANG module is part of RFC XXXX; see the RFC
+       itself for full legal notices.";
+
+     revision 2024-02-28 {
+       description
+         "First revision";
+       reference
+         "RFC XXXX: Applying COSE Signatures for YANG Data Provenance";
+     }
+
+     typedef provenance-signature {
+       type binary;
+       description
+         "The provenance-signature type represents a digital signature
+         associated to the enclosing element. The signature is based
+         on COSE and generated using a cannonicalized version of the
+         enclosing element.";
+       reference
+         "RFC XXXX: Applying COSE Signatures for YANG Data Provenance";
+     }
+   }
+   <CODE ENDS>
+
+6.  Signature of NETCONF Event Notifications and YANG-Push Notifications
+
+   The signature mechanism proposed in this document can be used with
+   NETCONF Event Notifications [RFC5277] and YANG-Push [RFC8641] to sign
+   the generated notifications directly from the publisher nodes.  The
+   signature is added to the header of the Notification along with the
+   eventTime leaf.
+
+   The following sections define the YANG module augmenting the ietf-
+   notification module.
+
+6.1.  YANG Tree Diagram
+
+   The following is the YANG tree diagram [RFC8340] for the ietf-
+   notification-provenance augmentation within the ietf-notification.
+
+   module: ietf-notification-provenance
+
+     augment-structure /inotif:notification:
+       +-- notification-provenance?   iyangprov:provenance-signature
+
+   And the following is the full YANG tree diagram for the notification.
+
+module: ietf-notification
+
+  structure notification:
+    +-- eventTime                             yang:date-and-time
+    +-- inotifprov:notification-provenance?   iyangprov:provenance-signature
+
+6.2.  YANG Module
+
+   The module augments ietf-notification module
+   [I-D.ahuang-netconf-notif-yang] adding the signature leaf in the
+   notification header.
+
+   <CODE BEGINS> file "ietf-notification-provenance@2024-02-28.yang"
+   module ietf-notification-provenance {
+     yang-version 1.1;
+     namespace
+       "urn:ietf:params:xml:ns:yang:ietf-notification-provenance";
+     prefix inotifprov;
+
+     import ietf-notification {
+       prefix inotif;
+       reference
+         "draft-ahuang-netconf-notif-yang: NETCONF Event Notification YANG";
+     }
+     import ietf-yang-provenance {
+       prefix iyangprov;
+       reference
+         "RFC XXXX: Applying COSE Signatures for YANG Data Provenance";
+     }
+     import ietf-yang-structure-ext {
+       prefix sx;
+       reference
+         "RFC 8791: YANG Data Structure Extensions";
+     }
+
+     organization "IETF OPSAWG (Operations and Management Area Working Group)";
+     contact
+       "WG Web:   <https://datatracker.ietf.org/wg/opsawg/>
+        WG List:  <mailto:opsawg@ietf.org>
+
+        Authors:  Alex Huang Feng
+                  <mailto:alex.huang-feng@insa-lyon.fr>
+                  Diego Lopez
+                  <mailto:diego.r.lopez@telefonica.com>
+                  Antonio Pastor
+                  <mailto:antonio.pastorperales@telefonica.com>";
+
+     description
+       "Defines a bynary provenance-signature type to be used in other YANG
+       modules.
+
+       Copyright (c) 2024 IETF Trust and the persons identified as
+       authors of the code.  All rights reserved.
+
+       Redistribution and use in source and binary forms, with or without
+       modification, is permitted pursuant to, and subject to the license
+       terms contained in, the Revised BSD License set forth in Section
+       4.c of the IETF Trust's Legal Provisions Relating to IETF Documents
+       (https://trustee.ietf.org/license-info).
+
+       This version of this YANG module is part of RFC XXXX; see the RFC
+       itself for full legal notices.";
+
+     revision 2024-02-28 {
+       description
+         "First revision";
+       reference
+         "RFC XXXX: Applying COSE Signatures for YANG Data Provenance";
+     }
+
+     sx:augment-structure "/inotif:notification" {
+       leaf notification-provenance {
+         type iyangprov:provenance-signature;
+         description
+           "COSE signature of the content of the Notification for
+           provenance verification.";
+       }
+     }
+   }
+   <CODE ENDS>
+
+7.  Security Considerations
 
    The provenance assessment mechanism described in this document relies
    on COSE [RFC9052] and the deterministic encoding or canonicalization
@@ -342,29 +515,75 @@ typedef provenance-signature {
    of certificates, PKI mechanisms, or any other secure distribution of
    id-public key mappings is RECOMMENDED.
 
-6.  IANA Considerations
+8.  IANA Considerations
 
-   The provenance-signature type might need registration.
+8.1.  IETF XML Registry
+
+   This document registers the following URIs in the "IETF XML Registry"
+   [RFC3688]:
+
+     URI: urn:ietf:params:xml:ns:yang:ietf-yang-provenance
+     Registrant Contact: The IESG.
+     XML: N/A; the requested URI is an XML namespace.
+
+     URI: urn:ietf:params:xml:ns:yang:ietf-notification-provenance
+     Registrant Contact: The IESG.
+     XML: N/A; the requested URI is an XML namespace.
+
+8.2.  YANG Module Name
+
+   This document registers the following YANG modules in the "YANG
+   Module Names" registry [RFC6020]:
+
+     name: ietf-yang-provenance
+     namespace: urn:ietf:params:xml:ns:yang:ietf-yang-provenance
+     prefix: iyangprov
+     reference: RFC XXXX
+
+     name: ietf-notification-provenance
+     namespace: urn:ietf:params:xml:ns:yang:ietf-notification-provenance
+     prefix: inotifprov
+     reference: RFC XXXX
 
    Others?
 
-7.  References
+9.  References
 
-7.1.  Normative References
+9.1.  Normative References
+
+   [I-D.ahuang-netconf-notif-yang]
+              Feng, A. H., Francois, P., Graf, T., and B. Claise, "YANG
+              model for NETCONF Event Notifications", Work in Progress,
+              Internet-Draft, draft-ahuang-netconf-notif-yang-04, 21
+              January 2024, <https://datatracker.ietf.org/doc/html/
+              draft-ahuang-netconf-notif-yang-04>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/rfc/rfc2119>.
 
+   [RFC3688]  Mealling, M., "The IETF XML Registry", BCP 81, RFC 3688,
+              DOI 10.17487/RFC3688, January 2004,
+              <https://www.rfc-editor.org/rfc/rfc3688>.
+
    [RFC3986]  Berners-Lee, T., Fielding, R., and L. Masinter, "Uniform
               Resource Identifier (URI): Generic Syntax", STD 66,
               RFC 3986, DOI 10.17487/RFC3986, January 2005,
               <https://www.rfc-editor.org/rfc/rfc3986>.
 
+   [RFC5277]  Chisholm, S. and H. Trevino, "NETCONF Event
+              Notifications", RFC 5277, DOI 10.17487/RFC5277, July 2008,
+              <https://www.rfc-editor.org/rfc/rfc5277>.
+
    [RFC5322]  Resnick, P., Ed., "Internet Message Format", RFC 5322,
               DOI 10.17487/RFC5322, October 2008,
               <https://www.rfc-editor.org/rfc/rfc5322>.
+
+   [RFC6020]  Bjorklund, M., Ed., "YANG - A Data Modeling Language for
+              the Network Configuration Protocol (NETCONF)", RFC 6020,
+              DOI 10.17487/RFC6020, October 2010,
+              <https://www.rfc-editor.org/rfc/rfc6020>.
 
    [RFC7950]  Bjorklund, M., Ed., "The YANG 1.1 Data Modeling Language",
               RFC 7950, DOI 10.17487/RFC7950, August 2016,
@@ -377,6 +596,14 @@ typedef provenance-signature {
    [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
+
+   [RFC8340]  Bjorklund, M. and L. Berger, Ed., "YANG Tree Diagrams",
+              BCP 215, RFC 8340, DOI 10.17487/RFC8340, March 2018,
+              <https://www.rfc-editor.org/rfc/rfc8340>.
+
+   [RFC8641]  Clemm, A. and E. Voit, "Subscription to YANG Notifications
+              for Datastore Updates", RFC 8641, DOI 10.17487/RFC8641,
+              September 2019, <https://www.rfc-editor.org/rfc/rfc8641>.
 
    [RFC8785]  Rundgren, A., Jordan, B., and S. Erdtman, "JSON
               Canonicalization Scheme (JCS)", RFC 8785,
@@ -402,15 +629,15 @@ typedef provenance-signature {
    [XMLSig]   "XML Signature Syntax and Processing Version 2.0", n.d.,
               <https://www.w3.org/TR/xmldsig-core2/>.
 
-7.2.  Informative References
+9.2.  Informative References
 
    [YANGmanifest]
               Claise, B., Quilbeuf, J., Lopez, D., Martinez-Casanueva,
               I. D., and T. Graf, "A Data Manifest for Contextualized
               Telemetry Data", Work in Progress, Internet-Draft, draft-
-              ietf-opsawg-collected-data-manifest-01, 10 July 2023,
+              ietf-opsawg-collected-data-manifest-02, 23 October 2023,
               <https://datatracker.ietf.org/doc/html/draft-ietf-opsawg-
-              collected-data-manifest-01>.
+              collected-data-manifest-02>.
 
 Acknowledgments
 
@@ -429,3 +656,8 @@ Authors' Addresses
    Antonio Pastor
    Telefonica
    Email: antonio.pastorperales@telefonica.com
+
+
+   Alex Huang Feng
+   INSA-Lyon
+   Email: alex.huang-feng@insa-lyon.fr
