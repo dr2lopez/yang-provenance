@@ -58,10 +58,9 @@ module ietf-notification-provenance {
   sx:augment-structure "/inotif:notification" {
     leaf notification-provenance {
       type iyangprov:provenance-signature;
-      mandatory true;
       description
-        "IP address or a DNS domain name from the server from which
-        the message was published.";
+        "COSE signature of the content of the Notification for
+        provenance verification.";
     }
   }
 }

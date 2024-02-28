@@ -45,7 +45,6 @@ normative:
  RFC7950:
  RFC7951:
  RFC8340:
- RFC8639:
  RFC8641:
  RFC8785:
  RFC8949:
@@ -295,7 +294,7 @@ The following is the YANG tree diagram {{RFC8340}} for the ietf-notification-pro
 module: ietf-notification-provenance
 
   augment-structure /inotif:notification:
-    +-- notification-provenance    iyangprov:provenance-signature
+    +-- notification-provenance?   iyangprov:provenance-signature
 ~~~
 
 And the following is the full YANG tree diagram for the notification.
@@ -304,8 +303,8 @@ And the following is the full YANG tree diagram for the notification.
 module: ietf-notification
 
   structure notification:
-    +-- eventTime                            yang:date-and-time
-    +-- inotifprov:notification-provenance   iyangprov:provenance-signature
+    +-- eventTime                             yang:date-and-time
+    +-- inotifprov:notification-provenance?   iyangprov:provenance-signature
 ~~~
 
 ## YANG Module
@@ -374,10 +373,9 @@ module ietf-notification-provenance {
   sx:augment-structure "/inotif:notification" {
     leaf notification-provenance {
       type iyangprov:provenance-signature;
-      mandatory true;
       description
-        "IP address or a DNS domain name from the server from which
-        the message was published.";
+        "COSE signature of the content of the Notification for
+        provenance verification.";
     }
   }
 }
