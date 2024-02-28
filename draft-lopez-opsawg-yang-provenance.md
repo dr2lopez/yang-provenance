@@ -30,7 +30,9 @@ author:
  - name: Antonio Pastor
    organization: Telefonica
    email: "antonio.pastorperales@telefonica.com"
- - name: Alex Huang Feng
+ - initials: A.
+   surname: Huang Feng
+   fullname: Alex Huang Feng
    organization: INSA-Lyon
    email: "alex.huang-feng@insa-lyon.fr"
 
