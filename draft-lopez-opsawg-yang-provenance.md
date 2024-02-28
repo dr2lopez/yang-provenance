@@ -30,16 +30,27 @@ author:
  - name: Antonio Pastor
    organization: Telefonica
    email: "antonio.pastorperales@telefonica.com"
+ - initials: A.
+   surname: Huang Feng
+   fullname: Alex Huang Feng
+   organization: INSA-Lyon
+   email: "alex.huang-feng@insa-lyon.fr"
 
 normative:
+ RFC3688:
  RFC3986:
+ RFC5277:
  RFC5322:
+ RFC6020:
  RFC7950:
  RFC7951:
+ RFC8340:
+ RFC8641:
  RFC8785:
  RFC8949:
  RFC9052:
  RFC9254:
+ I-D.ahuang-netconf-notif-yang: I-D.ahuang-netconf-notif-yang
  XMLSig:
   title: XML Signature Syntax and Processing Version 2.0
   target: https://www.w3.org/TR/xmldsig-core2/
@@ -55,7 +66,7 @@ This document defines a mechanism based on COSE signatures to provide and verify
 
 # Introduction
 
-OAM automation, generally based on  closed-loop principles, requires at least two datasets to be used. Using the common terms in Control Theory, we need those from the plant (the network device or segment under control) and those to be used as reference (the desired values of the relevant data). The usual automation behavior compares these values and takes a decision, by whatever the method (algorithmic, rule-based, an AI model tuned by ML...) to decide on a control action according to this comparison. Assurance of the origin and integrity of these datasets, what we refer in this document as "provenance", becomes essential to guarantee a proper behavior of closed-loop automation.
+OAM automation, generally based on closed-loop principles, requires at least two datasets to be used. Using the common terms in Control Theory, we need those from the plant (the network device or segment under control) and those to be used as reference (the desired values of the relevant data). The usual automation behavior compares these values and takes a decision, by whatever the method (algorithmic, rule-based, an AI model tuned by ML...) to decide on a control action according to this comparison. Assurance of the origin and integrity of these datasets, what we refer in this document as "provenance", becomes essential to guarantee a proper behavior of closed-loop automation.
 
 When datasets are made available as an online data flow, provenance can be assessed by properties of the data transport protocol, as long as some kind of cryptographic protocol is used for source authentication, with TLS, SSH and IPsec as the main examples. But when these datasets are stored, go through some pre-processing or aggregation stages, or even cryptographic data transport is not available, provenance must be assessed by other means.
 
@@ -89,7 +100,7 @@ typedef provenance-signature {
 }
 ~~~
 
-When using it, a provenance-signature leaf MAY appear at any position in the enclosing element, but only one such leaf MUST be defined for the enclosing element. If the enclosing element contains other non-leaf elements, they MAY provide their own provenance-signature leaf, according to the same rule. In this case, the provenance-signature leaves in the childrem elements are applicable to the specific child element where they are enclosed, while the provenance-signature leaf enclosed in the top-most element is applicable to the whole element contents, including the children provenance-signature leaf themselves. This allows for recursive provenance validation, data aggregation, and the application of provenance verification of relevant children elements at different stages of any data processing pipeline.
+When using it, a provenance-signature leaf MAY appear at any position in the enclosing element, but only one such leaf MUST be defined for the enclosing element. If the enclosing element contains other non-leaf elements, they MAY provide their own provenance-signature leaf, according to the same rule. In this case, the provenance-signature leaves in the children elements are applicable to the specific child element where they are enclosed, while the provenance-signature leaf enclosed in the top-most element is applicable to the whole element contents, including the children provenance-signature leaf themselves. This allows for recursive provenance validation, data aggregation, and the application of provenance verification of relevant children elements at different stages of any data processing pipeline.
 
 As example, let us consider the two modules proposed in {{YANGmanifest}}. For the platform-manifest module, the provenance for a platform would be provided by the optional platform-provenance leaf shown below:
 
@@ -207,6 +218,169 @@ Signature generation and verification require a canonicalization method to be ap
 
 * For XML, Exclusive XML Canonicalization 1.0, as defined by {{XMLSig}}.
 
+# YANG module
+
+This module defines a provenance-signature type to be used in other YANG modules.
+
+~~~
+<CODE BEGINS> file "ietf-yang-provenance@2024-02-28.yang"
+module ietf-yang-provenance {
+  yang-version 1.1;
+  namespace
+    "urn:ietf:params:xml:ns:yang:ietf-yang-provenance";
+  prefix iyangprov;
+
+  organization "IETF OPSAWG (Operations and Management Area Working Group)";
+  contact
+    "WG Web:   <https://datatracker.ietf.org/wg/opsawg/>
+     WG List:  <mailto:opsawg@ietf.org>
+
+     Authors:  Alex Huang Feng
+               <mailto:alex.huang-feng@insa-lyon.fr>
+               Diego Lopez
+               <mailto:diego.r.lopez@telefonica.com>
+               Antonio Pastor
+               <mailto:antonio.pastorperales@telefonica.com>";
+
+  description
+    "Defines a binary provenance-signature type to be used in other YANG
+    modules.
+
+    Copyright (c) 2024 IETF Trust and the persons identified as
+    authors of the code.  All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, is permitted pursuant to, and subject to the license
+    terms contained in, the Revised BSD License set forth in Section
+    4.c of the IETF Trust's Legal Provisions Relating to IETF Documents
+    (https://trustee.ietf.org/license-info).
+
+    This version of this YANG module is part of RFC XXXX; see the RFC
+    itself for full legal notices.";
+
+  revision 2024-02-28 {
+    description
+      "First revision";
+    reference
+      "RFC XXXX: Applying COSE Signatures for YANG Data Provenance";
+  }
+
+  typedef provenance-signature {
+    type binary;
+    description
+      "The provenance-signature type represents a digital signature
+      associated to the enclosing element. The signature is based
+      on COSE and generated using a cannonicalized version of the
+      enclosing element.";
+    reference
+      "RFC XXXX: Applying COSE Signatures for YANG Data Provenance";
+  }
+}
+<CODE ENDS>
+~~~
+
+# Signature of NETCONF Event Notifications and YANG-Push Notifications
+
+The signature mechanism proposed in this document can be used with NETCONF Event Notifications {{RFC5277}} and YANG-Push {{RFC8641}} to sign the generated notifications directly from the publisher nodes. The signature is added to the header of the Notification along with the eventTime leaf.
+
+The following sections define the YANG module augmenting the ietf-notification module.
+
+
+## YANG Tree Diagram
+
+The following is the YANG tree diagram {{RFC8340}} for the ietf-notification-provenance augmentation within the ietf-notification.
+
+~~~
+module: ietf-notification-provenance
+
+  augment-structure /inotif:notification:
+    +-- notification-provenance?   iyangprov:provenance-signature
+~~~
+
+And the following is the full YANG tree diagram for the notification.
+
+~~~
+module: ietf-notification
+
+  structure notification:
+    +-- eventTime                             yang:date-and-time
+    +-- inotifprov:notification-provenance?   iyangprov:provenance-signature
+~~~
+
+## YANG Module
+
+The module augments ietf-notification module {{I-D.ahuang-netconf-notif-yang}} adding the signature leaf in the notification header.
+
+~~~
+<CODE BEGINS> file "ietf-notification-provenance@2024-02-28.yang"
+module ietf-notification-provenance {
+  yang-version 1.1;
+  namespace
+    "urn:ietf:params:xml:ns:yang:ietf-notification-provenance";
+  prefix inotifprov;
+
+  import ietf-notification {
+    prefix inotif;
+    reference
+      "draft-ahuang-netconf-notif-yang: NETCONF Event Notification YANG";
+  }
+  import ietf-yang-provenance {
+    prefix iyangprov;
+    reference
+      "RFC XXXX: Applying COSE Signatures for YANG Data Provenance";
+  }
+  import ietf-yang-structure-ext {
+    prefix sx;
+    reference
+      "RFC 8791: YANG Data Structure Extensions";
+  }
+
+  organization "IETF OPSAWG (Operations and Management Area Working Group)";
+  contact
+    "WG Web:   <https://datatracker.ietf.org/wg/opsawg/>
+     WG List:  <mailto:opsawg@ietf.org>
+
+     Authors:  Alex Huang Feng
+               <mailto:alex.huang-feng@insa-lyon.fr>
+               Diego Lopez
+               <mailto:diego.r.lopez@telefonica.com>
+               Antonio Pastor
+               <mailto:antonio.pastorperales@telefonica.com>";
+
+  description
+    "Defines a bynary provenance-signature type to be used in other YANG
+    modules.
+
+    Copyright (c) 2024 IETF Trust and the persons identified as
+    authors of the code.  All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, is permitted pursuant to, and subject to the license
+    terms contained in, the Revised BSD License set forth in Section
+    4.c of the IETF Trust's Legal Provisions Relating to IETF Documents
+    (https://trustee.ietf.org/license-info).
+
+    This version of this YANG module is part of RFC XXXX; see the RFC
+    itself for full legal notices.";
+
+  revision 2024-02-28 {
+    description
+      "First revision";
+    reference
+      "RFC XXXX: Applying COSE Signatures for YANG Data Provenance";
+  }
+
+  sx:augment-structure "/inotif:notification" {
+    leaf notification-provenance {
+      type iyangprov:provenance-signature;
+      description
+        "COSE signature of the content of the Notification for
+        provenance verification.";
+    }
+  }
+}
+<CODE ENDS>
+~~~
 
 # Security Considerations
 
@@ -217,7 +391,39 @@ The verification step depends on the association of the kid (Key ID) with the pr
 
 # IANA Considerations
 
-The provenance-signature type might need registration.
+## IETF XML Registry
+
+This document registers the following URIs in the "IETF XML Registry" {{RFC3688}}:
+
+~~~
+  URI: urn:ietf:params:xml:ns:yang:ietf-yang-provenance
+  Registrant Contact: The IESG.
+  XML: N/A; the requested URI is an XML namespace.
+~~~
+
+~~~
+  URI: urn:ietf:params:xml:ns:yang:ietf-notification-provenance
+  Registrant Contact: The IESG.
+  XML: N/A; the requested URI is an XML namespace.
+~~~
+
+## YANG Module Name
+
+This document registers the following YANG modules in the "YANG Module Names" registry {{RFC6020}}:
+
+~~~
+  name: ietf-yang-provenance
+  namespace: urn:ietf:params:xml:ns:yang:ietf-yang-provenance
+  prefix: iyangprov
+  reference: RFC XXXX
+~~~
+
+~~~
+  name: ietf-notification-provenance
+  namespace: urn:ietf:params:xml:ns:yang:ietf-notification-provenance
+  prefix: inotifprov
+  reference: RFC XXXX
+~~~
 
 Others?
 
