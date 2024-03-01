@@ -35,20 +35,32 @@ author:
    fullname: Alex Huang Feng
    organization: INSA-Lyon
    email: "alex.huang-feng@insa-lyon.fr"
+ - ins: H. Birkholz
+   name: Henk Birkholz
+   org: Fraunhofer SIT
+   abbrev: Fraunhofer SIT
+   email: henk.birkholz@sit.fraunhofer.de
+   street: Rheinstrasse 75
+   code: '64295'
+   city: Darmstadt
+   country: Germany
+
 
 normative:
- RFC3688:
+RFC3688:
  RFC3986:
  RFC5277:
  RFC5322:
  RFC6020:
  RFC7950:
  RFC7951:
+ RFC7952:
  RFC8340:
  RFC8641:
  RFC8785:
  RFC8949:
  RFC9052:
+ RFC9195:
  RFC9254:
  I-D.ahuang-netconf-notif-yang: I-D.ahuang-netconf-notif-yang
  XMLSig:
@@ -72,7 +84,7 @@ When datasets are made available as an online data flow, provenance can be asses
 
 The original use case for this provenance mechanism is associated with {{YANGmanifest}}, in order to provide a proof of the origin and integrity of the provided metadata, and therefore the examples in this document use the modules described there, but it soon became clear that it could be extended to any YANG datamodel to support provenance evidence. An analysis of other potential use cases suggested the interest of defining an independent, generally applicable mechanism.
 
-Provenance verification by signatures incorporated in the YANG data elements can be applied to any data processing pipeline, whether they rely on an online flow or use some kind of data store, such as data lakes or time-series databases. The application of recorded data for ML training or validation constitute the most relevant examples of these scenarios.
+Provenance verification by signatures incorporated in YANG data can be applied to any data processing pipeline, whether they rely on an online flow or use some kind of data store, such as data lakes or time-series databases. The application of recorded data for ML training or validation constitute the most relevant examples of these scenarios.
 
 This document provides a mechanism for including digital signatures within YANG data. It applies COSE {{RFC9052}} to make the signature compact and reduce the resources required for calculating it. This mechanism is applicable to any serialization of the YANG data supporting a clear method for canonicalization, but this document considers three base ones: CBOR, JSON and XML.
 
@@ -82,25 +94,143 @@ This document provides a mechanism for including digital signatures within YANG 
 
 The term "data provenance" refers to a documented trail accounting for the origin of a piece of data and where it has moved from to where it is presently. The signature mechanism provided here can be recursively applied to allow this accounting for YANG data.
 
-# Provenance Elements
+# Defining Provenance Elements
 
-To provide provenance for a YANG element, a new leaf element MUST be included, containing the COSE signature bitstring built according to the procedure defined in the following section. The provenance leaf MUST be of type provenance-signature, defined as follows:
+The provenance for a given YANG element MUST be convened by a leaf element, containing the COSE signature bitstring built according to the procedure defined below in this section. The provenance leaf MUST be of type provenance-signature, defined as follows:
 
 ~~~
 typedef provenance-signature {
      type binary;
      description
       "The provenance-signature type represents a digital signature
-       associated to the enclosing element. The signature is based
-       on COSE and generated using a cannonicalized version of the
-       enclosing element.";
+       corresponding to the associated YANG element. The signature is based
+       on COSE and generated using a canonicalized version of the
+       associated element.";
      reference
       "RFC 9052: CBOR Object Signing and Encryption (COSE): Structures and Process
        draft-lopez-opsawg-yang-provenance";
 }
 ~~~
 
-When using it, a provenance-signature leaf MAY appear at any position in the enclosing element, but only one such leaf MUST be defined for the enclosing element. If the enclosing element contains other non-leaf elements, they MAY provide their own provenance-signature leaf, according to the same rule. In this case, the provenance-signature leaves in the children elements are applicable to the specific child element where they are enclosed, while the provenance-signature leaf enclosed in the top-most element is applicable to the whole element contents, including the children provenance-signature leaf themselves. This allows for recursive provenance validation, data aggregation, and the application of provenance verification of relevant children elements at different stages of any data processing pipeline.
+## Provenance Signature Strings
+
+Provenance signature strings are COSE single signature messages with \[nil\] payload, according to COSE conventions and registries, and with the following structure (as defined by {{RFC9052, Section 4.2}}):
+
+~~~
+COSE_Sign1 = [
+protected /algorithm-identifier, kid, serialization-method/
+unprotected /algorithm-parameters/
+signature /using as external data the content of the YANG
+           (meta-)data without the signature leaf/
+]
+~~~
+
+The COSE_Sign1 procedure yields a bitstring when building the signature and expects a bitstring for checking it, hence the proposed type for provenance signature leaves. The structure of the COSE_Sign1 consists of:
+
+* The algorithm-identifier, which MUST follow COSE conventions and registries.
+
+* The kid (Key ID), to be locally agreed, used and interpreted by the signer and the signature validator. URIs {{RFC3986}} and RFC822-style {{RFC5322}} identifiers are typical values to be used as kid.
+
+* The serialization-method, a string identifying the YANG serialization in use. It MUST be one of the three possible values "xml" (for XML serialization {{RFC7950}}), "json" (for JSON serialization {{RFC7951}}) or "cbor" (for CBOR serialization {{RFC9254}}).
+
+* The value algorithm-parameters, which MUST follow the COSE conventions for providing relevant parameters to the signing algorithm.
+
+* The signature for the YANG element provenance is being established for, to be produced and verified according to the procedure described below for each one of the enclosing methods for the provenance string described below.
+
+## Signature and Verification Procedures
+
+To keep a concise signature and avoid the need for wrapping YANG constructs in COSE envelopes, the whole signature MUST be built and verified by means of externally supplied data, as defined in {{RFC9052, Section 4.3}}, with a \[nil\] payload.
+
+The byte strings to be used as input to the signature and verification procedures MUST be built by:
+
+* Selecting the exact YANG content to be used, according to the corresponding enclosing methods.
+
+* Applying the corresponding canonicalization method as described in the following section.
+
+## Canonicalization
+
+Signature generation and verification require a canonicalization method to be applied, that depends on the serialization used. According to the three types of serialization defined, the following canonicalization methods MUST be applied:
+
+* For CBOR, length-first core deterministic encoding, as defined by {{RFC8949}}.
+
+* For JSON, JSON Canonicalization Scheme (JCS), as defined by {{RFC8785}}.
+
+* For XML, Exclusive XML Canonicalization 1.0, as defined by {{XMLSig}}.
+
+## Provenance-Signature YANG Module
+
+This module defines a provenance-signature type to be used in other YANG modules.
+
+~~~
+<CODE BEGINS> file "ietf-yang-provenance@2024-02-28.yang"
+module ietf-yang-provenance {
+  yang-version 1.1;
+  namespace
+    "urn:ietf:params:xml:ns:yang:ietf-yang-provenance";
+  prefix iyangprov;
+
+  organization "IETF OPSAWG (Operations and Management Area Working Group)";
+  contact
+    "WG Web:   <https://datatracker.ietf.org/wg/opsawg/>
+     WG List:  <mailto:opsawg@ietf.org>
+
+     Authors:  Alex Huang Feng
+               <mailto:alex.huang-feng@insa-lyon.fr>
+               Diego Lopez
+               <mailto:diego.r.lopez@telefonica.com>
+               Antonio Pastor
+               <mailto:antonio.pastorperales@telefonica.com>
+               Henk Birkholz
+               <mailto:henk.birkholz@sit.fraunhofer.de>";
+
+  description
+    "Defines a binary provenance-signature type to be used in other YANG
+    modules.
+
+    Copyright (c) 2024 IETF Trust and the persons identified as
+    authors of the code.  All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, is permitted pursuant to, and subject to the license
+    terms contained in, the Revised BSD License set forth in Section
+    4.c of the IETF Trust's Legal Provisions Relating to IETF Documents
+    (https://trustee.ietf.org/license-info).
+
+    This version of this YANG module is part of RFC XXXX; see the RFC
+    itself for full legal notices.";
+
+  revision 2024-02-28 {
+    description
+      "First revision";
+    reference
+      "RFC XXXX: Applying COSE Signatures for YANG Data Provenance";
+  }
+
+  typedef provenance-signature {
+    type binary;
+    description
+      "The provenance-signature type represents a digital signature
+      corresponding to the associated YANG element. The signature is based
+      on COSE and generated using a canonicalized version of the
+      associated element.";
+    reference
+      "RFC XXXX: Applying COSE Signatures for YANG Data Provenance";
+  }
+}
+<CODE ENDS>
+~~~
+
+# Enclosing Methods
+
+Once defined the procedures for generating and verifying the provenance signature string, let's consider how these signatures can be integrated with the associated YANG data by enclosing the signature in the data structure. This document considers four different enclosing methods, suitable for different stages of the YANG schema and usage patterns of the YANG data. The enclosing method defines not only how the provenance signature string is combined with the signed YANG data but also the specific procedure for selecting the specific YANG content to be processed when signing and verifying
+
+## Including a Provenance Leaf in a YANG Element
+
+This enclosing method requires a specific element in the YANG schema defining the element to be signed (the enclosing element), and thus implies considering provenance signatures when creating the corresponding YANG module, or the update of existing modules willing to support this provenance enclosing method.
+
+When using this enclosing method, a provenance-signature leaf MAY appear at any position in the enclosing element, but only one such leaf MUST be defined for the enclosing element. If the enclosing element contains other non-leaf elements, they MAY provide their own provenance-signature leaf, according to the same rule. In this case, the provenance-signature leaves in the children elements are applicable to the specific child element where they are enclosed, while the provenance-signature leaf enclosed in the top-most element is applicable to the whole element contents, including the children provenance-signature leaf themselves. This allows for recursive provenance validation, data aggregation, and the application of provenance verification of relevant children elements at different stages of any data processing pipeline.
+
+The specific YANG content to be processed SHALL be generated by taking the whole enclosing element and eliminiating the leaf containing the provenance signature string.
 
 As example, let us consider the two modules proposed in {{YANGmanifest}}. For the platform-manifest module, the provenance for a platform would be provided by the optional platform-provenance leaf shown below:
 
@@ -108,7 +238,6 @@ As example, let us consider the two modules proposed in {{YANGmanifest}}. For th
 module: ietf-platform-manifest
   +--ro platforms
      +--ro platform* [id]
-       +--ro platform-provenance?    provenance-signature
        +--ro id                      string
        +--ro name?                   string
        +--ro vendor?                 string
@@ -117,6 +246,7 @@ module: ietf-platform-manifest
        +--ro software-flavor?        string
        +--ro os-version?             string
        +--ro os-type?                string
+       +--ro platform-provenance?    provenance-signature
        +--ro yang-push-streams
        |  +--ro stream* [name]
        |     +--ro name
@@ -152,7 +282,7 @@ module: ietf-data-collection-manifest
      .
 ~~~
 
-In both cases, and for the sake of brevity, the provenance element appears at the top of the enclosing element, but it is worth remarking they may appear anywhere within it.
+Note how, in the two examples, the element bearing the provenance signature appears at different positions in the enclosing element. And note that, for processing the element for signature generation and verification, the signature element MUST be eliminated from the enclosing element before applying the corresponding canonicalization method.
 
 Note that, in application of the recursion mechanism described above, a provenance element could be included at the top of any of the collections, supporting the verification of the provenance of the collection itself (as provided by a specific collector), without interfering with the verification of the provenance of each of the collection elements. As an example, in the case of the platform manifests it would look like:
 
@@ -171,122 +301,17 @@ module: ietf-platform-manifest
        .
 ~~~
 
-# Provenance Signature Strings
+Note here that, to generate the YANG content to be processed in the case of the collection the provenance leafs of the indivual elements SHALL NOT be eliminated, as it SHALL be the case when generating the YANG content to be processed for each individual element in the collection.
 
-Signature strings are COSE single signature messages with \[nil\] payload, according to COSE conventions and registries, and with the following structure (as defined by {{RFC9052, Section 4.2}}):
+## Including a Provenance Signature in NETCONF Event Notifications and YANG-Push Notifications
 
-~~~
-COSE_Sign1 = [
-protected /algorithm-identifier, kid, serialization-method/
-unprotected /algorithm-parameters/
-signature /using as external data the content
-           of the (meta-)data without the signature leaf/
-]
-~~~
+The signature mechanism proposed in this document MAY be used with NETCONF Event Notifications {{RFC5277}} and YANG-Push {{RFC8641}} to sign the generated notifications directly from the publisher nodes. The signature is added to the header of the Notification along with the eventTime leaf.
 
-The COSE_Sign1 procedure yields a bitstring when building the signature and expects a bitstring for checking it, hence the proposed type for signature leaves. The structure of the COSE_Sign1 consists of:
-
-* The algorithm-identifier, which MUST follow COSE conventions and registries.
-
-* The kid (Key ID), to be locally agreed, used and interpreted by the signer and the signature validator. URIs {{RFC3986}} and RFC822-style {{RFC5322}} identifiers are typical values to be used as kid.
-
-* The serialization-method, a string identifying the YANG serialization in use. It MUST be one of the three possible values "xml" (for XML serialization {{RFC7950}}), "json" (for JSON serialization {{RFC7951}}) or "cbor" (for CBOR serialization {{RFC9254}}).
-
-* The value algorithm-parameters, which MUST follow the COSE conventions for providing relevant parameters to the signing algorithm.
-
-* The signature for the enclosing element, to be produced and verified according to the procedure described below.
-
-## Signature and Verification Procedures
-
-To keep a concise signature and avoid the need for wrapping YANG constructs in COSE envelopes, the whole signature MUST be built and verified by means of externally supplied data, as defined in {{RFC9052, Section 4.3}}, with a \[nil\] payload.
-
-The byte strings to be used as input to the signature and verification procedures MUST be built by:
-
-* Taking the whole element enclosing the signature leaf.
-
-* Eliminating the signature leaf element.
-
-* Applying the corresponding canonicalization method as described in the following section.
-
-## Canonicalization
-
-Signature generation and verification require a canonicalization method to be applied, that depends on the serialization used. According to the three types of serialization defined, the following canonicalization methods MUST be applied:
-
-* For CBOR, length-first core deterministic encoding, as defined by {{RFC8949}}.
-
-* For JSON, JSON Canonicalization Scheme (JCS), as defined by {{RFC8785}}.
-
-* For XML, Exclusive XML Canonicalization 1.0, as defined by {{XMLSig}}.
-
-# YANG module
-
-This module defines a provenance-signature type to be used in other YANG modules.
-
-~~~
-<CODE BEGINS> file "ietf-yang-provenance@2024-02-28.yang"
-module ietf-yang-provenance {
-  yang-version 1.1;
-  namespace
-    "urn:ietf:params:xml:ns:yang:ietf-yang-provenance";
-  prefix iyangprov;
-
-  organization "IETF OPSAWG (Operations and Management Area Working Group)";
-  contact
-    "WG Web:   <https://datatracker.ietf.org/wg/opsawg/>
-     WG List:  <mailto:opsawg@ietf.org>
-
-     Authors:  Alex Huang Feng
-               <mailto:alex.huang-feng@insa-lyon.fr>
-               Diego Lopez
-               <mailto:diego.r.lopez@telefonica.com>
-               Antonio Pastor
-               <mailto:antonio.pastorperales@telefonica.com>";
-
-  description
-    "Defines a binary provenance-signature type to be used in other YANG
-    modules.
-
-    Copyright (c) 2024 IETF Trust and the persons identified as
-    authors of the code.  All rights reserved.
-
-    Redistribution and use in source and binary forms, with or without
-    modification, is permitted pursuant to, and subject to the license
-    terms contained in, the Revised BSD License set forth in Section
-    4.c of the IETF Trust's Legal Provisions Relating to IETF Documents
-    (https://trustee.ietf.org/license-info).
-
-    This version of this YANG module is part of RFC XXXX; see the RFC
-    itself for full legal notices.";
-
-  revision 2024-02-28 {
-    description
-      "First revision";
-    reference
-      "RFC XXXX: Applying COSE Signatures for YANG Data Provenance";
-  }
-
-  typedef provenance-signature {
-    type binary;
-    description
-      "The provenance-signature type represents a digital signature
-      associated to the enclosing element. The signature is based
-      on COSE and generated using a cannonicalized version of the
-      enclosing element.";
-    reference
-      "RFC XXXX: Applying COSE Signatures for YANG Data Provenance";
-  }
-}
-<CODE ENDS>
-~~~
-
-# Signature of NETCONF Event Notifications and YANG-Push Notifications
-
-The signature mechanism proposed in this document can be used with NETCONF Event Notifications {{RFC5277}} and YANG-Push {{RFC8641}} to sign the generated notifications directly from the publisher nodes. The signature is added to the header of the Notification along with the eventTime leaf.
+The YANG content to be processed MUST consist of the content of the notificationContent element.
 
 The following sections define the YANG module augmenting the ietf-notification module.
 
-
-## YANG Tree Diagram
+### YANG Tree Diagram
 
 The following is the YANG tree diagram {{RFC8340}} for the ietf-notification-provenance augmentation within the ietf-notification.
 
@@ -307,7 +332,7 @@ module: ietf-notification
     +-- inotifprov:notification-provenance?   iyangprov:provenance-signature
 ~~~
 
-## YANG Module
+### YANG Module
 
 The module augments ietf-notification module {{I-D.ahuang-netconf-notif-yang}} adding the signature leaf in the notification header.
 
@@ -345,10 +370,12 @@ module ietf-notification-provenance {
                Diego Lopez
                <mailto:diego.r.lopez@telefonica.com>
                Antonio Pastor
-               <mailto:antonio.pastorperales@telefonica.com>";
+               <mailto:antonio.pastorperales@telefonica.com>
+               Henk Birkholz
+               <mailto:henk.birkholz@sit.fraunhofer.de>";
 
   description
-    "Defines a bynary provenance-signature type to be used in other YANG
+    "Defines a binary provenance-signature type to be used in other YANG
     modules.
 
     Copyright (c) 2024 IETF Trust and the persons identified as
@@ -381,6 +408,48 @@ module ietf-notification-provenance {
 }
 <CODE ENDS>
 ~~~
+
+## Including Provenance as Metadata in YANG Instance Data
+
+Provenance signature strings can be included as part of the metadata in YANG instance data files, as defined in {{RFC9195}} for data at rest. The augmented YANG tree diagram including the provenance signature is as follows:
+
+~~~
+module: ietf-yang-instance-data-provenance
+  augment-structure instance-data-set:
+    +--provenance-string?   provenance-signature
+~~~
+
+The provenance signature string in this enclosing method applies to whole content-data element in instance-data-set, independently of whether those data contain other provenance signature strings by applying other enclosing methods.
+
+The specific YANG content to be processed SHALL be generated by taking the contents of the content-data element and applying the corresponding canonicalization method.
+
+TBD: Example of YANG data file with provenace strings, probably using the same examples of {{RFC9195}}.
+
+### YANG Module
+
+TBD: YANG module derived from {{RFC9195}}, named "ietf-yang-instance-data-provenance"
+
+## Inclduing Provenance in YANG Annotations
+
+The use of annotations as defined in {{RFC7952}} seems a natural enclosing method, dealing with the provenance signature string as metadata and not requiring modification of existing YANG schemas.The provenance-string annotation is defined as follows:
+
+~~~
+ md:annotation provenance-string {
+       type provenance-signature;
+       description
+         "This annotation contains a digital signature corresponding
+          to the YANG element in which it appears.";
+     }
+~~~
+
+The specific YANG content to be processed SHALL be generated by eliminating the provenance-string (encoded according to what is described in Section 5 of {{RFC7952}}) from the element it applies to, before invoking the corresponding canonicalization method. In application of the general recursion principle for provenance signature strings, any other provenance strings within the element to which the provenance-string applies SHALL be left as they appear, whatever the enclosing method used for them.
+
+TBD: Provide an example for a provenance-string annotation, possibly follwing the examples in {{RFC7952}}.
+
+### YANG Module
+
+TBD: YANG module based on {{RFC7952}}, named "yang-provenance-metadata"
+
 
 # Security Considerations
 
@@ -425,7 +494,7 @@ This document registers the following YANG modules in the "YANG Module Names" re
   reference: RFC XXXX
 ~~~
 
-Others?
+TBD: Others? At least for the two additional enclosing methods (instance files and annotations)
 
 
 --- back
