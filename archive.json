@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-02-29T00:37:33.294598+00:00",
+  "timestamp": "2024-03-03T00:40:07.165965+00:00",
   "repo": "dr2lopez/yang-provenance",
   "labels": [
     {
@@ -58,7 +58,7 @@
       "url": "https://github.com/dr2lopez/yang-provenance/pull/1",
       "state": "MERGED",
       "author": "ahuangfeng",
-      "authorAssociation": "CONTRIBUTOR",
+      "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "This version proposes 2 yangs:\r\n- YANG proposing the \"typedef provenance-signature\"\r\n- YANG module augmenting the notification module to sign YANG-push notifications using the header\r\n",
