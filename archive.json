@@ -1,0 +1,105 @@
+{
+  "magic": "E!vIA5L86J2I",
+  "timestamp": "2024-04-07T00:42:51.529293+00:00",
+  "repo": "dr2lopez/yang-provenance",
+  "labels": [
+    {
+      "name": "bug",
+      "description": "Something isn't working",
+      "color": "d73a4a"
+    },
+    {
+      "name": "documentation",
+      "description": "Improvements or additions to documentation",
+      "color": "0075ca"
+    },
+    {
+      "name": "duplicate",
+      "description": "This issue or pull request already exists",
+      "color": "cfd3d7"
+    },
+    {
+      "name": "enhancement",
+      "description": "New feature or request",
+      "color": "a2eeef"
+    },
+    {
+      "name": "good first issue",
+      "description": "Good for newcomers",
+      "color": "7057ff"
+    },
+    {
+      "name": "help wanted",
+      "description": "Extra attention is needed",
+      "color": "008672"
+    },
+    {
+      "name": "invalid",
+      "description": "This doesn't seem right",
+      "color": "e4e669"
+    },
+    {
+      "name": "question",
+      "description": "Further information is requested",
+      "color": "d876e3"
+    },
+    {
+      "name": "wontfix",
+      "description": "This will not be worked on",
+      "color": "ffffff"
+    }
+  ],
+  "issues": [],
+  "pulls": [
+    {
+      "number": 1,
+      "id": "PR_kwDOJ3j81c5oJKGn",
+      "title": "YANG data provenance in YANG-push",
+      "url": "https://github.com/dr2lopez/yang-provenance/pull/1",
+      "state": "MERGED",
+      "author": "ahuangfeng",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This version proposes 2 yangs:\r\n- YANG proposing the \"typedef provenance-signature\"\r\n- YANG module augmenting the notification module to sign YANG-push notifications using the header\r\n",
+      "createdAt": "2024-02-28T08:49:55Z",
+      "updatedAt": "2024-02-28T23:52:03Z",
+      "baseRepository": "dr2lopez/yang-provenance",
+      "baseRefName": "main",
+      "baseRefOid": "f134612993e4ebf2f4454e5cb09516231d7cc202",
+      "headRepository": "network-analytics/draft-yang-provenance",
+      "headRefName": "main",
+      "headRefOid": "3054c21617830c491a44675af211df8db932f94d",
+      "closedAt": "2024-02-28T23:51:42Z",
+      "mergedAt": "2024-02-28T23:51:42Z",
+      "mergedBy": "dr2lopez",
+      "mergeCommit": {
+        "oid": "a5b1825f7605e052e4291f071727f036d581212a"
+      },
+      "comments": [
+        {
+          "author": "dr2lopez",
+          "authorAssociation": "OWNER",
+          "body": "Incorporate two modules including:\r\n\r\n* The typedef for provenance-signature\r\n* The use of provenance signature mechanisms in YANG-push messages using the Netconf event notification header",
+          "createdAt": "2024-02-28T23:52:02Z",
+          "updatedAt": "2024-02-28T23:52:02Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOJ3j81c5xtJ76",
+          "commit": {
+            "abbreviatedOid": "3054c21"
+          },
+          "author": "dr2lopez",
+          "authorAssociation": "OWNER",
+          "state": "APPROVED",
+          "body": "Incorporate two modules including:\r\n  * The typedef for provenance-signature\r\n  * The use of provenance signature mechanisms in YANG-push messages using the Netconf event notification header",
+          "createdAt": "2024-02-28T23:50:10Z",
+          "updatedAt": "2024-02-28T23:50:10Z",
+          "comments": []
+        }
+      ]
+    }
+  ]
+}
