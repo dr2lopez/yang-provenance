@@ -514,8 +514,8 @@ Let us consider the following YANG instance, corresponding to a monitoring inter
 ~~~
 <?xml version="1.0" encoding="UTF-8"?>
 <interfaces-state xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
-    <interface> 
-        <name>GigabitEthernet1</name> 
+    <interface>
+        <name>GigabitEthernet1</name>
         <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">
             ianaift:ethernetCsmacd</type>
         <admin-status>up</admin-status>
