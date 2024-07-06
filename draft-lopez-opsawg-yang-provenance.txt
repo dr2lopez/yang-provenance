@@ -5,11 +5,13 @@
 Operations and Management Area Working Group                    D. Lopez
 Internet-Draft                                                 A. Pastor
 Intended status: Informational                                Telefonica
-Expires: 2 September 2024                                  A. Huang Feng
+Expires: 7 January 2025                                    A. Huang Feng
                                                                INSA-Lyon
                                                              H. Birkholz
                                                           Fraunhofer SIT
-                                                            1 March 2024
+                                                               S. Garcia
+                                                                    UC3M
+                                                             6 July 2024
 
 
            Applying COSE Signatures for YANG Data Provenance
@@ -62,7 +64,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 2 September 2024.
+   This Internet-Draft will expire on 7 January 2025.
 
 Copyright Notice
 
@@ -95,7 +97,7 @@ Table of Contents
        4.2.2.  YANG Module
      4.3.  Including Provenance as Metadata in YANG Instance Data
        4.3.1.  YANG Module
-     4.4.  Inclduing Provenance in YANG Annotations
+     4.4.  Including Provenance in YANG Annotations
        4.4.1.  YANG Module
    5.  Security Considerations
    6.  IANA Considerations
@@ -104,6 +106,11 @@ Table of Contents
    7.  References
      7.1.  Normative References
      7.2.  Informative References
+   Appendix A.  Examples of Application of the Different Enclosing
+           Methods
+     XML
+     JSON
+     CBOR
    Acknowledgments
    Authors' Addresses
 
@@ -330,7 +337,10 @@ typedef provenance-signature {
    method defines not only how the provenance signature string is
    combined with the signed YANG data but also the specific procedure
    for selecting the specific YANG content to be processed when signing
-   and verifying
+   and verifying.
+
+   Appendix A includes a set of exmaples of the different enclosing
+   methods, applied to the same YANG fragment, to illustrate their use.
 
 4.1.  Including a Provenance Leaf in a YANG Element
 
@@ -572,15 +582,12 @@ module: ietf-notification
    taking the contents of the content-data element and applying the
    corresponding canonicalization method.
 
-   TBD: Example of YANG data file with provenace strings, probably using
-   the same examples of [RFC9195].
-
 4.3.1.  YANG Module
 
    TBD: YANG module derived from [RFC9195], named "ietf-yang-instance-
    data-provenance"
 
-4.4.  Inclduing Provenance in YANG Annotations
+4.4.  Including Provenance in YANG Annotations
 
    The use of annotations as defined in [RFC7952] seems a natural
    enclosing method, dealing with the provenance signature string as
@@ -602,9 +609,6 @@ module: ietf-notification
    signature strings, any other provenance strings within the element to
    which the provenance-string applies SHALL be left as they appear,
    whatever the enclosing method used for them.
-
-   TBD: Provide an example for a provenance-string annotation, possibly
-   follwing the examples in [RFC7952].
 
 4.4.1.  YANG Module
 
@@ -664,9 +668,9 @@ module: ietf-notification
    [I-D.ahuang-netconf-notif-yang]
               Feng, A. H., Francois, P., Graf, T., and B. Claise, "YANG
               model for NETCONF Event Notifications", Work in Progress,
-              Internet-Draft, draft-ahuang-netconf-notif-yang-04, 21
-              January 2024, <https://datatracker.ietf.org/doc/html/
-              draft-ahuang-netconf-notif-yang-04>.
+              Internet-Draft, draft-ahuang-netconf-notif-yang-05, 18
+              June 2024, <https://datatracker.ietf.org/doc/html/draft-
+              ahuang-netconf-notif-yang-05>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -749,13 +753,190 @@ module: ietf-notification
 
 7.2.  Informative References
 
+   [RFC7223]  Bjorklund, M., "A YANG Data Model for Interface
+              Management", RFC 7223, DOI 10.17487/RFC7223, May 2014,
+              <https://www.rfc-editor.org/rfc/rfc7223>.
+
    [YANGmanifest]
               Claise, B., Quilbeuf, J., Lopez, D., Martinez-Casanueva,
               I. D., and T. Graf, "A Data Manifest for Contextualized
               Telemetry Data", Work in Progress, Internet-Draft, draft-
-              ietf-opsawg-collected-data-manifest-02, 23 October 2023,
+              ietf-opsawg-collected-data-manifest-03, 4 March 2024,
               <https://datatracker.ietf.org/doc/html/draft-ietf-opsawg-
-              collected-data-manifest-02>.
+              collected-data-manifest-03>.
+
+Appendix A.  Examples of Application of the Different Enclosing Methods
+
+XML
+
+   Let us consider the following YANG instance, corresponding to a
+   monitoring interface statement, as defined in [RFC7223]:
+
+<?xml version="1.0" encoding="UTF-8"?>
+<interfaces-state xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
+    <interface>
+        <name>GigabitEthernet1</name>
+        <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">
+            ianaift:ethernetCsmacd</type>
+        <admin-status>up</admin-status>
+        <oper-status>up</oper-status>
+        <last-change>2024-02-03T11:22:41.081+00:00</last-change>
+        <if-index>1</if-index>
+        <phys-address>0c:00:00:37:d6:00</phys-address>
+        <speed>1000000000</speed>
+        <statistics>
+            <discontinuity-time>2024-02-03T11:20:38+00:00</discontinuity-time>
+            <in-octets>8157</in-octets>
+            <in-unicast-pkts>94</in-unicast-pkts>
+            <in-broadcast-pkts>0</in-broadcast-pkts>
+            <in-multicast-pkts>0</in-multicast-pkts>
+            <in-discards>0</in-discards>
+            <in-errors>0</in-errors>
+            <in-unknown-protos>0</in-unknown-protos>
+            <out-octets>89363</out-octets>
+            <out-unicast-pkts>209</out-unicast-pkts>
+            <out-broadcast-pkts>0</out-broadcast-pkts>
+            <out-multicast-pkts>0</out-multicast-pkts>
+            <out-discards>0</out-discards>
+            <out-errors>0</out-errors>
+        </statistics>
+    </interface>
+</interfaces-state>
+
+   Applying the first enclosing method, a provenance leaf at the top
+   element (named "signature-string" in this case"), would would be
+   included and produce the following output:
+
+<?xml version="1.0" encoding="UTF-8"?>
+<interfaces-state xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
+    <signature-string>
+0oRRowNjeG1sBGdlYzIua2V5ASag9lhAvzyFP5HP0nONaqTRxKmSqerrDS6CQXJSK+5NdprzQZLf0QsHtAi2pxzbuDJDy9kZoy1JTvNaJmMxGTLdm4ktug==
+    </signature-string>
+    <interface>
+        <name>GigabitEthernet1</name>
+        <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">
+            ianaift:ethernetCsmacd</type>
+        <admin-status>up</admin-status>
+        <oper-status>up</oper-status>
+        <last-change>2024-02-03T11:22:41.081+00:00</last-change>
+        <if-index>1</if-index>
+        <phys-address>0c:00:00:37:d6:00</phys-address>
+        <speed>1000000000</speed>
+        <statistics>
+            <discontinuity-time>2024-02-03T11:20:38+00:00</discontinuity-time>
+            <in-octets>8157</in-octets>
+            <in-unicast-pkts>94</in-unicast-pkts>
+            <in-broadcast-pkts>0</in-broadcast-pkts>
+            <in-multicast-pkts>0</in-multicast-pkts>
+            <in-discards>0</in-discards>
+            <in-errors>0</in-errors>
+            <in-unknown-protos>0</in-unknown-protos>
+            <out-octets>89363</out-octets>
+            <out-unicast-pkts>209</out-unicast-pkts>
+            <out-broadcast-pkts>0</out-broadcast-pkts>
+            <out-multicast-pkts>0</out-multicast-pkts>
+            <out-discards>0</out-discards>
+            <out-errors>0</out-errors>
+        </statistics>
+    </interface>
+</interfaces-state>
+
+   The second enclosing method would translate into a notification
+   including the "notification-provenance" element as follows:
+
+<?xml version="1.0" encoding="UTF-8"?>
+<notification xmlns="urn:ietf:params:xml:ns:netconf:notification:1.0">
+    <eventTime>2024-02-03T11:37:25.94Z</eventTime>
+    <notification-provenance>
+0oRRowNjeG1sBGdlYzIua2V5ASag9lhADiPn3eMRclCAnMlauYyD5yKFvYeXipf4oAmQW5DUREizL59Xs5erOerbryu8vs+A8YOl8AhlAUFzvThffcKPZg==
+    </notification-provenance>
+    <push-update xmlns="urn:ietf:params:xml:ns:yang:ietf-yang-push">
+        <subscription-id>2147483648</subscription-id>
+        <datastore-contents-xml>
+            <interfaces-state xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
+                <interface>
+                    <name>GigabitEthernet1</name>
+                    <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">
+                        ianaift:ethernetCsmacd</type>
+                    <admin-status>up</admin-status>
+                    <oper-status>up</oper-status>
+                    <last-change>2024-02-03T11:22:41.081+00:00</last-change>
+                    <if-index>1</if-index>
+                    <phys-address>0c:00:00:37:d6:00</phys-address>
+                    <speed>1000000000</speed>
+                    <statistics>
+                        <discontinuity-time>2024-02-03T11:20:38+00:00</discontinuity-time>
+                        <in-octets>8157</in-octets>
+                        <in-unicast-pkts>94</in-unicast-pkts>
+                        <in-broadcast-pkts>0</in-broadcast-pkts>
+                        <in-multicast-pkts>0</in-multicast-pkts>
+                        <in-discards>0</in-discards>
+                        <in-errors>0</in-errors>
+                        <in-unknown-protos>0</in-unknown-protos>
+                        <out-octets>89363</out-octets>
+                        <out-unicast-pkts>209</out-unicast-pkts>
+                        <out-broadcast-pkts>0</out-broadcast-pkts>
+                        <out-multicast-pkts>0</out-multicast-pkts>
+                        <out-discards>0</out-discards>
+                        <out-errors>0</out-errors>
+                    </statistics>
+                </interface>
+            </interfaces-state>
+        </datastore-contents-xml>
+    </push-update>
+</notification>
+
+   The third enclosing method, applicable if the instance is to be
+   stored in a YANG instance data file by adding the corresponding
+   metadata, would produce a results as shown below:
+
+   TBD: Provide a sample of how to deal with instance data files when
+   the reference implementation is ready.
+
+   Finally, using the fourth enclosing method, the YANG instance would
+   incorporate the corresponding provenance metadata as an annotation:
+
+<?xml version="1.0" encoding="UTF-8"?>
+<interfaces-state xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces"
+xmlns:pv="http://telefonica.com/temporary-ns-yang"
+pv:provenance-string=
+"0oRRowNjeG1sBGdlYzIua2V5ASag9lhAzen3Bm9AZoyXuetpoTB70SzZqKVxeuOMW099sm+NXSqCfnqBKfXeuqDNEkuEr+E0XiAso986fbAHQCHbAJMOhw==">
+    <interface>
+        <name>GigabitEthernet1</name>
+        <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">
+            ianaift:ethernetCsmacd</type>
+        <admin-status>up</admin-status>
+        <oper-status>up</oper-status>
+        <last-change>2024-02-03T11:22:41.081+00:00</last-change>
+        <if-index>1</if-index>
+        <phys-address>0c:00:00:37:d6:00</phys-address>
+        <speed>1000000000</speed>
+        <statistics>
+            <discontinuity-time>2024-02-03T11:20:38+00:00</discontinuity-time>
+            <in-octets>8157</in-octets>
+            <in-unicast-pkts>94</in-unicast-pkts>
+            <in-broadcast-pkts>0</in-broadcast-pkts>
+            <in-multicast-pkts>0</in-multicast-pkts>
+            <in-discards>0</in-discards>
+            <in-errors>0</in-errors>
+            <in-unknown-protos>0</in-unknown-protos>
+            <out-octets>89363</out-octets>
+            <out-unicast-pkts>209</out-unicast-pkts>
+            <out-broadcast-pkts>0</out-broadcast-pkts>
+            <out-multicast-pkts>0</out-multicast-pkts>
+            <out-discards>0</out-discards>
+            <out-errors>0</out-errors>
+        </statistics>
+    </interface>
+</interfaces-state>
+
+JSON
+
+   TBD, as the reference implementation evolves.
+
+CBOR
+
+   TBD, as the reference implementation evolves.
 
 Acknowledgments
 
@@ -787,3 +968,8 @@ Authors' Addresses
    64295 Darmstadt
    Germany
    Email: henk.birkholz@sit.fraunhofer.de
+
+
+   Sofia Garcia
+   UC3M
+   Email: sofia.garciarincon.practicas@telefonica.com
