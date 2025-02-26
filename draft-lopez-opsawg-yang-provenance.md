@@ -35,6 +35,9 @@ author:
    fullname: Alex Huang Feng
    organization: INSA-Lyon
    email: "alex.huang-feng@insa-lyon.fr"
+ - name: Ana Mendez
+   organization: Telefonica
+   email: "ana.mendezperez@telefonica.com"
  - ins: H. Birkholz
    name: Henk Birkholz
    org: Fraunhofer SIT
@@ -605,7 +608,7 @@ Let us consider the following YANG instance, corresponding to a monitoring inter
 </interfaces-state>
 ~~~
 
-Applying the first enclosing method, a provenance leaf at the top element (named "signature-string" in this case"), would would be included and produce the following output:
+Applying the first enclosing method, a provenance leaf at the top element (named "signature-string" in this case") would be included and produce the following output:
 
 ~~~
 <?xml version="1.0" encoding="UTF-8"?>
@@ -777,11 +780,247 @@ ypmd:provenance-string=
 </interfaces-state>
 ~~~
 
-
 ## JSON
 {:numbered="false"}
 
-TBD, as the reference implementation evolves.
+Let us consider the following YANG instance, corresponding to the same monitoring interface statement, with JSON serialization:
+
+~~~
+{
+  "ietf-interfaces:interfaces-state": {
+    "interface": {
+      "name": "GigabitEthernet1",
+      "iana-if-type:type": "ianaift:ethernetCsmacd",
+      "admin-status": "up",
+      "oper-status": "up",
+      "last-change": "2024-02-03T11:22:41.081+00:00",
+      "if-index": 1,
+      "phys-address": "0c:00:00:37:d6:00",
+      "speed": 1000000000,
+      "statistics": {
+        "discontinuity-time": "2024-02-03T11:20:38+00:00",
+        "in-octets": 8157,
+        "in-unicast-pkts": 94,
+        "in-broadcast-pkts": 0,
+        "in-multicast-pkts": 0,
+        "in-discards": 0,
+        "in-errors": 0,
+        "in-unknown-protos": 0,
+        "out-octets": 89363,
+        "out-unicast-pkts": 209,
+        "out-broadcast-pkts": 0,
+        "out-multicast-pkts": 0,
+        "out-discards": 0,
+        "out-errors": 0
+      }
+    }
+  }
+}
+~~~
+
+Applying the first enclosing method, a provenance leaf at the top element (named "provenance-string" in this case") would be included and produce the following output:
+
+~~~
+{
+  "ietf-interfaces:interfaces-state" : {
+    "interface" : {
+      "name" : "GigabitEthernet1",
+      "iana-if-type:type" : "ianaift:ethernetCsmacd",
+      "admin-status" : "up",
+      "oper-status" : "up",
+      "last-change" : "2024-02-03T11:22:41.081+00:00",
+      "if-index" : 1,
+      "phys-address" : "0c:00:00:37:d6:00",
+      "speed" : 1000000000,
+      "statistics" : {
+        "discontinuity-time" : "2024-02-03T11:20:38+00:00",
+        "in-octets" : 8157,
+        "in-unicast-pkts" : 94,
+        "in-broadcast-pkts" : 0,
+        "in-multicast-pkts" : 0,
+        "in-discards" : 0,
+        "in-errors" : 0,
+        "in-unknown-protos" : 0,
+        "out-octets" : 89363,
+        "out-unicast-pkts" : 209,
+        "out-broadcast-pkts" : 0,
+        "out-multicast-pkts" : 0,
+        "out-discards" : 0,
+        "out-errors" : 0
+      }
+    },
+    "provenance-string" : "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAnC4dNl5VSxkVCv8IOaiIhD7ymVZJ8Ol1NFH0GZ7bhe+CrnLTOyPazKl2PK33ZqkUGwZo0HmlkPOiAb1okaCZIw=="
+  }
+}
+~~~
+
+The second enclosing method would translate into a notification including the "notification-provenance" element. For RESTCONF it would be as follows:
+
+~~~
+{
+  "ietf-restconf:notification" : {
+    "eventTime" : "2013-12-21T00:01:00Z",
+    "ietf-yang-push:push-update": {
+      "subscription-id": 2147483648,
+      "datastore-contents": {
+        "ietf-interfaces:interfaces-state": {
+          "interface": [ {
+              "name": "GigabitEthernet1",
+              "type": "ianaift:ethernetCsmacd",
+              "admin-status": "up",
+              "oper-status": "up",
+              "last-change": "2024-02-03T11:22:41.081+00:00",
+              "if-index": 1,
+              "phys-address": "0c:00:00:37:d6:00",
+              "speed": 1000000000,
+              "statistics": {
+                "discontinuity-time": "2024-02-03T11:20:38+00:00",
+                "in-octets": 8157,
+                "in-unicast-pkts": 94,
+                "in-broadcast-pkts": 0,
+                "in-multicast-pkts": 0,
+                "in-discards": 0,
+                "in-errors": 0,
+                "in-unknown-protos": 0,
+                "out-octets": 89363,
+                "out-unicast-pkts": 209,
+                "out-broadcast-pkts": 0,
+                "out-multicast-pkts": 0,
+                "out-discards": 0,
+                "out-errors": 0
+              }
+            }
+          ]
+        }
+      }
+    },
+    "notification-provenance" : "0oRRowNjeG1sBGdlYzIua2V5ASag9lhArfYIbXGXjjg5wMF+xJnYGm0NV3ULe2triP4gT7GFeikK19g1N3gNXD5ZZbCn03aN68PgIEl+dglQ6/mobLeEvg=="
+  }
+}
+~~~
+
+And for NETCONF:
+
+~~~
+{
+  "ietf-notification:notification" : {
+    "eventTime" : "2023-02-10T08:00:11.22Z",
+    "ietf-yang-push:push-update" : {
+      "id" : 1011,
+      "datastore-contents" : {
+        "ietf-interfaces:interfaces" : [ {
+          "interface" : {
+            "name": "GigabitEthernet1",
+              "iana-if-type:type": "ianaift:ethernetCsmacd",
+              "admin-status": "up",
+              "oper-status": "up",
+              "last-change": "2024-02-03T11:22:41.081+00:00",
+              "if-index": 1,
+              "phys-address": "0c:00:00:37:d6:00",
+              "speed": 1000000000,
+              "statistics": {
+                "discontinuity-time": "2024-02-03T11:20:38+00:00",
+                "in-octets": 8157,
+                "in-unicast-pkts": 94,
+                "in-broadcast-pkts": 0,
+                "in-multicast-pkts": 0,
+                "in-discards": 0,
+                "in-errors": 0,
+                "in-unknown-protos": 0,
+                "out-octets": 89363,
+                "out-unicast-pkts": 209,
+                "out-broadcast-pkts": 0,
+                "out-multicast-pkts": 0,
+                "out-discards": 0,
+                "out-errors": 0
+              }
+          }
+        } ]
+      }
+    },
+    "notification-provenance" : "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAvkE8Y0Od9zRLM/sNlJtau07xuO3zDArCnUhaKJpS6erVUL0MflWm7zby//k4BBQ2zBiBO6LDouoaiuGGj6EwiQ=="
+  }
+}
+~~~
+
+The third enclosing method, applicable if the instance is to be stored as YANG instance data at rest, by adding the corresponding metadata, would produce a results as shown below:
+
+~~~
+{
+  "ietf-yang-instance-data:instance-data-set" : {
+    "name" : "interfaces-labTID-status",
+    "contact" : "sofia.garciarincon.practicas@telefonica.com",
+    "timestamp" : "Thu Jul 18 11:42:06 CEST 2024",
+    "content-data" : {
+      "ietf-interfaces:interfaces-state": {
+        "interface": {
+          "name": "GigabitEthernet1",
+          "iana-if-type:type": "ianaift:ethernetCsmacd",
+          "admin-status": "up",
+          "oper-status": "up",
+          "last-change": "2024-02-03T11:22:41.081+00:00",
+          "if-index": 1,
+          "phys-address": "0c:00:00:37:d6:00",
+          "speed": 1000000000,
+          "statistics": {
+            "discontinuity-time": "2024-02-03T11:20:38+00:00",
+            "in-octets": 8157,
+            "in-unicast-pkts": 94,
+            "in-broadcast-pkts": 0,
+            "in-multicast-pkts": 0,
+            "in-discards": 0,
+            "in-errors": 0,
+            "in-unknown-protos": 0,
+            "out-octets": 89363,
+            "out-unicast-pkts": 209,
+            "out-broadcast-pkts": 0,
+            "out-multicast-pkts": 0,
+            "out-discards": 0,
+            "out-errors": 0
+          }
+        }
+      }
+    },
+    "provenance-string" : "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAmop/c7wMcjRmiSPVy65F/N6O21dsGkjGQjIDRizhu3WMwi9Je+VUf5sqwlhSwQCdv5u7mRXa6Pd9dhCwdxdRCA=="
+  }
+}
+~~~
+
+Finally, using the fourth enclosing method, the YANG instance would incorporate the corresponding provenance metadata as an annotation:
+
+~~~
+{
+  "ietf-interfaces:interfaces-state" : {
+    "interface" : {
+      "name" : "GigabitEthernet1",
+      "iana-if-type:type" : "ianaift:ethernetCsmacd",
+      "admin-status" : "up",
+      "oper-status" : "up",
+      "last-change" : "2024-02-03T11:22:41.081+00:00",
+      "if-index" : 1,
+      "phys-address" : "0c:00:00:37:d6:00",
+      "speed" : 1000000000,
+      "statistics" : {
+        "discontinuity-time" : "2024-02-03T11:20:38+00:00",
+        "in-octets" : 8157,
+        "in-unicast-pkts" : 94,
+        "in-broadcast-pkts" : 0,
+        "in-multicast-pkts" : 0,
+        "in-discards" : 0,
+        "in-errors" : 0,
+        "in-unknown-protos" : 0,
+        "out-octets" : 89363,
+        "out-unicast-pkts" : 209,
+        "out-broadcast-pkts" : 0,
+        "out-multicast-pkts" : 0,
+        "out-discards" : 0,
+        "out-errors" : 0
+      }
+    },
+    "@ypmd:provenance-string" : "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAM/Dx3HVc4GL91jmuU5nWgcmOPPVpARLJkWo5wwQYvGFJpKMXTkjAtArPp8v6Sl1ZD1qHimKMhAoHLMHVxBtrcA=="
+  }
+}
+~~~
 
 ## CBOR
 {:numbered="false"}
