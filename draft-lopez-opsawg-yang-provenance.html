@@ -8,6 +8,7 @@
 <meta content="Diego Lopez" name="author">
 <meta content="Antonio Pastor" name="author">
 <meta content="Alex Huang Feng" name="author">
+<meta content="Ana Mendez" name="author">
 <meta content="Henk Birkholz" name="author">
 <meta content="Sofia Garcia" name="author">
 <meta content="
@@ -1089,6 +1090,10 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <div class="org">INSA-Lyon</div>
 </div>
 <div class="author">
+      <div class="author-name">A. Mendez</div>
+<div class="org">Telefonica</div>
+</div>
+<div class="author">
       <div class="author-name">H. Birkholz</div>
 <div class="org">Fraunhofer SIT</div>
 </div>
@@ -2002,7 +2007,7 @@ module yang-provenance-metadata {
 &lt;/interfaces-state&gt;
 </pre><a href="#appendix-A.1-2" class="pilcrow">¶</a>
 </div>
-<p id="appendix-A.1-3">Applying the first enclosing method, a provenance leaf at the top element (named "signature-string" in this case"), would would be included and produce the following output:<a href="#appendix-A.1-3" class="pilcrow">¶</a></p>
+<p id="appendix-A.1-3">Applying the first enclosing method, a provenance leaf at the top element (named "signature-string" in this case") would be included and produce the following output:<a href="#appendix-A.1-3" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="appendix-A.1-4">
 <pre>
 &lt;?xml version="1.0" encoding="UTF-8"?&gt;
@@ -2181,7 +2186,245 @@ ypmd:provenance-string=
         <h3 id="name-json">
 <a href="#name-json" class="section-name selfRef">JSON</a>
         </h3>
-<p id="appendix-A.2-1">TBD, as the reference implementation evolves.<a href="#appendix-A.2-1" class="pilcrow">¶</a></p>
+<p id="appendix-A.2-1">Let us consider the following YANG instance, corresponding to the same monitoring interface statement, with JSON serialization:<a href="#appendix-A.2-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-A.2-2">
+<pre>
+{
+  "ietf-interfaces:interfaces-state": {
+    "interface": {
+      "name": "GigabitEthernet1",
+      "iana-if-type:type": "ianaift:ethernetCsmacd",
+      "admin-status": "up",
+      "oper-status": "up",
+      "last-change": "2024-02-03T11:22:41.081+00:00",
+      "if-index": 1,
+      "phys-address": "0c:00:00:37:d6:00",
+      "speed": 1000000000,
+      "statistics": {
+        "discontinuity-time": "2024-02-03T11:20:38+00:00",
+        "in-octets": 8157,
+        "in-unicast-pkts": 94,
+        "in-broadcast-pkts": 0,
+        "in-multicast-pkts": 0,
+        "in-discards": 0,
+        "in-errors": 0,
+        "in-unknown-protos": 0,
+        "out-octets": 89363,
+        "out-unicast-pkts": 209,
+        "out-broadcast-pkts": 0,
+        "out-multicast-pkts": 0,
+        "out-discards": 0,
+        "out-errors": 0
+      }
+    }
+  }
+}
+</pre><a href="#appendix-A.2-2" class="pilcrow">¶</a>
+</div>
+<p id="appendix-A.2-3">Applying the first enclosing method, a provenance leaf at the top element (named "provenance-string" in this case") would be included and produce the following output:<a href="#appendix-A.2-3" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-A.2-4">
+<pre>
+{
+  "ietf-interfaces:interfaces-state" : {
+    "interface" : {
+      "name" : "GigabitEthernet1",
+      "iana-if-type:type" : "ianaift:ethernetCsmacd",
+      "admin-status" : "up",
+      "oper-status" : "up",
+      "last-change" : "2024-02-03T11:22:41.081+00:00",
+      "if-index" : 1,
+      "phys-address" : "0c:00:00:37:d6:00",
+      "speed" : 1000000000,
+      "statistics" : {
+        "discontinuity-time" : "2024-02-03T11:20:38+00:00",
+        "in-octets" : 8157,
+        "in-unicast-pkts" : 94,
+        "in-broadcast-pkts" : 0,
+        "in-multicast-pkts" : 0,
+        "in-discards" : 0,
+        "in-errors" : 0,
+        "in-unknown-protos" : 0,
+        "out-octets" : 89363,
+        "out-unicast-pkts" : 209,
+        "out-broadcast-pkts" : 0,
+        "out-multicast-pkts" : 0,
+        "out-discards" : 0,
+        "out-errors" : 0
+      }
+    },
+    "provenance-string" : "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAnC4dNl5VSxkVCv8IOaiIhD7ymVZJ8Ol1NFH0GZ7bhe+CrnLTOyPazKl2PK33ZqkUGwZo0HmlkPOiAb1okaCZIw=="
+  }
+}
+</pre><a href="#appendix-A.2-4" class="pilcrow">¶</a>
+</div>
+<p id="appendix-A.2-5">The second enclosing method would translate into a notification including the "notification-provenance" element. For RESTCONF it would be as follows:<a href="#appendix-A.2-5" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-A.2-6">
+<pre>
+{
+  "ietf-restconf:notification" : {
+    "eventTime" : "2013-12-21T00:01:00Z",
+    "ietf-yang-push:push-update": {
+      "subscription-id": 2147483648,
+      "datastore-contents": {
+        "ietf-interfaces:interfaces-state": {
+          "interface": [ {
+              "name": "GigabitEthernet1",
+              "type": "ianaift:ethernetCsmacd",
+              "admin-status": "up",
+              "oper-status": "up",
+              "last-change": "2024-02-03T11:22:41.081+00:00",
+              "if-index": 1,
+              "phys-address": "0c:00:00:37:d6:00",
+              "speed": 1000000000,
+              "statistics": {
+                "discontinuity-time": "2024-02-03T11:20:38+00:00",
+                "in-octets": 8157,
+                "in-unicast-pkts": 94,
+                "in-broadcast-pkts": 0,
+                "in-multicast-pkts": 0,
+                "in-discards": 0,
+                "in-errors": 0,
+                "in-unknown-protos": 0,
+                "out-octets": 89363,
+                "out-unicast-pkts": 209,
+                "out-broadcast-pkts": 0,
+                "out-multicast-pkts": 0,
+                "out-discards": 0,
+                "out-errors": 0
+              }
+            }
+          ]
+        }
+      }
+    },
+    "notification-provenance" : "0oRRowNjeG1sBGdlYzIua2V5ASag9lhArfYIbXGXjjg5wMF+xJnYGm0NV3ULe2triP4gT7GFeikK19g1N3gNXD5ZZbCn03aN68PgIEl+dglQ6/mobLeEvg=="
+  }
+}
+</pre><a href="#appendix-A.2-6" class="pilcrow">¶</a>
+</div>
+<p id="appendix-A.2-7">And for NETCONF:<a href="#appendix-A.2-7" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-A.2-8">
+<pre>
+{
+  "ietf-notification:notification" : {
+    "eventTime" : "2023-02-10T08:00:11.22Z",
+    "ietf-yang-push:push-update" : {
+      "id" : 1011,
+      "datastore-contents" : {
+        "ietf-interfaces:interfaces" : [ {
+          "interface" : {
+            "name": "GigabitEthernet1",
+              "iana-if-type:type": "ianaift:ethernetCsmacd",
+              "admin-status": "up",
+              "oper-status": "up",
+              "last-change": "2024-02-03T11:22:41.081+00:00",
+              "if-index": 1,
+              "phys-address": "0c:00:00:37:d6:00",
+              "speed": 1000000000,
+              "statistics": {
+                "discontinuity-time": "2024-02-03T11:20:38+00:00",
+                "in-octets": 8157,
+                "in-unicast-pkts": 94,
+                "in-broadcast-pkts": 0,
+                "in-multicast-pkts": 0,
+                "in-discards": 0,
+                "in-errors": 0,
+                "in-unknown-protos": 0,
+                "out-octets": 89363,
+                "out-unicast-pkts": 209,
+                "out-broadcast-pkts": 0,
+                "out-multicast-pkts": 0,
+                "out-discards": 0,
+                "out-errors": 0
+              }
+          }
+        } ]
+      }
+    },
+    "notification-provenance" : "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAvkE8Y0Od9zRLM/sNlJtau07xuO3zDArCnUhaKJpS6erVUL0MflWm7zby//k4BBQ2zBiBO6LDouoaiuGGj6EwiQ=="
+  }
+}
+</pre><a href="#appendix-A.2-8" class="pilcrow">¶</a>
+</div>
+<p id="appendix-A.2-9">The third enclosing method, applicable if the instance is to be stored as YANG instance data at rest, by adding the corresponding metadata, would produce a results as shown below:<a href="#appendix-A.2-9" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-A.2-10">
+<pre>
+{
+  "ietf-yang-instance-data:instance-data-set" : {
+    "name" : "interfaces-labTID-status",
+    "contact" : "sofia.garciarincon.practicas@telefonica.com",
+    "timestamp" : "Thu Jul 18 11:42:06 CEST 2024",
+    "content-data" : {
+      "ietf-interfaces:interfaces-state": {
+        "interface": {
+          "name": "GigabitEthernet1",
+          "iana-if-type:type": "ianaift:ethernetCsmacd",
+          "admin-status": "up",
+          "oper-status": "up",
+          "last-change": "2024-02-03T11:22:41.081+00:00",
+          "if-index": 1,
+          "phys-address": "0c:00:00:37:d6:00",
+          "speed": 1000000000,
+          "statistics": {
+            "discontinuity-time": "2024-02-03T11:20:38+00:00",
+            "in-octets": 8157,
+            "in-unicast-pkts": 94,
+            "in-broadcast-pkts": 0,
+            "in-multicast-pkts": 0,
+            "in-discards": 0,
+            "in-errors": 0,
+            "in-unknown-protos": 0,
+            "out-octets": 89363,
+            "out-unicast-pkts": 209,
+            "out-broadcast-pkts": 0,
+            "out-multicast-pkts": 0,
+            "out-discards": 0,
+            "out-errors": 0
+          }
+        }
+      }
+    },
+    "provenance-string" : "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAmop/c7wMcjRmiSPVy65F/N6O21dsGkjGQjIDRizhu3WMwi9Je+VUf5sqwlhSwQCdv5u7mRXa6Pd9dhCwdxdRCA=="
+  }
+}
+</pre><a href="#appendix-A.2-10" class="pilcrow">¶</a>
+</div>
+<p id="appendix-A.2-11">Finally, using the fourth enclosing method, the YANG instance would incorporate the corresponding provenance metadata as an annotation:<a href="#appendix-A.2-11" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-A.2-12">
+<pre>
+{
+  "ietf-interfaces:interfaces-state" : {
+    "interface" : {
+      "name" : "GigabitEthernet1",
+      "iana-if-type:type" : "ianaift:ethernetCsmacd",
+      "admin-status" : "up",
+      "oper-status" : "up",
+      "last-change" : "2024-02-03T11:22:41.081+00:00",
+      "if-index" : 1,
+      "phys-address" : "0c:00:00:37:d6:00",
+      "speed" : 1000000000,
+      "statistics" : {
+        "discontinuity-time" : "2024-02-03T11:20:38+00:00",
+        "in-octets" : 8157,
+        "in-unicast-pkts" : 94,
+        "in-broadcast-pkts" : 0,
+        "in-multicast-pkts" : 0,
+        "in-discards" : 0,
+        "in-errors" : 0,
+        "in-unknown-protos" : 0,
+        "out-octets" : 89363,
+        "out-unicast-pkts" : 209,
+        "out-broadcast-pkts" : 0,
+        "out-multicast-pkts" : 0,
+        "out-discards" : 0,
+        "out-errors" : 0
+      }
+    },
+    "@ypmd:provenance-string" : "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAM/Dx3HVc4GL91jmuU5nWgcmOPPVpARLJkWo5wwQYvGFJpKMXTkjAtArPp8v6Sl1ZD1qHimKMhAoHLMHVxBtrcA=="
+  }
+}
+</pre><a href="#appendix-A.2-12" class="pilcrow">¶</a>
+</div>
 </section>
 </div>
 <div id="cbor">
@@ -2229,6 +2472,14 @@ ypmd:provenance-string=
 <div class="email">
 <span>Email:</span>
 <a href="mailto:alex.huang-feng@insa-lyon.fr" class="email">alex.huang-feng@insa-lyon.fr</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Ana Mendez</span></div>
+<div dir="auto" class="left"><span class="org">Telefonica</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:ana.mendezperez@telefonica.com" class="email">ana.mendezperez@telefonica.com</a>
 </div>
 </address>
 <address class="vcard">
