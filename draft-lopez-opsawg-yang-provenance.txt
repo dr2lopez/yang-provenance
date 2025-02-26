@@ -5,13 +5,13 @@
 Operations and Management Area Working Group                    D. Lopez
 Internet-Draft                                                 A. Pastor
 Intended status: Informational                                Telefonica
-Expires: 9 July 2025                                       A. Huang Feng
+Expires: 30 August 2025                                    A. Huang Feng
                                                                INSA-Lyon
                                                              H. Birkholz
                                                           Fraunhofer SIT
                                                                S. Garcia
                                                                     UC3M
-                                                          5 January 2025
+                                                        26 February 2025
 
 
            Applying COSE Signatures for YANG Data Provenance
@@ -64,7 +64,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 9 July 2025.
+   This Internet-Draft will expire on 30 August 2025.
 
 Copyright Notice
 
