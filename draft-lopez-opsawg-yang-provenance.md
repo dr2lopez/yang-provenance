@@ -564,6 +564,10 @@ This document registers the following YANG modules in the "YANG Module Names" re
 TBD: Others? At least for the two additional enclosing methods (instance files and annotations)
 
 
+# Implementation status
+
+An open-source reference implementation, written in Java, is available at https://github.com/tefiros/cose-provenance. This implementation has been used to generate the examples in the appendix of this document, and was first demonstrated at the IETF 122 Hackathon. Work is ongoing to explore its integration with other open-source YANG modules.
+
 --- back
 
 # Appendix A. Examples of Application of the Different Enclosing Methods
