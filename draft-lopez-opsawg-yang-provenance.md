@@ -1,7 +1,7 @@
 ---
 title: "Applying COSE Signatures for YANG Data Provenance"
 abbrev: "yang-data-provenance"
-category: info
+category: std
 
 docname: draft-lopez-opsawg-yang-provenance-latest
 submissiontype: IETF  # also: "independent", "IAB", or "IRTF"
