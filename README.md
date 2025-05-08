@@ -3,9 +3,9 @@
 This is the working area for the individual Internet-Draft, "opsawg-yang-provenance".
 
 * [Editor's Copy](https://dr2lopez.github.io/yang-provenance/#go.draft-ietf-opsawg-yang-provenance.html)
-* [Datatracker Page](https://datatracker.ietf.org/doc/draft-lopez-opsawg-yang-provenance)
-* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-lopez-opsawg-yang-provenance)
-* [Compare Editor's Copy to Individual Draft](https://dr2lopez.github.io/yang-provenance/#go.draft-lopez-opsawg-yang-provenance.diff)
+* [Datatracker Page](https://datatracker.ietf.org/doc/draft-ietf-opsawg-yang-provenance)
+* [Current Draft](https://datatracker.ietf.org/doc/html/draft-ietf-opsawg-yang-provenance)
+* [Compare Editor's Copy to Individual Draft](https://dr2lopez.github.io/yang-provenance/#go.draft-ietf-opsawg-yang-provenance.diff)
 
 
 ## Contributing
