@@ -3,7 +3,7 @@ title: "Applying COSE Signatures for YANG Data Provenance"
 abbrev: "yang-data-provenance"
 category: std
 
-docname: draft-lopez-opsawg-yang-provenance-latest
+docname: draft-ietf-opsawg-yang-provenance-latest
 submissiontype: IETF  # also: "independent", "IAB", or "IRTF"
 number:
 date:
@@ -22,7 +22,7 @@ venue:
   mail: "opsawg@ietf.org"
   arch: "https://mailarchive.ietf.org/arch/browse/opsawg/"
   github: "dr2lopez/yang-provenance"
-  latest: "https://dr2lopez.github.io/yang-provenance/draft-lopez-opsawg-yang-provenance.html"
+  latest: "https://dr2lopez.github.io/yang-provenance/draft-ietf-opsawg-yang-provenance.html"
 author:
  - name: Diego Lopez
    organization: Telefonica
@@ -114,7 +114,7 @@ typedef provenance-signature {
        associated element.";
      reference
       "RFC 9052: CBOR Object Signing and Encryption (COSE): Structures and Process
-       draft-lopez-opsawg-yang-provenance";
+       draft-ietf-opsawg-yang-provenance";
 }
 ~~~
 
