@@ -7,5 +7,5 @@ $ pyang dependencies/ietf-notification@2024-01-22.yang ietf-notification-provena
 ```
 
 ```shell
-$ pyang ietf-notification-provenance@2025-05-09.yang -p dependencies --ietf -f tree --tree-print-structures --tree-line-length=69
+$ pyang ietf-yp-provenance@2025-05-09.yang -p dependencies --ietf -f tree --tree-print-structures --tree-line-length=69
 ```

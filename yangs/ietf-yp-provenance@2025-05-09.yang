@@ -1,7 +1,7 @@
-module ietf-notification-provenance {
+module ietf-yp-provenance {
   yang-version 1.1;
   namespace
-    "urn:ietf:params:xml:ns:yang:ietf-notification-provenance";
+    "urn:ietf:params:xml:ns:yang:ietf-yp-provenance";
   prefix inotifprov;
   
   import ietf-system-capabilities {
@@ -68,7 +68,7 @@ module ietf-notification-provenance {
   }
 
   sx:augment-structure "/inotenv:envelope" {
-    leaf notif-provenance {
+    leaf provenance {
       type iyangprov:provenance-signature;
       description
         "COSE signature of the content of the Notification for
@@ -82,7 +82,7 @@ module ietf-notification-provenance {
     description
       "Extensions to Notification Capabilities enabling clients to
       know whether the provenance signature is supported.";
-    leaf notif-provenance {
+    leaf notification-provenance {
       type boolean;
       default "false";
       description

@@ -320,17 +320,17 @@ The following sections define the YANG module augmenting the "ietf-yp-notificati
 
 ### YANG Tree Diagram
 
-The following is the YANG tree diagram {{RFC8340}} for the "ietf-notification-provenance" module.
+The following is the YANG tree diagram {{RFC8340}} for the "ietf-yp-provenance" module.
 
 ~~~
-module: ietf-notification-provenance
+module: ietf-yp-provenance
 
   augment /sysc:system-capabilities/notc:subscription-capabilities
             /inotenv:notification-metadata/inotenv:metadata:
-    +--ro notif-provenance?   boolean
+    +--ro notification-provenance?   boolean
 
   augment-structure /inotenv:envelope:
-    +-- notif-provenance?   iyangprov:provenance-signature
+    +-- provenance?   iyangprov:provenance-signature
 ~~~
 
 And the following is the full YANG tree diagram for the notification structure.
@@ -342,7 +342,7 @@ module: ietf-notification
     +-- event-time         yang:date-and-time
     +-- hostname?          inet:host
     +-- sequence-number?   yang:counter32
-    +-- notif-provenance?  iyangprov:provenance-signature
+    +-- provenance?        iyangprov:provenance-signature
     +-- contents?          <anydata>
 ~~~
 
@@ -351,11 +351,11 @@ module: ietf-notification
 The module augments "ietf-yp-notification" module {{I-D.ietf-netconf-notif-envelope}} adding the signature leaf in the notification envelope header.
 
 ~~~
-<CODE BEGINS> file "ietf-notification-provenance@2024-05-09.yang"
-module ietf-notification-provenance {
+<CODE BEGINS> file "ietf-yp-provenance@2024-05-09.yang"
+module ietf-yp-provenance {
   yang-version 1.1;
   namespace
-    "urn:ietf:params:xml:ns:yang:ietf-notification-provenance";
+    "urn:ietf:params:xml:ns:yang:ietf-yp-provenance";
   prefix inotifprov;
 
   import ietf-system-capabilities {
@@ -422,7 +422,7 @@ module ietf-notification-provenance {
   }
 
   sx:augment-structure "/inotenv:envelope" {
-    leaf notif-provenance {
+    leaf provenance {
       type iyangprov:provenance-signature;
       description
         "COSE signature of the content of the Notification for
@@ -436,7 +436,7 @@ module ietf-notification-provenance {
     description
       "Extensions to Notification Capabilities enabling clients to
       know whether the provenance signature is supported.";
-    leaf notif-provenance {
+    leaf notification-provenance {
       type boolean;
       default "false";
       description
@@ -569,7 +569,7 @@ This document registers the following URIs in the "IETF XML Registry" {{RFC3688}
 ~~~
 
 ~~~
-  URI: urn:ietf:params:xml:ns:yang:ietf-notification-provenance
+  URI: urn:ietf:params:xml:ns:yang:ietf-yp-provenance
   Registrant Contact: The IESG.
   XML: N/A; the requested URI is an XML namespace.
 ~~~
@@ -586,8 +586,8 @@ This document registers the following YANG modules in the "YANG Module Names" re
 ~~~
 
 ~~~
-  name: ietf-notification-provenance
-  namespace: urn:ietf:params:xml:ns:yang:ietf-notification-provenance
+  name: ietf-yp-provenance
+  namespace: urn:ietf:params:xml:ns:yang:ietf-yp-provenance
   prefix: inotifprov
   reference: RFC XXXX
 ~~~
@@ -681,15 +681,15 @@ Applying the first enclosing method, a provenance leaf at the top element (named
 </interfaces-state>
 ~~~
 
-The second enclosing method would translate into a notification including the "notification-provenance" element as follows:
+The second enclosing method would translate into a notification including the "provenance" element as follows:
 
 ~~~
 <?xml version="1.0" encoding="UTF-8"?>
 <envelope xmlns="urn:ietf:params:xml:ns:yang:ietf-yp-notification">
     <event-time>2024-02-03T11:37:25.94Z</event-time>
-    <notification-provenance>
+    <provenance xmlns="urn:ietf:params:xml:ns:yang:ietf-yp-provenance">
 0oRRowNjeG1sBGdlYzIua2V5ASag9lhADiPn3eMRclCAnMlauYyD5yKFvYeXipf4oAmQW5DUREizL59Xs5erOerbryu8vs+A8YOl8AhlAUFzvThffcKPZg==
-    </notification-provenance>
+    </provenance>
     <contents>
         <push-update xmlns="urn:ietf:params:xml:ns:yang:ietf-yang-push">
             <subscription-id>2147483648</subscription-id>
@@ -891,47 +891,49 @@ Applying the first enclosing method, a provenance leaf at the top element (named
 }
 ~~~
 
-The second enclosing method would translate into a notification including the "notification-provenance" element. For RESTCONF it would be as follows:
+The second enclosing method would translate into a notification including the "provenance" element. For RESTCONF it would be as follows:
 
 ~~~
 {
-  "ietf-restconf:notification" : {
-    "eventTime" : "2013-12-21T00:01:00Z",
-    "ietf-yang-push:push-update": {
-      "subscription-id": 2147483648,
-      "datastore-contents": {
-        "ietf-interfaces:interfaces-state": {
-          "interface": [ {
-              "name": "GigabitEthernet1",
-              "type": "ianaift:ethernetCsmacd",
-              "admin-status": "up",
-              "oper-status": "up",
-              "last-change": "2024-02-03T11:22:41.081+00:00",
-              "if-index": 1,
-              "phys-address": "0c:00:00:37:d6:00",
-              "speed": 1000000000,
-              "statistics": {
-                "discontinuity-time": "2024-02-03T11:20:38+00:00",
-                "in-octets": 8157,
-                "in-unicast-pkts": 94,
-                "in-broadcast-pkts": 0,
-                "in-multicast-pkts": 0,
-                "in-discards": 0,
-                "in-errors": 0,
-                "in-unknown-protos": 0,
-                "out-octets": 89363,
-                "out-unicast-pkts": 209,
-                "out-broadcast-pkts": 0,
-                "out-multicast-pkts": 0,
-                "out-discards": 0,
-                "out-errors": 0
+  "ietf-yp-notification:envelope" : {
+    "event-time" : "2013-12-21T00:01:00Z",
+    "ietf-yp-provenance:provenance" : "0oRRowNjeG1sBGdlYzIua2V5ASag9lhArfYIbXGXjjg5wMF+xJnYGm0NV3ULe2triP4gT7GFeikK19g1N3gNXD5ZZbCn03aN68PgIEl+dglQ6/mobLeEvg==",
+    "contents": {
+      "ietf-yang-push:push-update": {
+        "subscription-id": 2147483648,
+        "datastore-contents": {
+          "ietf-interfaces:interfaces-state": {
+            "interface": [ {
+                "name": "GigabitEthernet1",
+                "type": "ianaift:ethernetCsmacd",
+                "admin-status": "up",
+                "oper-status": "up",
+                "last-change": "2024-02-03T11:22:41.081+00:00",
+                "if-index": 1,
+                "phys-address": "0c:00:00:37:d6:00",
+                "speed": 1000000000,
+                "statistics": {
+                  "discontinuity-time": "2024-02-03T11:20:38+00:00",
+                  "in-octets": 8157,
+                  "in-unicast-pkts": 94,
+                  "in-broadcast-pkts": 0,
+                  "in-multicast-pkts": 0,
+                  "in-discards": 0,
+                  "in-errors": 0,
+                  "in-unknown-protos": 0,
+                  "out-octets": 89363,
+                  "out-unicast-pkts": 209,
+                  "out-broadcast-pkts": 0,
+                  "out-multicast-pkts": 0,
+                  "out-discards": 0,
+                  "out-errors": 0
+                }
               }
-            }
-          ]
+            ]
+          }
         }
       }
-    },
-    "notification-provenance" : "0oRRowNjeG1sBGdlYzIua2V5ASag9lhArfYIbXGXjjg5wMF+xJnYGm0NV3ULe2triP4gT7GFeikK19g1N3gNXD5ZZbCn03aN68PgIEl+dglQ6/mobLeEvg=="
+    }
   }
 }
 ~~~
@@ -940,42 +942,44 @@ And for NETCONF:
 
 ~~~
 {
-  "ietf-notification:notification" : {
-    "eventTime" : "2023-02-10T08:00:11.22Z",
-    "ietf-yang-push:push-update" : {
-      "id" : 1011,
-      "datastore-contents" : {
-        "ietf-interfaces:interfaces" : [ {
-          "interface" : {
-            "name": "GigabitEthernet1",
-              "iana-if-type:type": "ianaift:ethernetCsmacd",
-              "admin-status": "up",
-              "oper-status": "up",
-              "last-change": "2024-02-03T11:22:41.081+00:00",
-              "if-index": 1,
-              "phys-address": "0c:00:00:37:d6:00",
-              "speed": 1000000000,
-              "statistics": {
-                "discontinuity-time": "2024-02-03T11:20:38+00:00",
-                "in-octets": 8157,
-                "in-unicast-pkts": 94,
-                "in-broadcast-pkts": 0,
-                "in-multicast-pkts": 0,
-                "in-discards": 0,
-                "in-errors": 0,
-                "in-unknown-protos": 0,
-                "out-octets": 89363,
-                "out-unicast-pkts": 209,
-                "out-broadcast-pkts": 0,
-                "out-multicast-pkts": 0,
-                "out-discards": 0,
-                "out-errors": 0
-              }
-          }
-        } ]
+  "ietf-yp-notification:envelope" : {
+    "event-time" : "2023-02-10T08:00:11.22Z",
+    "ietf-yp-provenance:provenance" : "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAvkE8Y0Od9zRLM/sNlJtau07xuO3zDArCnUhaKJpS6erVUL0MflWm7zby//k4BBQ2zBiBO6LDouoaiuGGj6EwiQ==",
+    "contents": {
+      "ietf-yang-push:push-update" : {
+        "id" : 1011,
+        "datastore-contents" : {
+          "ietf-interfaces:interfaces" : [ {
+            "interface" : {
+              "name": "GigabitEthernet1",
+                "iana-if-type:type": "ianaift:ethernetCsmacd",
+                "admin-status": "up",
+                "oper-status": "up",
+                "last-change": "2024-02-03T11:22:41.081+00:00",
+                "if-index": 1,
+                "phys-address": "0c:00:00:37:d6:00",
+                "speed": 1000000000,
+                "statistics": {
+                  "discontinuity-time": "2024-02-03T11:20:38+00:00",
+                  "in-octets": 8157,
+                  "in-unicast-pkts": 94,
+                  "in-broadcast-pkts": 0,
+                  "in-multicast-pkts": 0,
+                  "in-discards": 0,
+                  "in-errors": 0,
+                  "in-unknown-protos": 0,
+                  "out-octets": 89363,
+                  "out-unicast-pkts": 209,
+                  "out-broadcast-pkts": 0,
+                  "out-multicast-pkts": 0,
+                  "out-discards": 0,
+                  "out-errors": 0
+                }
+            }
+          } ]
+        }
       }
-    },
-    "notification-provenance" : "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAvkE8Y0Od9zRLM/sNlJtau07xuO3zDArCnUhaKJpS6erVUL0MflWm7zby//k4BBQ2zBiBO6LDouoaiuGGj6EwiQ=="
+    }
   }
 }
 ~~~
