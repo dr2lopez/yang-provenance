@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-05-08T01:00:16.106329+00:00",
+  "timestamp": "2025-05-11T01:03:52.230330+00:00",
   "repo": "dr2lopez/yang-provenance",
   "labels": [
     {
@@ -100,6 +100,32 @@
           "comments": []
         }
       ]
+    },
+    {
+      "number": 2,
+      "id": "PR_kwDOJ3j81c6VnIMK",
+      "title": "update second enclosing method to latests updates on notif-envelope",
+      "url": "https://github.com/dr2lopez/yang-provenance/pull/2",
+      "state": "OPEN",
+      "author": "ahuangfeng",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2025-05-09T16:20:54Z",
+      "updatedAt": "2025-05-09T16:47:37Z",
+      "baseRepository": "dr2lopez/yang-provenance",
+      "baseRefName": "main",
+      "baseRefOid": "2471873b112e6bd6b308e883a976bd1126aa6c51",
+      "headRepository": "ahuangfeng/draft-yang-provenance",
+      "headRefName": "main",
+      "headRefOid": "2a0fc360de6072bbdda582a0cde269b6e09c19e9",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
