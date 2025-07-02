@@ -648,8 +648,8 @@ Applying the first enclosing method, a provenance leaf at the top element (named
 <?xml version="1.0" encoding="UTF-8"?>
 <interfaces-state xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
     <signature-string>
-0oRRowNjeG1sBGdlYzIua2V5ASag9lhAvzyFP5HP0nONaqTRxKmSqerrDS6CQXJSK+5Ndp
-rzQZLf0QsHtAi2pxzbuDJDy9kZoy1JTvNaJmMxGTLdm4ktug==
+0oRRowNjeG1sBGdlYzIua2V5ASag9lhAvzyFP5HP0nONaqTRxKmSqerrDS6C
+QXJSK+5NdprzQZLf0QsHtAi2pxzbuDJDy9kZoy1JTvNaJmMxGTLdm4ktug==
     </signature-string>
     <interface>
         <name>GigabitEthernet1</name>
@@ -688,8 +688,8 @@ The second enclosing method would translate into a notification including the "p
 <envelope xmlns="urn:ietf:params:xml:ns:yang:ietf-yp-notification">
     <event-time>2024-02-03T11:37:25.94Z</event-time>
     <provenance xmlns="urn:ietf:params:xml:ns:yang:ietf-yp-provenance">
-0oRRowNjeG1sBGdlYzIua2V5ASag9lhADiPn3eMRclCAnMlauYyD5yKFvYeXipf4oAmQW5
-DUREizL59Xs5erOerbryu8vs+A8YOl8AhlAUFzvThffcKPZg==
+0oRRowNjeG1sBGdlYzIua2V5ASag9lhADiPn3eMRclCAnMlauYyD5yKFvYe
+Xipf4oAmQW5DUREizL59Xs5erOerbryu8vs+A8YOl8AhlAUFzvThffcKPZg==
     </provenance>
     <contents>
         <push-update xmlns="urn:ietf:params:xml:ns:yang:ietf-yang-push">
@@ -744,8 +744,8 @@ The third enclosing method, applicable if the instance is to be stored as YANG i
   <description>Sample for demonstrating provenance signatures</description>
   <contact>diego.r.lopez@telefonica.com</contact>
   <provenance-string>
-0oRRowNjeG1sBGdlYzIua2V5ASag9lhAWff+fMbfNChKUYZ52UTOBmAlYPFe4vlZOLyZeW0CU7
-/2OutDeMCG28+m3rm58jqLjKbcueKLFq8qFJb4mvPY+Q==
+0oRRowNjeG1sBGdlYzIua2V5ASag9lhAWff+fMbfNChKUYZ52UTOBmAlYPFe4
+vlZOLyZeW0CU7/2OutDeMCG28+m3rm58jqLjKbcueKLFq8qFJb4mvPY+Q==
   </provenance-string>
   <content-data>
    <interfaces-state xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
@@ -788,8 +788,8 @@ Finally, using the fourth enclosing method, the YANG instance would incorporate 
 <interfaces-state xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces"
 xmlns:ypmd="http://telefonica.com/temporary-ns-yangpmd"
 ypmd:provenance-string=
-"0oRRowNjeG1sBGdlYzIua2V5ASag9lhAzen3Bm9AZoyXuetpoTB70SzZqKVxeuOMW099
-sm+NXSqCfnqBKfXeuqDNEkuEr+E0XiAso986fbAHQCHbAJMOhw==">
+"0oRRowNjeG1sBGdlYzIua2V5ASag9lhAzen3Bm9AZoyXuetpoTB70SzZqKVxeu
+OMW099sm+NXSqCfnqBKfXeuqDNEkuEr+E0XiAso986fbAHQCHbAJMOhw==">
     <interface>
         <name>GigabitEthernet1</name>
         <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">
@@ -889,7 +889,9 @@ Applying the first enclosing method, a provenance leaf at the top element (named
         "out-errors" : 0
       }
     },
-    "provenance-string" : "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAnC4dNl5VSxkVCv8IOaiIhD7ymVZJ8Ol1NFH0GZ7bhe+CrnLTOyPazKl2PK33ZqkUGwZo0HmlkPOiAb1okaCZIw=="
+    "provenance-string" :
+    "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAnC4dNl5VSxkVCv8IOaiIhD7ymVZJ
+     8Ol1NFH0GZ7bhe+CrnLTOyPazKl2PK33ZqkUGwZo0HmlkPOiAb1okaCZIw=="
   }
 }
 ~~~
@@ -900,7 +902,9 @@ The second enclosing method would translate into a notification including the "p
 {
   "ietf-yp-notification:envelope" : {
     "event-time" : "2013-12-21T00:01:00Z",
-    "ietf-yp-provenance:provenance" : "0oRRowNjeG1sBGdlYzIua2V5ASag9lhArfYIbXGXjjg5wMF+xJnYGm0NV3ULe2triP4gT7GFeikK19g1N3gNXD5ZZbCn03aN68PgIEl+dglQ6/mobLeEvg==",
+    "ietf-yp-provenance:provenance" :
+    "0oRRowNjeG1sBGdlYzIua2V5ASag9lhArfYIbXGXjjg5wMF+xJnYGm0NV3ULe
+     2triP4gT7GFeikK19g1N3gNXD5ZZbCn03aN68PgIEl+dglQ6/mobLeEvg==",
     "contents": {
       "ietf-yang-push:push-update": {
         "subscription-id": 2147483648,
@@ -947,7 +951,9 @@ And for NETCONF:
 {
   "ietf-yp-notification:envelope" : {
     "event-time" : "2023-02-10T08:00:11.22Z",
-    "ietf-yp-provenance:provenance" : "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAvkE8Y0Od9zRLM/sNlJtau07xuO3zDArCnUhaKJpS6erVUL0MflWm7zby//k4BBQ2zBiBO6LDouoaiuGGj6EwiQ==",
+    "ietf-yp-provenance:provenance" :
+    "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAvkE8Y0Od9zRLM/sNlJtau07xuO3z
+     DArCnUhaKJpS6erVUL0MflWm7zby//k4BBQ2zBiBO6LDouoaiuGGj6EwiQ==",
     "contents": {
       "ietf-yang-push:push-update" : {
         "id" : 1011,
@@ -1025,7 +1031,9 @@ The third enclosing method, applicable if the instance is to be stored as YANG i
         }
       }
     },
-    "provenance-string" : "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAmop/c7wMcjRmiSPVy65F/N6O21dsGkjGQjIDRizhu3WMwi9Je+VUf5sqwlhSwQCdv5u7mRXa6Pd9dhCwdxdRCA=="
+    "provenance-string" :
+    "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAmop/c7wMcjRmiSPVy65F/N6O21dsG
+     kjGQjIDRizhu3WMwi9Je+VUf5sqwlhSwQCdv5u7mRXa6Pd9dhCwdxdRCA=="
   }
 }
 ~~~
@@ -1061,7 +1069,9 @@ Finally, using the fourth enclosing method, the YANG instance would incorporate 
         "out-errors" : 0
       }
     },
-    "@ypmd:provenance-string" : "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAM/Dx3HVc4GL91jmuU5nWgcmOPPVpARLJkWo5wwQYvGFJpKMXTkjAtArPp8v6Sl1ZD1qHimKMhAoHLMHVxBtrcA=="
+    "@ypmd:provenance-string" :
+    "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAM/Dx3HVc4GL91jmuU5nWgcmOPPVp
+     ARLJkWo5wwQYvGFJpKMXTkjAtArPp8v6Sl1ZD1qHimKMhAoHLMHVxBtrcA=="
   }
 }
 ~~~
