@@ -345,7 +345,7 @@ typedef provenance-signature {
    for selecting the specific YANG content to be processed when signing
    and verifying.
 
-   Appendix A includes a set of exmaples of the different enclosing
+   Appendix A includes a set of examples of the different enclosing
    methods, applied to the same YANG fragment, to illustrate their use.
 
 4.1.  Including a Provenance Leaf in a YANG Element
@@ -908,6 +908,12 @@ XML
         </statistics>
     </interface>
 </interfaces-state>
+
+   In the examples that follow, the signature strings have been wrapped
+   and, in some cases, indented to improve readability.  If this
+   examples are used for any kind of validation, please delete all
+   intermediate carriage returns and whitespace to build the actual
+   signature string to be considered.
 
    Applying the first enclosing method, a provenance leaf at the top
    element (named "signature-string" in this case") would be included
