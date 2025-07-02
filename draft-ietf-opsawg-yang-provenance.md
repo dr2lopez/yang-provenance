@@ -228,7 +228,7 @@ module ietf-yang-provenance {
 
 Once defined the procedures for generating and verifying the provenance signature string, let's consider how these signatures can be integrated with the associated YANG data by enclosing the signature in the data structure. This document considers four different enclosing methods, suitable for different stages of the YANG schema and usage patterns of the YANG data. The enclosing method defines not only how the provenance signature string is combined with the signed YANG data but also the specific procedure for selecting the specific YANG content to be processed when signing and verifying.
 
-Appendix A includes a set of exmaples of the different enclosing methods, applied to the same YANG fragment, to illustrate their use.
+Appendix A includes a set of examples of the different enclosing methods, applied to the same YANG fragment, to illustrate their use.
 
 ## Including a Provenance Leaf in a YANG Element
 
@@ -641,6 +641,8 @@ Let us consider the following YANG instance, corresponding to a monitoring inter
     </interface>
 </interfaces-state>
 ~~~
+
+In the examples that follow, the signature strings have been wrapped and, in some cases, indented to improve readability. If this examples are used for any kind of validation, please delete all intermediate carriage returns and whitespace to build the actual signature string to be considered.
 
 Applying the first enclosing method, a provenance leaf at the top element (named "signature-string" in this case") would be included and produce the following output:
 
