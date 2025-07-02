@@ -1198,7 +1198,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
                 <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-including-a-provenance-leaf" class="internal xref">Including a Provenance Leaf in a YANG Element</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2">
-                <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="auto internal xref">4.2</a>.  <a href="#name-including-a-provenance-sign" class="internal xref">Including a Provenance Signature in NETCONF Event Notifications and YANG-Push Notifications</a></p>
+                <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="auto internal xref">4.2</a>.  <a href="#name-including-a-provenance-sign" class="internal xref">Including a Provenance Signature in YANG-Push Notifications</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2.2.1">
                     <p id="section-toc.1-1.4.2.2.2.1.1"><a href="#section-4.2.1" class="auto internal xref">4.2.1</a>.  <a href="#name-yang-tree-diagram" class="internal xref">YANG Tree Diagram</a></p>
@@ -1403,7 +1403,7 @@ signature /using as external data the content of the YANG
         </h3>
 <p id="section-3.4-1">This module defines a provenance-signature type to be used in other YANG modules.<a href="#section-3.4-1" class="pilcrow">¶</a></p>
 <div class="breakable sourcecode" id="section-3.4-2">
-<pre>&lt;CODE BEGINS&gt; file "ietf-yang-provenance@2024-02-28.yang"
+<pre>&lt;CODE BEGINS&gt; file "ietf-yang-provenance@2025-05-09.yang"
 
 module ietf-yang-provenance {
   yang-version 1.1;
@@ -1429,7 +1429,7 @@ module ietf-yang-provenance {
     "Defines a binary provenance-signature type to be used in other YANG
     modules.
 
-    Copyright (c) 2024 IETF Trust and the persons identified as
+    Copyright (c) 2025 IETF Trust and the persons identified as
     authors of the code.  All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -1441,7 +1441,7 @@ module ietf-yang-provenance {
     This version of this YANG module is part of RFC XXXX; see the RFC
     itself for full legal notices.";
 
-  revision 2024-02-28 {
+  revision 2025-05-09 {
     description
       "First revision";
     reference
@@ -1552,36 +1552,43 @@ module: ietf-platform-manifest
 <p id="section-4.1-11">Note here that, to generate the YANG content to be processed in the case of the collection the provenance leafs of the indivual elements <span class="bcp14">SHALL NOT</span> be eliminated, as it <span class="bcp14">SHALL</span> be the case when generating the YANG content to be processed for each individual element in the collection.<a href="#section-4.1-11" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="including-a-provenance-signature-in-netconf-event-notifications-and-yang-push-notifications">
+<div id="including-a-provenance-signature-in-yang-push-notifications">
 <section id="section-4.2">
         <h3 id="name-including-a-provenance-sign">
-<a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-including-a-provenance-sign" class="section-name selfRef">Including a Provenance Signature in NETCONF Event Notifications and YANG-Push Notifications</a>
+<a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-including-a-provenance-sign" class="section-name selfRef">Including a Provenance Signature in YANG-Push Notifications</a>
         </h3>
-<p id="section-4.2-1">The signature mechanism proposed in this document <span class="bcp14">MAY</span> be used with NETCONF Event Notifications <span>[<a href="#RFC5277" class="cite xref">RFC5277</a>]</span> and YANG-Push <span>[<a href="#RFC8641" class="cite xref">RFC8641</a>]</span> to sign the generated notifications directly from the publisher nodes. The signature is added to the header of the Notification along with the eventTime leaf.<a href="#section-4.2-1" class="pilcrow">¶</a></p>
-<p id="section-4.2-2">The YANG content to be processed <span class="bcp14">MUST</span> consist of the content of the notificationContent element.<a href="#section-4.2-2" class="pilcrow">¶</a></p>
-<p id="section-4.2-3">The following sections define the YANG module augmenting the ietf-notification module.<a href="#section-4.2-3" class="pilcrow">¶</a></p>
+<p id="section-4.2-1">The signature mechanism proposed in this document <span class="bcp14">MAY</span> be used with YANG-Push <span>[<a href="#RFC8641" class="cite xref">RFC8641</a>]</span> to sign the generated notifications directly from the publisher nodes. The signature is added to the notification envelope header <span>[<a href="#I-D.ietf-netconf-notif-envelope" class="cite xref">I-D.ietf-netconf-notif-envelope</a>]</span> as a new extension.<a href="#section-4.2-1" class="pilcrow">¶</a></p>
+<p id="section-4.2-2">The YANG content to be processed <span class="bcp14">MUST</span> consist of the content defined by the "contents" element <span>[<a href="#I-D.ietf-netconf-notif-envelope" class="cite xref">I-D.ietf-netconf-notif-envelope</a>]</span>.<a href="#section-4.2-2" class="pilcrow">¶</a></p>
+<p id="section-4.2-3">The following sections define the YANG module augmenting the "ietf-yp-notification" module. It extends the notification envelope header with a new leaf for the provenance signature and an augmentation to the "ietf-notification-capabilities" to enable clients discover the support of the provenance signature.<a href="#section-4.2-3" class="pilcrow">¶</a></p>
 <div id="yang-tree-diagram">
 <section id="section-4.2.1">
           <h4 id="name-yang-tree-diagram">
 <a href="#section-4.2.1" class="section-number selfRef">4.2.1. </a><a href="#name-yang-tree-diagram" class="section-name selfRef">YANG Tree Diagram</a>
           </h4>
-<p id="section-4.2.1-1">The following is the YANG tree diagram <span>[<a href="#RFC8340" class="cite xref">RFC8340</a>]</span> for the ietf-notification-provenance augmentation within the ietf-notification.<a href="#section-4.2.1-1" class="pilcrow">¶</a></p>
+<p id="section-4.2.1-1">The following is the YANG tree diagram <span>[<a href="#RFC8340" class="cite xref">RFC8340</a>]</span> for the "ietf-yp-provenance" module.<a href="#section-4.2.1-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-4.2.1-2">
 <pre>
-module: ietf-notification-provenance
+module: ietf-yp-provenance
 
-  augment-structure /inotif:notification:
-    +-- notification-provenance?   iyangprov:provenance-signature
+  augment /sysc:system-capabilities/notc:subscription-capabilities
+            /inotenv:notification-metadata/inotenv:metadata:
+    +--ro notification-provenance?   boolean
+
+  augment-structure /inotenv:envelope:
+    +-- provenance?   iyangprov:provenance-signature
 </pre><a href="#section-4.2.1-2" class="pilcrow">¶</a>
 </div>
-<p id="section-4.2.1-3">And the following is the full YANG tree diagram for the notification.<a href="#section-4.2.1-3" class="pilcrow">¶</a></p>
+<p id="section-4.2.1-3">And the following is the full YANG tree diagram for the notification structure.<a href="#section-4.2.1-3" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-4.2.1-4">
 <pre>
 module: ietf-notification
 
-  structure notification:
-    +-- eventTime                             yang:date-and-time
-    +-- inotifprov:notification-provenance?   iyangprov:provenance-signature
+  structure envelope:
+    +-- event-time         yang:date-and-time
+    +-- hostname?          inet:host
+    +-- sequence-number?   yang:counter32
+    +-- provenance?        iyangprov:provenance-signature
+    +-- contents?          &lt;anydata&gt;
 </pre><a href="#section-4.2.1-4" class="pilcrow">¶</a>
 </div>
 </section>
@@ -1591,20 +1598,27 @@ module: ietf-notification
           <h4 id="name-yang-module">
 <a href="#section-4.2.2" class="section-number selfRef">4.2.2. </a><a href="#name-yang-module" class="section-name selfRef">YANG Module</a>
           </h4>
-<p id="section-4.2.2-1">The module augments ietf-notification module <span>[<a href="#I-D.ahuang-netconf-notif-yang" class="cite xref">I-D.ahuang-netconf-notif-yang</a>]</span> adding the signature leaf in the notification header.<a href="#section-4.2.2-1" class="pilcrow">¶</a></p>
+<p id="section-4.2.2-1">The module augments "ietf-yp-notification" module <span>[<a href="#I-D.ietf-netconf-notif-envelope" class="cite xref">I-D.ietf-netconf-notif-envelope</a>]</span> adding the signature leaf in the notification envelope header.<a href="#section-4.2.2-1" class="pilcrow">¶</a></p>
 <div class="breakable sourcecode" id="section-4.2.2-2">
-<pre>&lt;CODE BEGINS&gt; file "ietf-notification-provenance@2024-02-28.yang"
+<pre>&lt;CODE BEGINS&gt; file "ietf-yp-provenance@2024-05-09.yang"
 
-module ietf-notification-provenance {
+module ietf-yp-provenance {
   yang-version 1.1;
   namespace
-    "urn:ietf:params:xml:ns:yang:ietf-notification-provenance";
+    "urn:ietf:params:xml:ns:yang:ietf-yp-provenance";
   prefix inotifprov;
 
-  import ietf-notification {
-    prefix inotif;
+  import ietf-system-capabilities {
+    prefix sysc;
     reference
-      "draft-ahuang-netconf-notif-yang: NETCONF Event Notification YANG";
+      "RFC 9196: YANG Modules Describing Capabilities for
+       Systems and Datastore Update Notifications";
+  }
+  import ietf-notification-capabilities {
+    prefix notc;
+    reference
+      "RFC 9196: YANG Modules Describing Capabilities for
+       Systems and Datastore Update Notifications";
   }
   import ietf-yang-provenance {
     prefix iyangprov;
@@ -1615,6 +1629,11 @@ module ietf-notification-provenance {
     prefix sx;
     reference
       "RFC 8791: YANG Data Structure Extensions";
+  }
+  import ietf-yp-notification {
+    prefix inotenv;
+    reference
+      "RFC YYYY: Extensible YANG Model for YANG-Push Notifications";
   }
 
   organization "IETF OPSAWG (Operations and Management Area Working Group)";
@@ -1627,15 +1646,13 @@ module ietf-notification-provenance {
                Diego Lopez
                &lt;mailto:diego.r.lopez@telefonica.com&gt;
                Antonio Pastor
-               &lt;mailto:antonio.pastorperales@telefonica.com&gt;
-               Henk Birkholz
-               &lt;mailto:henk.birkholz@sit.fraunhofer.de&gt;";
+               &lt;mailto:antonio.pastorperales@telefonica.com&gt;";
 
   description
-    "Defines a binary provenance-signature type to be used in other YANG
+    "Defines a bynary provenance-signature type to be used in other YANG
     modules.
 
-    Copyright (c) 2024 IETF Trust and the persons identified as
+    Copyright (c) 2025 IETF Trust and the persons identified as
     authors of the code.  All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -1647,19 +1664,34 @@ module ietf-notification-provenance {
     This version of this YANG module is part of RFC XXXX; see the RFC
     itself for full legal notices.";
 
-  revision 2024-02-28 {
+  revision 2025-05-09 {
     description
       "First revision";
     reference
       "RFC XXXX: Applying COSE Signatures for YANG Data Provenance";
   }
 
-  sx:augment-structure "/inotif:notification" {
-    leaf notification-provenance {
+  sx:augment-structure "/inotenv:envelope" {
+    leaf provenance {
       type iyangprov:provenance-signature;
       description
         "COSE signature of the content of the Notification for
         provenance verification.";
+    }
+  }
+
+  augment "/sysc:system-capabilities"
+        + "/notc:subscription-capabilities"
+        + "/inotenv:notification-metadata/inotenv:metadata" {
+    description
+      "Extensions to Notification Capabilities enabling clients to
+      know whether the provenance signature is supported.";
+    leaf notification-provenance {
+      type boolean;
+      default "false";
+      description
+        "Support of the provenance signature on YANG-Push
+        Notifications.";
     }
   }
 }
@@ -1818,7 +1850,7 @@ module yang-provenance-metadata {
 </div>
 <div class="alignLeft art-text artwork" id="section-6.1-3">
 <pre>
-  URI: urn:ietf:params:xml:ns:yang:ietf-notification-provenance
+  URI: urn:ietf:params:xml:ns:yang:ietf-yp-provenance
   Registrant Contact: The IESG.
   XML: N/A; the requested URI is an XML namespace.
 </pre><a href="#section-6.1-3" class="pilcrow">¶</a>
@@ -1841,8 +1873,8 @@ module yang-provenance-metadata {
 </div>
 <div class="alignLeft art-text artwork" id="section-6.2-3">
 <pre>
-  name: ietf-notification-provenance
-  namespace: urn:ietf:params:xml:ns:yang:ietf-notification-provenance
+  name: ietf-yp-provenance
+  namespace: urn:ietf:params:xml:ns:yang:ietf-yp-provenance
   prefix: inotifprov
   reference: RFC XXXX
 </pre><a href="#section-6.2-3" class="pilcrow">¶</a>
@@ -1871,9 +1903,9 @@ module yang-provenance-metadata {
 <a href="#section-8.1" class="section-number selfRef">8.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
         </h3>
 <dl class="references">
-<dt id="I-D.ahuang-netconf-notif-yang">[I-D.ahuang-netconf-notif-yang]</dt>
+<dt id="I-D.ietf-netconf-notif-envelope">[I-D.ietf-netconf-notif-envelope]</dt>
         <dd>
-<span class="refAuthor">Feng, A. H.</span>, <span class="refAuthor">Francois, P.</span>, <span class="refAuthor">Graf, T.</span>, and <span class="refAuthor">B. Claise</span>, <span class="refTitle">"YANG model for NETCONF Event Notifications"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ahuang-netconf-notif-yang-05</span>, <time datetime="2024-06-18" class="refDate">18 June 2024</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ahuang-netconf-notif-yang-05">https://datatracker.ietf.org/doc/html/draft-ahuang-netconf-notif-yang-05</a>&gt;</span>. </dd>
+<span class="refAuthor">Feng, A. H.</span>, <span class="refAuthor">Francois, P.</span>, <span class="refAuthor">Graf, T.</span>, and <span class="refAuthor">B. Claise</span>, <span class="refTitle">"Extensible YANG Model for YANG-Push Notifications"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-netconf-notif-envelope-02</span>, <time datetime="2025-06-17" class="refDate">17 June 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-netconf-notif-envelope-02">https://datatracker.ietf.org/doc/html/draft-ietf-netconf-notif-envelope-02</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC2119">[RFC2119]</dt>
         <dd>
@@ -1886,10 +1918,6 @@ module yang-provenance-metadata {
 <dt id="RFC3986">[RFC3986]</dt>
         <dd>
 <span class="refAuthor">Berners-Lee, T.</span>, <span class="refAuthor">Fielding, R.</span>, and <span class="refAuthor">L. Masinter</span>, <span class="refTitle">"Uniform Resource Identifier (URI): Generic Syntax"</span>, <span class="seriesInfo">STD 66</span>, <span class="seriesInfo">RFC 3986</span>, <span class="seriesInfo">DOI 10.17487/RFC3986</span>, <time datetime="2005-01" class="refDate">January 2005</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc3986">https://www.rfc-editor.org/rfc/rfc3986</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="RFC5277">[RFC5277]</dt>
-        <dd>
-<span class="refAuthor">Chisholm, S.</span> and <span class="refAuthor">H. Trevino</span>, <span class="refTitle">"NETCONF Event Notifications"</span>, <span class="seriesInfo">RFC 5277</span>, <span class="seriesInfo">DOI 10.17487/RFC5277</span>, <time datetime="2008-07" class="refDate">July 2008</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc5277">https://www.rfc-editor.org/rfc/rfc5277</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC5322">[RFC5322]</dt>
         <dd>
@@ -2052,50 +2080,52 @@ module yang-provenance-metadata {
 &lt;/interfaces-state&gt;
 </pre><a href="#appendix-A.1-4" class="pilcrow">¶</a>
 </div>
-<p id="appendix-A.1-5">The second enclosing method would translate into a notification including the "notification-provenance" element as follows:<a href="#appendix-A.1-5" class="pilcrow">¶</a></p>
+<p id="appendix-A.1-5">The second enclosing method would translate into a notification including the "provenance" element as follows:<a href="#appendix-A.1-5" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="appendix-A.1-6">
 <pre>
 &lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;notification xmlns="urn:ietf:params:xml:ns:netconf:notification:1.0"&gt;
-    &lt;eventTime&gt;2024-02-03T11:37:25.94Z&lt;/eventTime&gt;
-    &lt;notification-provenance&gt;
+&lt;envelope xmlns="urn:ietf:params:xml:ns:yang:ietf-yp-notification"&gt;
+    &lt;event-time&gt;2024-02-03T11:37:25.94Z&lt;/event-time&gt;
+    &lt;provenance xmlns="urn:ietf:params:xml:ns:yang:ietf-yp-provenance"&gt;
 0oRRowNjeG1sBGdlYzIua2V5ASag9lhADiPn3eMRclCAnMlauYyD5yKFvYeXipf4oAmQW5DUREizL59Xs5erOerbryu8vs+A8YOl8AhlAUFzvThffcKPZg==
-    &lt;/notification-provenance&gt;
-    &lt;push-update xmlns="urn:ietf:params:xml:ns:yang:ietf-yang-push"&gt;
-        &lt;subscription-id&gt;2147483648&lt;/subscription-id&gt;
-        &lt;datastore-contents-xml&gt;
-            &lt;interfaces-state xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces"&gt;
-                &lt;interface&gt;
-                    &lt;name&gt;GigabitEthernet1&lt;/name&gt;
-                    &lt;type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type"&gt;
-                        ianaift:ethernetCsmacd&lt;/type&gt;
-                    &lt;admin-status&gt;up&lt;/admin-status&gt;
-                    &lt;oper-status&gt;up&lt;/oper-status&gt;
-                    &lt;last-change&gt;2024-02-03T11:22:41.081+00:00&lt;/last-change&gt;
-                    &lt;if-index&gt;1&lt;/if-index&gt;
-                    &lt;phys-address&gt;0c:00:00:37:d6:00&lt;/phys-address&gt;
-                    &lt;speed&gt;1000000000&lt;/speed&gt;
-                    &lt;statistics&gt;
-                        &lt;discontinuity-time&gt;2024-02-03T11:20:38+00:00&lt;/discontinuity-time&gt;
-                        &lt;in-octets&gt;8157&lt;/in-octets&gt;
-                        &lt;in-unicast-pkts&gt;94&lt;/in-unicast-pkts&gt;
-                        &lt;in-broadcast-pkts&gt;0&lt;/in-broadcast-pkts&gt;
-                        &lt;in-multicast-pkts&gt;0&lt;/in-multicast-pkts&gt;
-                        &lt;in-discards&gt;0&lt;/in-discards&gt;
-                        &lt;in-errors&gt;0&lt;/in-errors&gt;
-                        &lt;in-unknown-protos&gt;0&lt;/in-unknown-protos&gt;
-                        &lt;out-octets&gt;89363&lt;/out-octets&gt;
-                        &lt;out-unicast-pkts&gt;209&lt;/out-unicast-pkts&gt;
-                        &lt;out-broadcast-pkts&gt;0&lt;/out-broadcast-pkts&gt;
-                        &lt;out-multicast-pkts&gt;0&lt;/out-multicast-pkts&gt;
-                        &lt;out-discards&gt;0&lt;/out-discards&gt;
-                        &lt;out-errors&gt;0&lt;/out-errors&gt;
-                    &lt;/statistics&gt;
-                &lt;/interface&gt;
-            &lt;/interfaces-state&gt;
-        &lt;/datastore-contents-xml&gt;
-    &lt;/push-update&gt;
-&lt;/notification&gt;
+    &lt;/provenance&gt;
+    &lt;contents&gt;
+        &lt;push-update xmlns="urn:ietf:params:xml:ns:yang:ietf-yang-push"&gt;
+            &lt;subscription-id&gt;2147483648&lt;/subscription-id&gt;
+            &lt;datastore-contents&gt;
+                &lt;interfaces-state xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces"&gt;
+                    &lt;interface&gt;
+                        &lt;name&gt;GigabitEthernet1&lt;/name&gt;
+                        &lt;type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type"&gt;
+                            ianaift:ethernetCsmacd&lt;/type&gt;
+                        &lt;admin-status&gt;up&lt;/admin-status&gt;
+                        &lt;oper-status&gt;up&lt;/oper-status&gt;
+                        &lt;last-change&gt;2024-02-03T11:22:41.081+00:00&lt;/last-change&gt;
+                        &lt;if-index&gt;1&lt;/if-index&gt;
+                        &lt;phys-address&gt;0c:00:00:37:d6:00&lt;/phys-address&gt;
+                        &lt;speed&gt;1000000000&lt;/speed&gt;
+                        &lt;statistics&gt;
+                            &lt;discontinuity-time&gt;2024-02-03T11:20:38+00:00&lt;/discontinuity-time&gt;
+                            &lt;in-octets&gt;8157&lt;/in-octets&gt;
+                            &lt;in-unicast-pkts&gt;94&lt;/in-unicast-pkts&gt;
+                            &lt;in-broadcast-pkts&gt;0&lt;/in-broadcast-pkts&gt;
+                            &lt;in-multicast-pkts&gt;0&lt;/in-multicast-pkts&gt;
+                            &lt;in-discards&gt;0&lt;/in-discards&gt;
+                            &lt;in-errors&gt;0&lt;/in-errors&gt;
+                            &lt;in-unknown-protos&gt;0&lt;/in-unknown-protos&gt;
+                            &lt;out-octets&gt;89363&lt;/out-octets&gt;
+                            &lt;out-unicast-pkts&gt;209&lt;/out-unicast-pkts&gt;
+                            &lt;out-broadcast-pkts&gt;0&lt;/out-broadcast-pkts&gt;
+                            &lt;out-multicast-pkts&gt;0&lt;/out-multicast-pkts&gt;
+                            &lt;out-discards&gt;0&lt;/out-discards&gt;
+                            &lt;out-errors&gt;0&lt;/out-errors&gt;
+                        &lt;/statistics&gt;
+                    &lt;/interface&gt;
+                &lt;/interfaces-state&gt;
+            &lt;/datastore-contents&gt;
+        &lt;/push-update&gt;
+    &lt;/contents&gt;
+&lt;/envelope&gt;
 </pre><a href="#appendix-A.1-6" class="pilcrow">¶</a>
 </div>
 <p id="appendix-A.1-7">The third enclosing method, applicable if the instance is to be stored as YANG instance data at rest, by adding the corresponding metadata, would produce a results as shown below:<a href="#appendix-A.1-7" class="pilcrow">¶</a></p>
@@ -2264,47 +2294,49 @@ ypmd:provenance-string=
 }
 </pre><a href="#appendix-A.2-4" class="pilcrow">¶</a>
 </div>
-<p id="appendix-A.2-5">The second enclosing method would translate into a notification including the "notification-provenance" element. For RESTCONF it would be as follows:<a href="#appendix-A.2-5" class="pilcrow">¶</a></p>
+<p id="appendix-A.2-5">The second enclosing method would translate into a notification including the "provenance" element. For RESTCONF it would be as follows:<a href="#appendix-A.2-5" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="appendix-A.2-6">
 <pre>
 {
-  "ietf-restconf:notification" : {
-    "eventTime" : "2013-12-21T00:01:00Z",
-    "ietf-yang-push:push-update": {
-      "subscription-id": 2147483648,
-      "datastore-contents": {
-        "ietf-interfaces:interfaces-state": {
-          "interface": [ {
-              "name": "GigabitEthernet1",
-              "type": "ianaift:ethernetCsmacd",
-              "admin-status": "up",
-              "oper-status": "up",
-              "last-change": "2024-02-03T11:22:41.081+00:00",
-              "if-index": 1,
-              "phys-address": "0c:00:00:37:d6:00",
-              "speed": 1000000000,
-              "statistics": {
-                "discontinuity-time": "2024-02-03T11:20:38+00:00",
-                "in-octets": 8157,
-                "in-unicast-pkts": 94,
-                "in-broadcast-pkts": 0,
-                "in-multicast-pkts": 0,
-                "in-discards": 0,
-                "in-errors": 0,
-                "in-unknown-protos": 0,
-                "out-octets": 89363,
-                "out-unicast-pkts": 209,
-                "out-broadcast-pkts": 0,
-                "out-multicast-pkts": 0,
-                "out-discards": 0,
-                "out-errors": 0
+  "ietf-yp-notification:envelope" : {
+    "event-time" : "2013-12-21T00:01:00Z",
+    "ietf-yp-provenance:provenance" : "0oRRowNjeG1sBGdlYzIua2V5ASag9lhArfYIbXGXjjg5wMF+xJnYGm0NV3ULe2triP4gT7GFeikK19g1N3gNXD5ZZbCn03aN68PgIEl+dglQ6/mobLeEvg==",
+    "contents": {
+      "ietf-yang-push:push-update": {
+        "subscription-id": 2147483648,
+        "datastore-contents": {
+          "ietf-interfaces:interfaces-state": {
+            "interface": [ {
+                "name": "GigabitEthernet1",
+                "type": "ianaift:ethernetCsmacd",
+                "admin-status": "up",
+                "oper-status": "up",
+                "last-change": "2024-02-03T11:22:41.081+00:00",
+                "if-index": 1,
+                "phys-address": "0c:00:00:37:d6:00",
+                "speed": 1000000000,
+                "statistics": {
+                  "discontinuity-time": "2024-02-03T11:20:38+00:00",
+                  "in-octets": 8157,
+                  "in-unicast-pkts": 94,
+                  "in-broadcast-pkts": 0,
+                  "in-multicast-pkts": 0,
+                  "in-discards": 0,
+                  "in-errors": 0,
+                  "in-unknown-protos": 0,
+                  "out-octets": 89363,
+                  "out-unicast-pkts": 209,
+                  "out-broadcast-pkts": 0,
+                  "out-multicast-pkts": 0,
+                  "out-discards": 0,
+                  "out-errors": 0
+                }
               }
-            }
-          ]
+            ]
+          }
         }
       }
-    },
-    "notification-provenance" : "0oRRowNjeG1sBGdlYzIua2V5ASag9lhArfYIbXGXjjg5wMF+xJnYGm0NV3ULe2triP4gT7GFeikK19g1N3gNXD5ZZbCn03aN68PgIEl+dglQ6/mobLeEvg=="
+    }
   }
 }
 </pre><a href="#appendix-A.2-6" class="pilcrow">¶</a>
@@ -2313,42 +2345,44 @@ ypmd:provenance-string=
 <div class="alignLeft art-text artwork" id="appendix-A.2-8">
 <pre>
 {
-  "ietf-notification:notification" : {
-    "eventTime" : "2023-02-10T08:00:11.22Z",
-    "ietf-yang-push:push-update" : {
-      "id" : 1011,
-      "datastore-contents" : {
-        "ietf-interfaces:interfaces" : [ {
-          "interface" : {
-            "name": "GigabitEthernet1",
-              "iana-if-type:type": "ianaift:ethernetCsmacd",
-              "admin-status": "up",
-              "oper-status": "up",
-              "last-change": "2024-02-03T11:22:41.081+00:00",
-              "if-index": 1,
-              "phys-address": "0c:00:00:37:d6:00",
-              "speed": 1000000000,
-              "statistics": {
-                "discontinuity-time": "2024-02-03T11:20:38+00:00",
-                "in-octets": 8157,
-                "in-unicast-pkts": 94,
-                "in-broadcast-pkts": 0,
-                "in-multicast-pkts": 0,
-                "in-discards": 0,
-                "in-errors": 0,
-                "in-unknown-protos": 0,
-                "out-octets": 89363,
-                "out-unicast-pkts": 209,
-                "out-broadcast-pkts": 0,
-                "out-multicast-pkts": 0,
-                "out-discards": 0,
-                "out-errors": 0
-              }
-          }
-        } ]
+  "ietf-yp-notification:envelope" : {
+    "event-time" : "2023-02-10T08:00:11.22Z",
+    "ietf-yp-provenance:provenance" : "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAvkE8Y0Od9zRLM/sNlJtau07xuO3zDArCnUhaKJpS6erVUL0MflWm7zby//k4BBQ2zBiBO6LDouoaiuGGj6EwiQ==",
+    "contents": {
+      "ietf-yang-push:push-update" : {
+        "id" : 1011,
+        "datastore-contents" : {
+          "ietf-interfaces:interfaces" : [ {
+            "interface" : {
+              "name": "GigabitEthernet1",
+                "iana-if-type:type": "ianaift:ethernetCsmacd",
+                "admin-status": "up",
+                "oper-status": "up",
+                "last-change": "2024-02-03T11:22:41.081+00:00",
+                "if-index": 1,
+                "phys-address": "0c:00:00:37:d6:00",
+                "speed": 1000000000,
+                "statistics": {
+                  "discontinuity-time": "2024-02-03T11:20:38+00:00",
+                  "in-octets": 8157,
+                  "in-unicast-pkts": 94,
+                  "in-broadcast-pkts": 0,
+                  "in-multicast-pkts": 0,
+                  "in-discards": 0,
+                  "in-errors": 0,
+                  "in-unknown-protos": 0,
+                  "out-octets": 89363,
+                  "out-unicast-pkts": 209,
+                  "out-broadcast-pkts": 0,
+                  "out-multicast-pkts": 0,
+                  "out-discards": 0,
+                  "out-errors": 0
+                }
+            }
+          } ]
+        }
       }
-    },
-    "notification-provenance" : "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAvkE8Y0Od9zRLM/sNlJtau07xuO3zDArCnUhaKJpS6erVUL0MflWm7zby//k4BBQ2zBiBO6LDouoaiuGGj6EwiQ=="
+    }
   }
 }
 </pre><a href="#appendix-A.2-8" class="pilcrow">¶</a>
