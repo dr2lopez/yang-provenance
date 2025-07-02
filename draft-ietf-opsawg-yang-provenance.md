@@ -648,7 +648,8 @@ Applying the first enclosing method, a provenance leaf at the top element (named
 <?xml version="1.0" encoding="UTF-8"?>
 <interfaces-state xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
     <signature-string>
-0oRRowNjeG1sBGdlYzIua2V5ASag9lhAvzyFP5HP0nONaqTRxKmSqerrDS6CQXJSK+5NdprzQZLf0QsHtAi2pxzbuDJDy9kZoy1JTvNaJmMxGTLdm4ktug==
+0oRRowNjeG1sBGdlYzIua2V5ASag9lhAvzyFP5HP0nONaqTRxKmSqerrDS6CQXJSK+5Ndp
+rzQZLf0QsHtAi2pxzbuDJDy9kZoy1JTvNaJmMxGTLdm4ktug==
     </signature-string>
     <interface>
         <name>GigabitEthernet1</name>
@@ -687,7 +688,8 @@ The second enclosing method would translate into a notification including the "p
 <envelope xmlns="urn:ietf:params:xml:ns:yang:ietf-yp-notification">
     <event-time>2024-02-03T11:37:25.94Z</event-time>
     <provenance xmlns="urn:ietf:params:xml:ns:yang:ietf-yp-provenance">
-0oRRowNjeG1sBGdlYzIua2V5ASag9lhADiPn3eMRclCAnMlauYyD5yKFvYeXipf4oAmQW5DUREizL59Xs5erOerbryu8vs+A8YOl8AhlAUFzvThffcKPZg==
+0oRRowNjeG1sBGdlYzIua2V5ASag9lhADiPn3eMRclCAnMlauYyD5yKFvYeXipf4oAmQW5
+DUREizL59Xs5erOerbryu8vs+A8YOl8AhlAUFzvThffcKPZg==
     </provenance>
     <contents>
         <push-update xmlns="urn:ietf:params:xml:ns:yang:ietf-yang-push">
@@ -742,7 +744,8 @@ The third enclosing method, applicable if the instance is to be stored as YANG i
   <description>Sample for demonstrating provenance signatures</description>
   <contact>diego.r.lopez@telefonica.com</contact>
   <provenance-string>
-0oRRowNjeG1sBGdlYzIua2V5ASag9lhAWff+fMbfNChKUYZ52UTOBmAlYPFe4vlZOLyZeW0CU7/2OutDeMCG28+m3rm58jqLjKbcueKLFq8qFJb4mvPY+Q==
+0oRRowNjeG1sBGdlYzIua2V5ASag9lhAWff+fMbfNChKUYZ52UTOBmAlYPFe4vlZOLyZeW0CU7
+/2OutDeMCG28+m3rm58jqLjKbcueKLFq8qFJb4mvPY+Q==
   </provenance-string>
   <content-data>
    <interfaces-state xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
@@ -785,7 +788,8 @@ Finally, using the fourth enclosing method, the YANG instance would incorporate 
 <interfaces-state xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces"
 xmlns:ypmd="http://telefonica.com/temporary-ns-yangpmd"
 ypmd:provenance-string=
-"0oRRowNjeG1sBGdlYzIua2V5ASag9lhAzen3Bm9AZoyXuetpoTB70SzZqKVxeuOMW099sm+NXSqCfnqBKfXeuqDNEkuEr+E0XiAso986fbAHQCHbAJMOhw==">
+"0oRRowNjeG1sBGdlYzIua2V5ASag9lhAzen3Bm9AZoyXuetpoTB70SzZqKVxeuOMW099
+sm+NXSqCfnqBKfXeuqDNEkuEr+E0XiAso986fbAHQCHbAJMOhw==">
     <interface>
         <name>GigabitEthernet1</name>
         <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">
