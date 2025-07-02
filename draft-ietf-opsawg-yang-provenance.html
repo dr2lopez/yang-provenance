@@ -1170,6 +1170,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <nav class="toc"><ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
             <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.1">
+                <p id="section-toc.1-1.1.2.1.1" class="keepWithNext"><a href="#section-1.1" class="auto internal xref">1.1</a>.  <a href="#name-target-deployment-scenarios" class="internal xref">Target Deployment Scenarios</a></p>
+</li>
+            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
             <p id="section-toc.1-1.2.1" class="keepWithNext"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-conventions-and-definitions" class="internal xref">Conventions and Definitions</a></p>
@@ -1178,7 +1183,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
             <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-defining-provenance-element" class="internal xref">Defining Provenance Elements</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1">
-                <p id="section-toc.1-1.3.2.1.1" class="keepWithNext"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-provenance-signature-string" class="internal xref">Provenance Signature Strings</a></p>
+                <p id="section-toc.1-1.3.2.1.1"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-provenance-signature-string" class="internal xref">Provenance Signature Strings</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2">
                 <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-signature-and-verification-" class="internal xref">Signature and Verification Procedures</a></p>
@@ -1288,6 +1293,25 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <p id="section-1-3">The original use case for this provenance mechanism is associated with <span>[<a href="#YANGmanifest" class="cite xref">YANGmanifest</a>]</span>, in order to provide a proof of the origin and integrity of the provided metadata, and therefore the examples in this document use the modules described there, but it soon became clear that it could be extended to any YANG datamodel to support provenance evidence. An analysis of other potential use cases suggested the interest of defining an independent, generally applicable mechanism.<a href="#section-1-3" class="pilcrow">¶</a></p>
 <p id="section-1-4">Provenance verification by signatures incorporated in YANG data can be applied to any data processing pipeline, whether they rely on an online flow or use some kind of data store, such as data lakes or time-series databases. The application of recorded data for ML training or validation constitute the most relevant examples of these scenarios.<a href="#section-1-4" class="pilcrow">¶</a></p>
 <p id="section-1-5">This document provides a mechanism for including digital signatures within YANG data. It applies COSE <span>[<a href="#RFC9052" class="cite xref">RFC9052</a>]</span> to make the signature compact and reduce the resources required for calculating it. This mechanism is applicable to any serialization of the YANG data supporting a clear method for canonicalization, but this document considers three base ones: CBOR, JSON and XML.<a href="#section-1-5" class="pilcrow">¶</a></p>
+<div id="target-deployment-scenarios">
+<section id="section-1.1">
+        <h3 id="name-target-deployment-scenarios">
+<a href="#section-1.1" class="section-number selfRef">1.1. </a><a href="#name-target-deployment-scenarios" class="section-name selfRef">Target Deployment Scenarios</a>
+        </h3>
+<p id="section-1.1-1">The provenance mechanisms described in this document are designed to be flexible and applicable in multiple deployment contexts within operational and management practices. The following non-exhaustive list provides examples of intended deployment scenarios:<a href="#section-1.1-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1.1-2.1">
+            <p id="section-1.1-2.1.1">Device Configuration Integrity: Digital signatures may be applied to device configuration elements to ensure that specific configuration fragments originate from an authorized source (e.g., controller, automation system) and have not been altered in transit. This is useful for zero-touch provisioning and secure configuration distribution in programmable networks.<a href="#section-1.1-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-1.1-2.2">
+            <p id="section-1.1-2.2.1">Telemetry and Monitoring Data: When applied to operational state or streaming telemetry data (e.g., YANG-Push updates or Subscription Notifications), provenance signatures can help verify the integrity and authenticity of data collected from network elements, especially when the data may traverse untrusted collection pipelines.<a href="#section-1.1-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-1.1-2.3">
+            <p id="section-1.1-2.3.1">Network-Wide Service Orchestration: In multi-vendor or multi-domain environments, provenance can be used to track and validate contributions from different orchestrators or domain controllers in composite service models. This enables trustable service chaining and auditability.<a href="#section-1.1-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
 </section>
 </div>
 <div id="conventions-and-definitions">
@@ -1375,6 +1399,7 @@ signature /using as external data the content of the YANG
             <p id="section-3.2-3.2.1">Applying the corresponding canonicalization method as described in the following section.<a href="#section-3.2-3.2.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
+<p id="section-3.2-4">In order to guarantee proper verification, the signature procedure <span class="bcp14">MUST</span> be the last action to be taken before the YANG construct being signed is made available, whatever the means (sent as a reply to a poll or a notification, written to a file or record, etc.), and verification <span class="bcp14">SHOULD</span> take place in advance of any processing by the consuming application. The actions to be taken if the verification fails are specific to the consuming application, but it is <span class="bcp14">RECOMMENDED</span> to at least issue an error warning.<a href="#section-3.2-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="canonicalization">
@@ -1827,7 +1852,7 @@ module yang-provenance-metadata {
 <a href="#section-5" class="section-number selfRef">5. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
       </h2>
 <p id="section-5-1">The provenance assessment mechanism described in this document relies on COSE <span>[<a href="#RFC9052" class="cite xref">RFC9052</a>]</span> and the deterministic encoding or canonicalization procedures described by <span>[<a href="#RFC8949" class="cite xref">RFC8949</a>]</span>, <span>[<a href="#RFC8785" class="cite xref">RFC8785</a>]</span> and <span>[<a href="#XMLSig" class="cite xref">XMLSig</a>]</span>. The security considerations made in these references are fully applicable here.<a href="#section-5-1" class="pilcrow">¶</a></p>
-<p id="section-5-2">The verification step depends on the association of the kid (Key ID) with the proper public key. This is a local matter for the verifier and its specification is out of the scope of this document. The use of certificates, PKI mechanisms, or any other secure distribution of id-public key mappings is <span class="bcp14">RECOMMENDED</span>.<a href="#section-5-2" class="pilcrow">¶</a></p>
+<p id="section-5-2">The verification step depends on the association of the kid (Key ID) with the proper public key. This is a local matter for the verifier and its specification is out of the scope of this document. Similarly, key association with reliable data sources is a deployment decision, though a couple of deployment patterns can be considered, depending on the application scenario under consideration. On the one hand, identities may be associated to controller entities (a domain controller, a person in charge of operational aspects, an organizational unit managing an administrative domain, ec.) owning the private keys to be use in generating the provenance signatures for YANG data such as configurations or telemetry. Alternatively, individual devices may hold the identities and corresponding private keys to generate provenance signatures for locally originated data (e.g., telemetry updates). The use of certificates, PKI mechanisms, or any other secure out-of-band distribution of id-public key mappings is <span class="bcp14">RECOMMENDED</span>.<a href="#section-5-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="iana-considerations">
@@ -2002,6 +2027,7 @@ module yang-provenance-metadata {
       <h2 id="name-appendix-a-examples-of-appl">
 <a href="#name-appendix-a-examples-of-appl" class="section-name selfRef">Appendix A. Examples of Application of the Different Enclosing Methods</a>
       </h2>
+<p id="appendix-A-1">In the examples that follow, the signature strings have been wrapped and, in some cases, indented to improve readability. If these examples are used for any kind of validation, all intermediate carriage returns and whitespace should be deleted to build the actual signature string to be considered.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
 <div id="xml">
 <section id="appendix-A.1">
         <h3 id="name-xml">
@@ -2042,9 +2068,8 @@ module yang-provenance-metadata {
 &lt;/interfaces-state&gt;
 </pre><a href="#appendix-A.1-2" class="pilcrow">¶</a>
 </div>
-<p id="appendix-A.1-3">In the examples that follow, the signature strings have been wrapped and, in some cases, indented to improve readability. If this examples are used for any kind of validation, please delete all intermediate carriage returns and whitespace to build the actual signature string to be considered.<a href="#appendix-A.1-3" class="pilcrow">¶</a></p>
-<p id="appendix-A.1-4">Applying the first enclosing method, a provenance leaf at the top element (named "signature-string" in this case") would be included and produce the following output:<a href="#appendix-A.1-4" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="appendix-A.1-5">
+<p id="appendix-A.1-3">Applying the first enclosing method, a provenance leaf at the top element (named "signature-string" in this case") would be included and produce the following output:<a href="#appendix-A.1-3" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-A.1-4">
 <pre>
 &lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;interfaces-state xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces"&gt;
@@ -2080,10 +2105,10 @@ QXJSK+5NdprzQZLf0QsHtAi2pxzbuDJDy9kZoy1JTvNaJmMxGTLdm4ktug==
         &lt;/statistics&gt;
     &lt;/interface&gt;
 &lt;/interfaces-state&gt;
-</pre><a href="#appendix-A.1-5" class="pilcrow">¶</a>
+</pre><a href="#appendix-A.1-4" class="pilcrow">¶</a>
 </div>
-<p id="appendix-A.1-6">The second enclosing method would translate into a notification including the "provenance" element as follows:<a href="#appendix-A.1-6" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="appendix-A.1-7">
+<p id="appendix-A.1-5">The second enclosing method would translate into a notification including the "provenance" element as follows:<a href="#appendix-A.1-5" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-A.1-6">
 <pre>
 &lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;envelope xmlns="urn:ietf:params:xml:ns:yang:ietf-yp-notification"&gt;
@@ -2129,10 +2154,10 @@ Xipf4oAmQW5DUREizL59Xs5erOerbryu8vs+A8YOl8AhlAUFzvThffcKPZg==
         &lt;/push-update&gt;
     &lt;/contents&gt;
 &lt;/envelope&gt;
-</pre><a href="#appendix-A.1-7" class="pilcrow">¶</a>
+</pre><a href="#appendix-A.1-6" class="pilcrow">¶</a>
 </div>
-<p id="appendix-A.1-8">The third enclosing method, applicable if the instance is to be stored as YANG instance data at rest, by adding the corresponding metadata, would produce a results as shown below:<a href="#appendix-A.1-8" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="appendix-A.1-9">
+<p id="appendix-A.1-7">The third enclosing method, applicable if the instance is to be stored as YANG instance data at rest, by adding the corresponding metadata, would produce a results as shown below:<a href="#appendix-A.1-7" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-A.1-8">
 <pre>
 &lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;instance-data-set xmlns="urn:ietf:params:xml:ns:yang:ietf-yang-instance-data"&gt;
@@ -2180,10 +2205,10 @@ vlZOLyZeW0CU7/2OutDeMCG28+m3rm58jqLjKbcueKLFq8qFJb4mvPY+Q==
    &lt;/interfaces-state&gt;
  &lt;/content-data&gt;
 &lt;/instance-data-set&gt;
-</pre><a href="#appendix-A.1-9" class="pilcrow">¶</a>
+</pre><a href="#appendix-A.1-8" class="pilcrow">¶</a>
 </div>
-<p id="appendix-A.1-10">Finally, using the fourth enclosing method, the YANG instance would incorporate the corresponding provenance metadata as an annotation:<a href="#appendix-A.1-10" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="appendix-A.1-11">
+<p id="appendix-A.1-9">Finally, using the fourth enclosing method, the YANG instance would incorporate the corresponding provenance metadata as an annotation:<a href="#appendix-A.1-9" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-A.1-10">
 <pre>
 &lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;interfaces-state xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces"
@@ -2219,7 +2244,7 @@ OMW099sm+NXSqCfnqBKfXeuqDNEkuEr+E0XiAso986fbAHQCHbAJMOhw=="&gt;
         &lt;/statistics&gt;
     &lt;/interface&gt;
 &lt;/interfaces-state&gt;
-</pre><a href="#appendix-A.1-11" class="pilcrow">¶</a>
+</pre><a href="#appendix-A.1-10" class="pilcrow">¶</a>
 </div>
 </section>
 </div>

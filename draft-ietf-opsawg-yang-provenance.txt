@@ -84,6 +84,7 @@ Copyright Notice
 Table of Contents
 
    1.  Introduction
+     1.1.  Target Deployment Scenarios
    2.  Conventions and Definitions
    3.  Defining Provenance Elements
      3.1.  Provenance Signature Strings
@@ -159,6 +160,33 @@ Table of Contents
    mechanism is applicable to any serialization of the YANG data
    supporting a clear method for canonicalization, but this document
    considers three base ones: CBOR, JSON and XML.
+
+1.1.  Target Deployment Scenarios
+
+   The provenance mechanisms described in this document are designed to
+   be flexible and applicable in multiple deployment contexts within
+   operational and management practices.  The following non-exhaustive
+   list provides examples of intended deployment scenarios:
+
+   *  Device Configuration Integrity: Digital signatures may be applied
+      to device configuration elements to ensure that specific
+      configuration fragments originate from an authorized source (e.g.,
+      controller, automation system) and have not been altered in
+      transit.  This is useful for zero-touch provisioning and secure
+      configuration distribution in programmable networks.
+
+   *  Telemetry and Monitoring Data: When applied to operational state
+      or streaming telemetry data (e.g., YANG-Push updates or
+      Subscription Notifications), provenance signatures can help verify
+      the integrity and authenticity of data collected from network
+      elements, especially when the data may traverse untrusted
+      collection pipelines.
+
+   *  Network-Wide Service Orchestration: In multi-vendor or multi-
+      domain environments, provenance can be used to track and validate
+      contributions from different orchestrators or domain controllers
+      in composite service models.  This enables trustable service
+      chaining and auditability.
 
 2.  Conventions and Definitions
 
@@ -253,6 +281,15 @@ typedef provenance-signature {
 
    *  Applying the corresponding canonicalization method as described in
       the following section.
+
+   In order to guarantee proper verification, the signature procedure
+   MUST be the last action to be taken before the YANG construct being
+   signed is made available, whatever the means (sent as a reply to a
+   poll or a notification, written to a file or record, etc.), and
+   verification SHOULD take place in advance of any processing by the
+   consuming application.  The actions to be taken if the verification
+   fails are specific to the consuming application, but it is
+   RECOMMENDED to at least issue an error warning.
 
 3.3.  Canonicalization
 
@@ -723,9 +760,20 @@ typedef provenance-signature {
 
    The verification step depends on the association of the kid (Key ID)
    with the proper public key.  This is a local matter for the verifier
-   and its specification is out of the scope of this document.  The use
-   of certificates, PKI mechanisms, or any other secure distribution of
-   id-public key mappings is RECOMMENDED.
+   and its specification is out of the scope of this document.
+   Similarly, key association with reliable data sources is a deployment
+   decision, though a couple of deployment patterns can be considered,
+   depending on the application scenario under consideration.  On the
+   one hand, identities may be associated to controller entities (a
+   domain controller, a person in charge of operational aspects, an
+   organizational unit managing an administrative domain, ec.) owning
+   the private keys to be use in generating the provenance signatures
+   for YANG data such as configurations or telemetry.  Alternatively,
+   individual devices may hold the identities and corresponding private
+   keys to generate provenance signatures for locally originated data
+   (e.g., telemetry updates).  The use of certificates, PKI mechanisms,
+   or any other secure out-of-band distribution of id-public key
+   mappings is RECOMMENDED.
 
 6.  IANA Considerations
 
@@ -873,6 +921,12 @@ typedef provenance-signature {
 
 Appendix A.  Examples of Application of the Different Enclosing Methods
 
+   In the examples that follow, the signature strings have been wrapped
+   and, in some cases, indented to improve readability.  If these
+   examples are used for any kind of validation, all intermediate
+   carriage returns and whitespace should be deleted to build the actual
+   signature string to be considered.
+
 XML
 
    Let us consider the following YANG instance, corresponding to a
@@ -908,12 +962,6 @@ XML
         </statistics>
     </interface>
 </interfaces-state>
-
-   In the examples that follow, the signature strings have been wrapped
-   and, in some cases, indented to improve readability.  If this
-   examples are used for any kind of validation, please delete all
-   intermediate carriage returns and whitespace to build the actual
-   signature string to be considered.
 
    Applying the first enclosing method, a provenance leaf at the top
    element (named "signature-string" in this case") would be included
