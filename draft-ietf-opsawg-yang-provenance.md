@@ -47,9 +47,6 @@ author:
    code: '64295'
    city: Darmstadt
    country: Germany
- - name: Sofia Garcia
-   organization: UC3M
-   email: "sofia.garciarincon.practicas@telefonica.com"
 
 normative:
  RFC3688:
@@ -78,7 +75,7 @@ informative:
 
 --- abstract
 
-This document defines a mechanism based on COSE signatures to provide and verify the provenance of YANG data, so it is possible to verify the origin and integrity of a dataset, even when those data are going to be processed and/or applied in workflows where a crypto-enabled data transport directly from the original data stream is not available. As the application of evidence-based OAM automation and the use of tools such as AI/ML grow, provenance validation becomes more relevant in all scenarios. The use of compact signatures facilitates the inclusion of provenance strings in any YANG schema requiring them.
+This document defines a mechanism based on COSE signatures to provide and verify the provenance of YANG data, so it is possible to verify the origin and integrity of a dataset, even when those data are going to be processed and/or applied in workflows where a crypto-enabled data transport directly from the original data stream is not available. As the application of evidence-based OAM automation and the use of tools such as AI/ML grow, provenance validation becomes more relevant in all scenarios, in support of the assuring the origin and integritu of datasets and/or data streams. The use of compact signatures facilitates the inclusion of provenance strings in any YANG schema requiring them.
 
 --- middle
 
@@ -117,6 +114,8 @@ typedef provenance-signature {
        draft-ietf-opsawg-yang-provenance";
 }
 ~~~
+
+The use of this type is the proper method for identifying signature leaves, and therefore whenever this type is used for a leaf element, it MUST be considered a provenance signature element, to be generated or verified according to the procedures described in this section.
 
 ## Provenance Signature Strings
 
@@ -1034,4 +1033,6 @@ TBD, as the reference implementation evolves.
 
 # Acknowledgments
 {:numbered="false"}
+Thanks to Sofia Garcia (UC3M, sgarciarincon01@gmail.com) for being instrumental in demonstrating the feasibility of the proposed approach, providing a first proof of concept of YANG provenance signatures.
+
 This document is based on work partially funded by the EU H2020 project SPIRS (grant 952622), and the EU Horizon Europe projects PRIVATEER (grant 101096110), HORSE (grant 101096342), MARE (grant 101191436), ACROSS (grant 101097122) and CYBERNEMO (grant 101168182).
