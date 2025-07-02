@@ -5,15 +5,13 @@
 Operations and Management Area Working Group                    D. Lopez
 Internet-Draft                                                 A. Pastor
 Intended status: Standards Track                              Telefonica
-Expires: 9 November 2025                                   A. Huang Feng
+Expires: 3 January 2026                                    A. Huang Feng
                                                                INSA-Lyon
                                                                A. Mendez
                                                               Telefonica
                                                              H. Birkholz
                                                           Fraunhofer SIT
-                                                               S. Garcia
-                                                                    UC3M
-                                                              8 May 2025
+                                                             2 July 2025
 
 
            Applying COSE Signatures for YANG Data Provenance
@@ -28,9 +26,10 @@ Abstract
    data transport directly from the original data stream is not
    available.  As the application of evidence-based OAM automation and
    the use of tools such as AI/ML grow, provenance validation becomes
-   more relevant in all scenarios.  The use of compact signatures
-   facilitates the inclusion of provenance strings in any YANG schema
-   requiring them.
+   more relevant in all scenarios, in support of the assuring the origin
+   and integritu of datasets and/or data streams.  The use of compact
+   signatures facilitates the inclusion of provenance strings in any
+   YANG schema requiring them.
 
 About This Document
 
@@ -66,7 +65,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 9 November 2025.
+   This Internet-Draft will expire on 3 January 2026.
 
 Copyright Notice
 
@@ -193,6 +192,11 @@ typedef provenance-signature {
       "RFC 9052: CBOR Object Signing and Encryption (COSE): Structures and Process
        draft-ietf-opsawg-yang-provenance";
 }
+
+   The use of this type is the proper method for identifying signature
+   leaves, and therefore whenever this type is used for a leaf element,
+   it MUST be considered a provenance signature element, to be generated
+   or verified according to the procedures described in this section.
 
 3.1.  Provenance Signature Strings
 
@@ -833,9 +837,9 @@ module: ietf-notification
               Claise, B., Quilbeuf, J., Lopez, D., Martinez-Casanueva,
               I. D., and T. Graf, "A Data Manifest for Contextualized
               Telemetry Data", Work in Progress, Internet-Draft, draft-
-              ietf-opsawg-collected-data-manifest-06, 3 March 2025,
+              ietf-opsawg-collected-data-manifest-08, 27 June 2025,
               <https://datatracker.ietf.org/doc/html/draft-ietf-opsawg-
-              collected-data-manifest-06>.
+              collected-data-manifest-08>.
 
 Appendix A.  Examples of Application of the Different Enclosing Methods
 
@@ -1288,6 +1292,11 @@ CBOR
 
 Acknowledgments
 
+   Thanks to Sofia Garcia (UC3M, sgarciarincon01@gmail.com) for being
+   instrumental in demonstrating the feasibility of the proposed
+   approach, providing a first proof of concept of YANG provenance
+   signatures.
+
    This document is based on work partially funded by the EU H2020
    project SPIRS (grant 952622), and the EU Horizon Europe projects
    PRIVATEER (grant 101096110), HORSE (grant 101096342), MARE (grant
@@ -1321,8 +1330,3 @@ Authors' Addresses
    64295 Darmstadt
    Germany
    Email: henk.birkholz@sit.fraunhofer.de
-
-
-   Sofia Garcia
-   UC3M
-   Email: sofia.garciarincon.practicas@telefonica.com
