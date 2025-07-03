@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-07-01T01:10:01.554834+00:00",
+  "timestamp": "2025-07-03T01:02:41.143549+00:00",
   "repo": "dr2lopez/yang-provenance",
   "labels": [
     {
@@ -106,26 +106,42 @@
       "id": "PR_kwDOJ3j81c6VnIMK",
       "title": "update second enclosing method to latests updates on notif-envelope",
       "url": "https://github.com/dr2lopez/yang-provenance/pull/2",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "ahuangfeng",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2025-05-09T16:20:54Z",
-      "updatedAt": "2025-05-09T16:47:37Z",
+      "updatedAt": "2025-07-02T11:43:43Z",
       "baseRepository": "dr2lopez/yang-provenance",
       "baseRefName": "main",
       "baseRefOid": "2471873b112e6bd6b308e883a976bd1126aa6c51",
       "headRepository": "ahuangfeng/draft-yang-provenance",
       "headRefName": "main",
       "headRefOid": "2a0fc360de6072bbdda582a0cde269b6e09c19e9",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2025-07-02T11:43:14Z",
+      "mergedAt": "2025-07-02T11:43:14Z",
+      "mergedBy": "dr2lopez",
+      "mergeCommit": {
+        "oid": "79e7578addf095a71d1e5b38f155ad8f93c35dcb"
+      },
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOJ3j81c6xjT-A",
+          "commit": {
+            "abbreviatedOid": "2a0fc36"
+          },
+          "author": "dr2lopez",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "Nothing to object",
+          "createdAt": "2025-07-02T11:43:43Z",
+          "updatedAt": "2025-07-02T11:43:43Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
