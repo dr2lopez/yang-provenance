@@ -638,6 +638,7 @@ This document registers the following URIs in the "IETF XML Registry" {{RFC3688}
   URI: urn:ietf:params:xml:ns:yang:ietf-yp-provenance
   Registrant Contact: The IESG.
   XML: N/A; the requested URI is an XML namespace.
+~~~
 
 ~~~
   URI: urn:ietf:params:xml:ns:yang:ietf-yang-instance-data-provenance
