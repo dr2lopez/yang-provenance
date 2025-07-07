@@ -1748,7 +1748,68 @@ module: ietf-yang-instance-data-provenance
 <a href="#section-4.3.1" class="section-number selfRef">4.3.1. </a><a href="#name-yang-module-2" class="section-name selfRef">YANG Module</a>
           </h4>
 <p id="section-4.3.1-1">This module defines the provenance signature element to be included as metadata of a YANG data instance.<a href="#section-4.3.1-1" class="pilcrow">¶</a></p>
-<p id="section-4.3.1-2">TBD: YANG module derived from <span>[<a href="#RFC9195" class="cite xref">RFC9195</a>]</span>, named "ietf-yang-instance-data-provenance"<a href="#section-4.3.1-2" class="pilcrow">¶</a></p>
+<div class="breakable sourcecode" id="section-4.3.1-2">
+<pre>&lt;CODE BEGINS&gt; file "ietf-yang-instance-data-provenance@2025-07-07.yang"
+
+module ietf-yang-instance-data-provenance {
+  yang-version 1.1;
+  namespace "urn:ietf:params:xml:ns:yang:ietf-yang-instance-data-provenance";
+  prefix "yidprov";
+  import ietf-yang-instance-data {
+    prefix "id";
+    reference
+     “RFC 9195 A File Format for YANG Instance Data”
+  }
+import ietf-yang-provenance {
+    prefix iyangprov;
+    reference
+      "RFC XXXX: Applying COSE Signatures for YANG Data Provenance";
+  }
+  import ietf-yang-structure-ext {
+    prefix sx;
+    reference
+      "RFC 8791: YANG Data Structure Extensions";
+  }
+  organization "IETF OPSAWG (Operations and Management Area Working Group)";
+  contact
+    "WG Web:   &lt;https://datatracker.ietf.org/wg/opsawg/&gt;
+     WG List:  &lt;mailto:opsawg@ietf.org&gt;
+
+     Authors:  Ana Mendez
+               &lt;mailto:ana.mendezperz@telefonica.com&gt;
+               Diego Lopez
+               &lt;mailto:diego.r.lopez@telefonica.com&gt;";
+  description
+        "Defines a binary provenance-signature type to be used as metadata
+         in a YANG data instance.
+
+         Copyright (c) 2025 IETF Trust and the persons identified as
+         authors of the code.  All rights reserved.
+
+         Redistribution and use in source and binary forms, with or without
+         modification, is permitted pursuant to, and subject to the license
+         terms contained in, the Revised BSD License set forth in Section
+         4.c of the IETF Trust's Legal Provisions Relating to IETF Documents
+         (https://trustee.ietf.org/license-info).
+
+         This version of this YANG module is part of RFC XXXX; see the RFC
+         itself for full legal notices.";
+
+  revision 2025-07-07 {
+    description "First revision.";
+    reference "RFC XXXX: Applying COSE Signatures for YANG Data Provenance";
+  }
+  sx:augment-structure "/id:instance-data-set" {
+    leaf provenance-string {
+      type iyangprov:provenance-signature;
+      description
+        "Provenance signature that applies to the full content-data block of an instance dataset.";
+    }
+  }
+}
+
+&lt;CODE ENDS&gt;</pre><a href="#section-4.3.1-2" class="pilcrow">¶</a>
+</div>
 </section>
 </div>
 </section>
@@ -1779,7 +1840,7 @@ module: ietf-yang-instance-data-provenance
 <div class="breakable sourcecode" id="section-4.4.1-2">
 <pre>&lt;CODE BEGINS&gt; file "ietf-provenance-annotation@2024-06-30.yang"
 
-module yang-provenance-metadata {
+module yang-annotation-provenance-metadata {
      yang-version 1.1;
      namespace
        "urn:ietf:params:xml:ns:yang:ietf-yang-annotation-pmd";
@@ -1873,9 +1934,13 @@ module yang-provenance-metadata {
   URI: urn:ietf:params:xml:ns:yang:ietf-yp-provenance
   Registrant Contact: The IESG.
   XML: N/A; the requested URI is an XML namespace.
+
 </pre><a href="#section-6.1-3" class="pilcrow">¶</a>
 </div>
-<p id="section-6.1-4">TBD: URI for the instance namespace<a href="#section-6.1-4" class="pilcrow">¶</a></p>
+<p id="section-6.1-4">URI: urn:ietf:params:xml:ns:yang:ietf-yang-instance-data-provenance
+  Registrant Contact: The IESG.
+  XML: N/A; the requested URI is an XML namespace.
+~~~<a href="#section-6.1-4" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-6.1-5">
 <pre>
   URI: urn:ietf:params:xml:ns:yang:ietf-yang-annotation-pmd
@@ -1907,10 +1972,17 @@ module yang-provenance-metadata {
   reference: RFC XXXX
 </pre><a href="#section-6.2-3" class="pilcrow">¶</a>
 </div>
-<p id="section-6.2-4">TBD: Name for the EM on instance files<a href="#section-6.2-4" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-6.2-4">
+<pre>
+  name: ietf-yang-instance-data-provenance
+  namespace: urn:ietf:params:xml:ns:yang:ietf-yang-instance-data-provenance
+  prefix: yidprov
+  reference: RFC XXXX
+</pre><a href="#section-6.2-4" class="pilcrow">¶</a>
+</div>
 <div class="alignLeft art-text artwork" id="section-6.2-5">
 <pre>
-  name: yang-provenance-metadata
+  name: yang-annotation-provenance-metadata
   namespace: urn:ietf:params:xml:ns:yang:ietf-yang-annotation-pmd
   prefix: ypmd
   reference: RFC XXXX
@@ -2125,8 +2197,8 @@ QXJSK+5NdprzQZLf0QsHtAi2pxzbuDJDy9kZoy1JTvNaJmMxGTLdm4ktug==
 &lt;envelope xmlns="urn:ietf:params:xml:ns:yang:ietf-yp-notification"&gt;
     &lt;event-time&gt;2024-02-03T11:37:25.94Z&lt;/event-time&gt;
     &lt;provenance xmlns="urn:ietf:params:xml:ns:yang:ietf-yp-provenance"&gt;
-0oRRowNjeG1sBGdlYzIua2V5ASag9lhADiPn3eMRclCAnMlauYyD5yKFvYe
-Xipf4oAmQW5DUREizL59Xs5erOerbryu8vs+A8YOl8AhlAUFzvThffcKPZg==
+0oRRowNjeG1sBGdlYzIua2V5ASag9lhAzyJBpvnpzI/TirrjckAA29q6Qmf
+u56L8ZhUXXhu0KFcKh1qSRFx2wGR/y+xgKigVHYicC7fp/0AlHSXWiKB2sg==
     &lt;/provenance&gt;
     &lt;contents&gt;
         &lt;push-update xmlns="urn:ietf:params:xml:ns:yang:ietf-yang-push"&gt;
@@ -2223,7 +2295,7 @@ vlZOLyZeW0CU7/2OutDeMCG28+m3rm58jqLjKbcueKLFq8qFJb4mvPY+Q==
 <pre>
 &lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;interfaces-state xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces"
-xmlns:ypmd="http://telefonica.com/temporary-ns-yangpmd"
+xmlns:ypmd="urn:ietf:params:xml:ns:yang:ietf-yang-annotation-pmd"
 ypmd:provenance-string=
 "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAzen3Bm9AZoyXuetpoTB70SzZqKVxeu
 OMW099sm+NXSqCfnqBKfXeuqDNEkuEr+E0XiAso986fbAHQCHbAJMOhw=="&gt;
@@ -2343,9 +2415,6 @@ OMW099sm+NXSqCfnqBKfXeuqDNEkuEr+E0XiAso986fbAHQCHbAJMOhw=="&gt;
 {
   "ietf-yp-notification:envelope" : {
     "event-time" : "2013-12-21T00:01:00Z",
-    "ietf-yp-provenance:provenance" :
-    "0oRRowNjeG1sBGdlYzIua2V5ASag9lhArfYIbXGXjjg5wMF+xJnYGm0NV3ULe
-     2triP4gT7GFeikK19g1N3gNXD5ZZbCn03aN68PgIEl+dglQ6/mobLeEvg==",
     "contents": {
       "ietf-yang-push:push-update": {
         "subscription-id": 2147483648,
@@ -2381,7 +2450,10 @@ OMW099sm+NXSqCfnqBKfXeuqDNEkuEr+E0XiAso986fbAHQCHbAJMOhw=="&gt;
           }
         }
       }
-    }
+    },
+    "ietf-yp-provenance:provenance":
+    "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAiKEKLQKJT12LsNgxt8WllEI65lyi
+     E/m12drCfl+wh7T61cTYhFGdEeX8A5F0vmUWROZebq/VVFewUZeVYGZBOQ=="
   }
 }
 </pre><a href="#appendix-A.2-6" class="pilcrow">¶</a>
@@ -2424,7 +2496,7 @@ OMW099sm+NXSqCfnqBKfXeuqDNEkuEr+E0XiAso986fbAHQCHbAJMOhw=="&gt;
         }
       }
     },
-    "provenance-string" :
+    "ietf-yang-instance-data-provenance:provenance-string" :
     "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAmop/c7wMcjRmiSPVy65F/N6O21dsG
      kjGQjIDRizhu3WMwi9Je+VUf5sqwlhSwQCdv5u7mRXa6Pd9dhCwdxdRCA=="
   }

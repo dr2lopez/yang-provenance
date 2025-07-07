@@ -666,8 +666,65 @@ typedef provenance-signature {
    This module defines the provenance signature element to be included
    as metadata of a YANG data instance.
 
-   TBD: YANG module derived from [RFC9195], named "ietf-yang-instance-
-   data-provenance"
+   <CODE BEGINS>
+     file "ietf-yang-instance-data-provenance@2025-07-07.yang"
+   module ietf-yang-instance-data-provenance {
+     yang-version 1.1;
+     namespace "urn:ietf:params:xml:ns:yang:ietf-yang-instance-data-provenance";
+     prefix "yidprov";
+     import ietf-yang-instance-data {
+       prefix "id";
+       reference
+        “RFC 9195 A File Format for YANG Instance Data”
+     }
+   import ietf-yang-provenance {
+       prefix iyangprov;
+       reference
+         "RFC XXXX: Applying COSE Signatures for YANG Data Provenance";
+     }
+     import ietf-yang-structure-ext {
+       prefix sx;
+       reference
+         "RFC 8791: YANG Data Structure Extensions";
+     }
+     organization "IETF OPSAWG (Operations and Management Area Working Group)";
+     contact
+       "WG Web:   <https://datatracker.ietf.org/wg/opsawg/>
+        WG List:  <mailto:opsawg@ietf.org>
+
+        Authors:  Ana Mendez
+                  <mailto:ana.mendezperz@telefonica.com>
+                  Diego Lopez
+                  <mailto:diego.r.lopez@telefonica.com>";
+     description
+           "Defines a binary provenance-signature type to be used as metadata
+            in a YANG data instance.
+
+            Copyright (c) 2025 IETF Trust and the persons identified as
+            authors of the code.  All rights reserved.
+
+            Redistribution and use in source and binary forms, with or without
+            modification, is permitted pursuant to, and subject to the license
+            terms contained in, the Revised BSD License set forth in Section
+            4.c of the IETF Trust's Legal Provisions Relating to IETF Documents
+            (https://trustee.ietf.org/license-info).
+
+            This version of this YANG module is part of RFC XXXX; see the RFC
+            itself for full legal notices.";
+
+     revision 2025-07-07 {
+       description "First revision.";
+       reference "RFC XXXX: Applying COSE Signatures for YANG Data Provenance";
+     }
+     sx:augment-structure "/id:instance-data-set" {
+       leaf provenance-string {
+         type iyangprov:provenance-signature;
+         description
+           "Provenance signature that applies to the full content-data block of an instance dataset.";
+       }
+     }
+   }
+   <CODE ENDS>
 
 4.4.  Including Provenance in YANG Annotations
 
@@ -698,7 +755,7 @@ typedef provenance-signature {
    signature for a YANG element.
 
    <CODE BEGINS> file "ietf-provenance-annotation@2024-06-30.yang"
-   module yang-provenance-metadata {
+   module yang-annotation-provenance-metadata {
         yang-version 1.1;
         namespace
           "urn:ietf:params:xml:ns:yang:ietf-yang-annotation-pmd";
@@ -793,7 +850,9 @@ typedef provenance-signature {
      Registrant Contact: The IESG.
      XML: N/A; the requested URI is an XML namespace.
 
-   TBD: URI for the instance namespace
+   URI: urn:ietf:params:xml:ns:yang:ietf-yang-instance-data-provenance
+   Registrant Contact: The IESG.  XML: N/A; the requested URI is an XML
+   namespace. ~~~
 
      URI: urn:ietf:params:xml:ns:yang:ietf-yang-annotation-pmd
      Registrant Contact: The IESG.
@@ -814,9 +873,12 @@ typedef provenance-signature {
      prefix: inotifprov
      reference: RFC XXXX
 
-   TBD: Name for the EM on instance files
+  name: ietf-yang-instance-data-provenance
+  namespace: urn:ietf:params:xml:ns:yang:ietf-yang-instance-data-provenance
+  prefix: yidprov
+  reference: RFC XXXX
 
-     name: yang-provenance-metadata
+     name: yang-annotation-provenance-metadata
      namespace: urn:ietf:params:xml:ns:yang:ietf-yang-annotation-pmd
      prefix: ypmd
      reference: RFC XXXX
@@ -1022,8 +1084,8 @@ QXJSK+5NdprzQZLf0QsHtAi2pxzbuDJDy9kZoy1JTvNaJmMxGTLdm4ktug==
 <envelope xmlns="urn:ietf:params:xml:ns:yang:ietf-yp-notification">
     <event-time>2024-02-03T11:37:25.94Z</event-time>
     <provenance xmlns="urn:ietf:params:xml:ns:yang:ietf-yp-provenance">
-0oRRowNjeG1sBGdlYzIua2V5ASag9lhADiPn3eMRclCAnMlauYyD5yKFvYe
-Xipf4oAmQW5DUREizL59Xs5erOerbryu8vs+A8YOl8AhlAUFzvThffcKPZg==
+0oRRowNjeG1sBGdlYzIua2V5ASag9lhAzyJBpvnpzI/TirrjckAA29q6Qmf
+u56L8ZhUXXhu0KFcKh1qSRFx2wGR/y+xgKigVHYicC7fp/0AlHSXWiKB2sg==
     </provenance>
     <contents>
         <push-update xmlns="urn:ietf:params:xml:ns:yang:ietf-yang-push">
@@ -1121,7 +1183,7 @@ vlZOLyZeW0CU7/2OutDeMCG28+m3rm58jqLjKbcueKLFq8qFJb4mvPY+Q==
 
 <?xml version="1.0" encoding="UTF-8"?>
 <interfaces-state xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces"
-xmlns:ypmd="http://telefonica.com/temporary-ns-yangpmd"
+xmlns:ypmd="urn:ietf:params:xml:ns:yang:ietf-yang-annotation-pmd"
 ypmd:provenance-string=
 "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAzen3Bm9AZoyXuetpoTB70SzZqKVxeu
 OMW099sm+NXSqCfnqBKfXeuqDNEkuEr+E0XiAso986fbAHQCHbAJMOhw==">
@@ -1234,9 +1296,6 @@ JSON
    {
      "ietf-yp-notification:envelope" : {
        "event-time" : "2013-12-21T00:01:00Z",
-       "ietf-yp-provenance:provenance" :
-       "0oRRowNjeG1sBGdlYzIua2V5ASag9lhArfYIbXGXjjg5wMF+xJnYGm0NV3ULe
-        2triP4gT7GFeikK19g1N3gNXD5ZZbCn03aN68PgIEl+dglQ6/mobLeEvg==",
        "contents": {
          "ietf-yang-push:push-update": {
            "subscription-id": 2147483648,
@@ -1272,7 +1331,10 @@ JSON
              }
            }
          }
-       }
+       },
+       "ietf-yp-provenance:provenance":
+       "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAiKEKLQKJT12LsNgxt8WllEI65lyi
+        E/m12drCfl+wh7T61cTYhFGdEeX8A5F0vmUWROZebq/VVFewUZeVYGZBOQ=="
      }
    }
 
@@ -1315,7 +1377,7 @@ JSON
            }
          }
        },
-       "provenance-string" :
+       "ietf-yang-instance-data-provenance:provenance-string" :
        "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAmop/c7wMcjRmiSPVy65F/N6O21dsG
         kjGQjIDRizhu3WMwi9Je+VUf5sqwlhSwQCdv5u7mRXa6Pd9dhCwdxdRCA=="
      }
