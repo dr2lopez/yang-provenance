@@ -850,9 +850,9 @@ typedef provenance-signature {
      Registrant Contact: The IESG.
      XML: N/A; the requested URI is an XML namespace.
 
-   URI: urn:ietf:params:xml:ns:yang:ietf-yang-instance-data-provenance
-   Registrant Contact: The IESG.  XML: N/A; the requested URI is an XML
-   namespace. ~~~
+     URI: urn:ietf:params:xml:ns:yang:ietf-yang-instance-data-provenance
+     Registrant Contact: The IESG.
+     XML: N/A; the requested URI is an XML namespace.
 
      URI: urn:ietf:params:xml:ns:yang:ietf-yang-annotation-pmd
      Registrant Contact: The IESG.
