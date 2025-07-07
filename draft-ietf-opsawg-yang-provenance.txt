@@ -5,13 +5,13 @@
 Operations and Management Area Working Group                    D. Lopez
 Internet-Draft                                                 A. Pastor
 Intended status: Standards Track                              Telefonica
-Expires: 5 January 2026                                    A. Huang Feng
+Expires: 8 January 2026                                    A. Huang Feng
                                                                INSA-Lyon
                                                                A. Mendez
                                                               Telefonica
                                                              H. Birkholz
                                                           Fraunhofer SIT
-                                                             4 July 2025
+                                                             7 July 2025
 
 
            Applying COSE Signatures for YANG Data Provenance
@@ -65,7 +65,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 5 January 2026.
+   This Internet-Draft will expire on 8 January 2026.
 
 Copyright Notice
 
@@ -391,7 +391,7 @@ typedef provenance-signature {
    defining the element to be signed (the enclosing element), and thus
    implies considering provenance signatures when defining a YANG
    module, or the use of augmentation to include the provenance
-   signature element.
+   signature element in a existing YANG module.
 
    When defining a provenance signature leaf element to appear in a YANG
    schema by means of this enclosing method, the provenance-signature
@@ -663,9 +663,11 @@ typedef provenance-signature {
 
 4.3.1.  YANG Module
 
-   This module defines the provenance signature element to be
-   included as metadata of a YANG data instance.  YANG module derived
-      from [RFC9195], named "ietf-yang-instance-data-provenance"
+   This module defines the provenance signature element to be included
+   as metadata of a YANG data instance.
+
+   TBD: YANG module derived from [RFC9195], named "ietf-yang-instance-
+   data-provenance"
 
 4.4.  Including Provenance in YANG Annotations
 
@@ -1104,7 +1106,9 @@ vlZOLyZeW0CU7/2OutDeMCG28+m3rm58jqLjKbcueKLFq8qFJb4mvPY+Q==
 </instance-data-set>
 
    Finally, using the fourth enclosing method, the YANG instance would
-   incorporate the corresponding provenance metadata as an annotation:
+   incorporate the corresponding provenance metadata as an annotation,
+   using the namespace prefix specified in the yang-provenance-metadata
+   module, as introduced in Section 4.4:
 
 <?xml version="1.0" encoding="UTF-8"?>
 <interfaces-state xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces"
@@ -1216,8 +1220,7 @@ JSON
    }
 
    The second enclosing method would translate into a notification
-   including the "provenance" element.  For RESTCONF it would be as
-   follows:
+   including the "provenance" element as follows:
 
    {
      "ietf-yp-notification:envelope" : {
@@ -1258,52 +1261,6 @@ JSON
                  }
                ]
              }
-           }
-         }
-       }
-     }
-   }
-
-   And for NETCONF:
-
-   {
-     "ietf-yp-notification:envelope" : {
-       "event-time" : "2023-02-10T08:00:11.22Z",
-       "ietf-yp-provenance:provenance" :
-       "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAvkE8Y0Od9zRLM/sNlJtau07xuO3z
-        DArCnUhaKJpS6erVUL0MflWm7zby//k4BBQ2zBiBO6LDouoaiuGGj6EwiQ==",
-       "contents": {
-         "ietf-yang-push:push-update" : {
-           "id" : 1011,
-           "datastore-contents" : {
-             "ietf-interfaces:interfaces" : [ {
-               "interface" : {
-                 "name": "GigabitEthernet1",
-                   "iana-if-type:type": "ianaift:ethernetCsmacd",
-                   "admin-status": "up",
-                   "oper-status": "up",
-                   "last-change": "2024-02-03T11:22:41.081+00:00",
-                   "if-index": 1,
-                   "phys-address": "0c:00:00:37:d6:00",
-                   "speed": 1000000000,
-                   "statistics": {
-                     "discontinuity-time": "2024-02-03T11:20:38+00:00",
-                     "in-octets": 8157,
-                     "in-unicast-pkts": 94,
-                     "in-broadcast-pkts": 0,
-                     "in-multicast-pkts": 0,
-                     "in-discards": 0,
-                     "in-errors": 0,
-                     "in-unknown-protos": 0,
-                     "out-octets": 89363,
-                     "out-unicast-pkts": 209,
-                     "out-broadcast-pkts": 0,
-                     "out-multicast-pkts": 0,
-                     "out-discards": 0,
-                     "out-errors": 0
-                   }
-               }
-             } ]
            }
          }
        }
@@ -1356,7 +1313,10 @@ JSON
    }
 
    Finally, using the fourth enclosing method, the YANG instance would
-   incorporate the corresponding provenance metadata as an annotation:
+   incorporate the corresponding provenance metadata as an annotation,
+   using the namespace prefix specified in the yang-provenance-metadata
+   module, as introduced in Section 4.4, and the recommendations in
+   section 5.2.3 of [RFC7952]:
 
    {
      "ietf-interfaces:interfaces-state" : {
