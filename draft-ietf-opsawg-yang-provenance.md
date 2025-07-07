@@ -581,10 +581,10 @@ This document registers the following URIs in the "IETF XML Registry" {{RFC3688}
   XML: N/A; the requested URI is an XML namespace.
 ~~~
 
-TBD UTI for the instance namespace
+TBD: URI for the instance namespace
 
 ~~~
-  URI: "urn:ietf:params:xml:ns:yang:ietf-yang-annotation-pmd";
+  URI: urn:ietf:params:xml:ns:yang:ietf-yang-annotation-pmd
   Registrant Contact: The IESG.
   XML: N/A; the requested URI is an XML namespace.
 ~~~
@@ -615,61 +615,7 @@ TBD: Name for the EM on instance files
   namespace: urn:ietf:params:xml:ns:yang:ietf-yang-annotation-pmd
   prefix: ypmd
   reference: RFC XXXX
-
-<CODE BEGINS> file "ietf-provenance-annotation@2024-06-30.yang"
-module yang-provenance-metadata {
-     yang-version 1.1;
-     namespace "http://telefonica.com/temporary-ns-yangpmd";
-     prefix "ypmd";
-     import ietf-yang-types {
-       prefix "yang";
-     }
-     import ietf-yang-metadata {
-       prefix "md";
-     }
-     organization "IETF OPSAWG (Operations and Management Area Working Group)";
-     contact
-       "WG Web:   <https://datatracker.ietf.org/wg/opsawg/>
-        WG List:  <mailto:opsawg@ietf.org>
-
-        Authors: Diego Lopez
-                 <mailto:diego.r.lopez@telefonica.com>
-                 Alex Huang Feng
-                 <mailto:alex.huang-feng@insa-lyon.fr>
-                 Antonio Pastor
-                 <mailto:antonio.pastorperales@telefonica.com>
-                 Henk Birkholz
-                 <mailto:henk.birkholz@sit.fraunhofer.de>";
-        description
-        "Defines a binary provenance-signature type to be used in YANG
-         metadata annotations
-
-         Copyright (c) 2024 IETF Trust and the persons identified as
-         authors of the code.  All rights reserved.
-
-         Redistribution and use in source and binary forms, with or without
-         modification, is permitted pursuant to, and subject to the license
-         terms contained in, the Revised BSD License set forth in Section
-         4.c of the IETF Trust's Legal Provisions Relating to IETF Documents
-         (https://trustee.ietf.org/license-info).
-
-         This version of this YANG module is part of RFC XXXX; see the RFC
-         itself for full legal notices.";
-
-     revision 2024-02-28 {
-        description
-        "First revision";
-        reference
-        "RFC XXXX: Applying COSE Signatures for YANG Data Provenance";
-     }
-     md:annotation provenance-string {
-       type yang:provenance-signature;
-       description
-         "This annotation contains the provenance signature for
-          the YANG element associated with it";
-     }
-}
-
+~~~
 
 # Implementation Status
 
