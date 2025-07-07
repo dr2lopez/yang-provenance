@@ -673,8 +673,8 @@ typedef provenance-signature {
 
    The use of annotations as defined in [RFC7952] seems a natural
    enclosing method, dealing with the provenance signature string as
-   metadata and not requiring modification of existing YANG schemas.The
-   provenance-string annotation is defined as follows:
+   metadata and not requiring modification of existing YANG schemas.
+   The provenance-string annotation is defined as follows:
 
     md:annotation provenance-string {
           type provenance-signature;
@@ -700,7 +700,8 @@ typedef provenance-signature {
    <CODE BEGINS> file "ietf-provenance-annotation@2024-06-30.yang"
    module yang-provenance-metadata {
         yang-version 1.1;
-        namespace "http://telefonica.com/temporary-ns-yangpmd";
+        namespace
+          "urn:ietf:params:xml:ns:yang:ietf-yang-annotation-pmd";
         prefix "ypmd";
         import ietf-yang-types {
           prefix "yang";
@@ -752,8 +753,6 @@ typedef provenance-signature {
    }
    <CODE ENDS>
 
-   TBD: Provide a final URL for the "ypmd" prefix.
-
 5.  Security Considerations
 
    The provenance assessment mechanism described in this document relies
@@ -794,6 +793,12 @@ typedef provenance-signature {
      Registrant Contact: The IESG.
      XML: N/A; the requested URI is an XML namespace.
 
+   TBD: URI for the instance namespace
+
+     URI: urn:ietf:params:xml:ns:yang:ietf-yang-annotation-pmd
+     Registrant Contact: The IESG.
+     XML: N/A; the requested URI is an XML namespace.
+
 6.2.  YANG Module Name
 
    This document registers the following YANG modules in the "YANG
@@ -809,8 +814,12 @@ typedef provenance-signature {
      prefix: inotifprov
      reference: RFC XXXX
 
-   TBD: Others?  At least for the two additional enclosing methods
-   (instance files and annotations)
+   TBD: Name for the EM on instance files
+
+     name: yang-provenance-metadata
+     namespace: urn:ietf:params:xml:ns:yang:ietf-yang-annotation-pmd
+     prefix: ypmd
+     reference: RFC XXXX
 
 7.  Implementation Status
 
