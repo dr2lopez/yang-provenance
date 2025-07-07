@@ -486,7 +486,7 @@ module ietf-yang-instance-data-provenance {
   prefix "yidprov";
   import ietf-yang-instance-data {
     prefix "id";
-    reference 
+    reference
      “RFC 9195 A File Format for YANG Instance Data”
   }
 import ietf-yang-provenance {
