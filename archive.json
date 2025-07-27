@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-07-24T01:06:21.732927+00:00",
+  "timestamp": "2025-07-27T01:12:40.335998+00:00",
   "repo": "dr2lopez/yang-provenance",
   "labels": [
     {
@@ -49,7 +49,40 @@
       "color": "ffffff"
     }
   ],
-  "issues": [],
+  "issues": [
+    {
+      "number": 3,
+      "id": "I_kwDOJ3j81c7CVtgK",
+      "title": "Notif-envelope defines that the payload (leaf \"contents\") is the last node",
+      "url": "https://github.com/dr2lopez/yang-provenance/issues/3",
+      "state": "OPEN",
+      "author": "ahuangfeng",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "I already discussed this with Ana during the Hackathon.\n\nThe examples from the appendix need to be updated to comply with notif-envelope:\nhttps://datatracker.ietf.org/doc/html/draft-ietf-opsawg-yang-provenance-01#appendix-A.2-5 (JSON encoding for notif-envelope enclosure)\n\nIn this case, the \"ietf-yp-provenance:provenance\" leaf need to be before the leaf \"contents\". This applies to all encodings.\n\n\n\n",
+      "createdAt": "2025-07-24T16:20:30Z",
+      "updatedAt": "2025-07-24T16:20:30Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 4,
+      "id": "I_kwDOJ3j81c7CVvUt",
+      "title": "SID file?",
+      "url": "https://github.com/dr2lopez/yang-provenance/issues/4",
+      "state": "OPEN",
+      "author": "ahuangfeng",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "I think we also need to allocate a CBOR SID file as we are using YANG structures and automatically generating the SIDs is not available yet.\nSee [https://datatracker.ietf.org/doc/html/draft-ietf-netconf-notif-envelope-02#name-sid-file](https://datatracker.ietf.org/doc/html/draft-ietf-netconf-notif-envelope-02#name-sid-file)",
+      "createdAt": "2025-07-24T16:23:40Z",
+      "updatedAt": "2025-07-24T16:23:40Z",
+      "closedAt": null,
+      "comments": []
+    }
+  ],
   "pulls": [
     {
       "number": 1,
