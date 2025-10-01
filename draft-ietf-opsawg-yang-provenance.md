@@ -994,6 +994,9 @@ The second enclosing method would translate into a notification including the "p
 {
   "ietf-yp-notification:envelope" : {
     "event-time" : "2013-12-21T00:01:00Z",
+    "ietf-yp-provenance:provenance":
+    "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAiKEKLQKJT12LsNgxt8WllEI65lyi
+     E/m12drCfl+wh7T61cTYhFGdEeX8A5F0vmUWROZebq/VVFewUZeVYGZBOQ=="
     "contents": {
       "ietf-yang-push:push-update": {
         "subscription-id": 2147483648,
@@ -1030,9 +1033,6 @@ The second enclosing method would translate into a notification including the "p
         }
       }
     },
-    "ietf-yp-provenance:provenance":
-    "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAiKEKLQKJT12LsNgxt8WllEI65lyi
-     E/m12drCfl+wh7T61cTYhFGdEeX8A5F0vmUWROZebq/VVFewUZeVYGZBOQ=="
   }
 }
 ~~~
