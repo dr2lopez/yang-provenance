@@ -679,7 +679,7 @@ This document registers the following YANG modules in the "YANG Module Names" re
 ~~~
 
 ~~~
-  name: yang-annotation-provenance-metadata
+  name: ietf-yang-annotation-provenance-metadata
   namespace: urn:ietf:params:xml:ns:yang:ietf-yang-annotation-pmd
   prefix: ypmd
   reference: RFC XXXX
@@ -687,7 +687,8 @@ This document registers the following YANG modules in the "YANG Module Names" re
 
 # Implementation Status
 
-An open-source reference implementation, written in Java, is available at <https://github.com/tefiros/cose-provenance>. This implementation has been used to generate the examples in the appendix of this document, and was first demonstrated at the IETF 122 Hackathon. Work is ongoing to explore its integration with other open-source YANG modules.
+An open-source reference implementation, written in Java, is available at <https://github.com/tefiros/cose-provenance>. This implementation has been used to generate the examples in the appendix of this document, and was first demonstrated at the IETF 122 Hackathon. Work is ongoing to explore its integration with other open-source YANG modules. A kafka message broker integration was presented at the IETF 123 Hackathon aiming at convergence with current efforts on YANG Push. The implementation is available at <https://github.com/tefiros/kafka-provenance>.
+
 
 --- back
 
@@ -703,7 +704,7 @@ Let us consider the following YANG instance, corresponding to a monitoring inter
 
 ~~~
 <?xml version="1.0" encoding="UTF-8"?>
-<interfaces-state xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
+<interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
     <interface>
         <name>GigabitEthernet1</name>
         <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">
@@ -731,18 +732,69 @@ Let us consider the following YANG instance, corresponding to a monitoring inter
             <out-errors>0</out-errors>
         </statistics>
     </interface>
-</interfaces-state>
+</interfaces>
 ~~~
 
-Applying the first enclosing method, a provenance leaf at the top element (named "signature-string" in this case") would be included and produce the following output:
+
+Using the first enclosing method, we will demonstrate how to augment the previous ietf-interfaces YANG module by defining it in the new example module below:
+
+~~~
+
+module interfaces-provenance-augmented {
+  yang-version 1.1;
+  namespace "urn:example:interfaces-provenance-augmented";
+  prefix ifprov;
+
+  import ietf-interfaces {
+    prefix if;
+  }
+  import ietf-yang-provenance {
+    prefix iyangprov;
+  }
+
+  description
+    "Augments ietf-interfaces with provenance information";
+
+  revision "2025-10-08" {
+    description
+      "Initial revision of the augment module adding provenance information to ietf-interfaces.";
+  }
+
+  augment "/if:interfaces" {
+    leaf interfaces-provenance {
+      type iyangprov:provenance-signature;
+      description
+        "Signature proving provenance of the interface configuration";
+    }
+  }
+}
+
+
+~~~
+
+The following tree diagram illustrates the augmentation of the ietf-interfaces module with a provenance-signature at the root container:
+
+~~~
+module: ietf-interfaces
+  +--rw interfaces
+     +--rw interface* [name]
+     |  +--rw name          string
+     |  +--rw type          identityref
+     |  ...
+     +--rw ifprov:interfaces-provenance?  iyangprov:provenance-signature
+~~~
+
+
+The following example illustrates how a provenance signature can be attached to the root interfaces container to protect the entire set of interface configuration and operational data.
+This augmentation adds a provenance-signature leaf at the root interfaces container (named "interfaces-provenance" in this case) and produces the following output:
 
 ~~~
 <?xml version="1.0" encoding="UTF-8"?>
-<interfaces-state xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
-    <signature-string>
-0oRRowNjeG1sBGdlYzIua2V5ASag9lhAvzyFP5HP0nONaqTRxKmSqerrDS6C
-QXJSK+5NdprzQZLf0QsHtAi2pxzbuDJDy9kZoy1JTvNaJmMxGTLdm4ktug==
-    </signature-string>
+<interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
+    <interfaces-provenance xmlns="urn:example:interfaces-provenance-augmented">
+      0oRRowNjeG1sBGdlYzIua2V5ASag9lhAvzyFP5HP0nONaqTRxKmSqerrDS6C
+      QXJSK+5NdprzQZLf0QsHtAi2pxzbuDJDy9kZoy1JTvNaJmMxGTLdm4ktug==
+    </interfaces-provenance>
     <interface>
         <name>GigabitEthernet1</name>
         <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">
@@ -770,7 +822,7 @@ QXJSK+5NdprzQZLf0QsHtAi2pxzbuDJDy9kZoy1JTvNaJmMxGTLdm4ktug==
             <out-errors>0</out-errors>
         </statistics>
     </interface>
-</interfaces-state>
+</interfaces>
 ~~~
 
 The second enclosing method would translate into a notification including the "provenance" element as follows:
@@ -919,73 +971,78 @@ Let us consider the following YANG instance, corresponding to the same monitorin
 
 ~~~
 {
-  "ietf-interfaces:interfaces-state": {
-    "interface": {
-      "name": "GigabitEthernet1",
-      "iana-if-type:type": "ianaift:ethernetCsmacd",
-      "admin-status": "up",
-      "oper-status": "up",
-      "last-change": "2024-02-03T11:22:41.081+00:00",
-      "if-index": 1,
-      "phys-address": "0c:00:00:37:d6:00",
-      "speed": 1000000000,
-      "statistics": {
-        "discontinuity-time": "2024-02-03T11:20:38+00:00",
-        "in-octets": 8157,
-        "in-unicast-pkts": 94,
-        "in-broadcast-pkts": 0,
-        "in-multicast-pkts": 0,
-        "in-discards": 0,
-        "in-errors": 0,
-        "in-unknown-protos": 0,
-        "out-octets": 89363,
-        "out-unicast-pkts": 209,
-        "out-broadcast-pkts": 0,
-        "out-multicast-pkts": 0,
-        "out-discards": 0,
-        "out-errors": 0
+  "ietf-interfaces:interfaces": {
+    "interface": [
+      {
+        "name": "GigabitEthernet1",
+        "type": "ianaift:ethernetCsmacd",
+        "admin-status": "up",
+        "oper-status": "up",
+        "last-change": "2024-02-03T11:22:41.081+00:00",
+        "if-index": 1,
+        "phys-address": "0c:00:00:37:d6:00",
+        "speed": 1000000000,
+        "statistics": {
+          "discontinuity-time": "2024-02-03T11:20:38+00:00",
+          "in-octets": 8157,
+          "in-unicast-pkts": 94,
+          "in-broadcast-pkts": 0,
+          "in-multicast-pkts": 0,
+          "in-discards": 0,
+          "in-errors": 0,
+          "in-unknown-protos": 0,
+          "out-octets": 89363,
+          "out-unicast-pkts": 209,
+          "out-broadcast-pkts": 0,
+          "out-multicast-pkts": 0,
+          "out-discards": 0,
+          "out-errors": 0
+        }
       }
-    }
+    ]
   }
 }
 ~~~
 
-Applying the first enclosing method, a provenance leaf at the top element (named "provenance-string" in this case") would be included and produce the following output:
+Applying the first enclosing method, a provenance-signature leaf at the top element (named "interfaces-provenance" in this case") would be included following the augmentation module previously defined before the XML example. This will produce the following output:
 
 ~~~
 {
-  "ietf-interfaces:interfaces-state" : {
-    "interface" : {
-      "name" : "GigabitEthernet1",
-      "iana-if-type:type" : "ianaift:ethernetCsmacd",
-      "admin-status" : "up",
-      "oper-status" : "up",
-      "last-change" : "2024-02-03T11:22:41.081+00:00",
-      "if-index" : 1,
-      "phys-address" : "0c:00:00:37:d6:00",
-      "speed" : 1000000000,
-      "statistics" : {
-        "discontinuity-time" : "2024-02-03T11:20:38+00:00",
-        "in-octets" : 8157,
-        "in-unicast-pkts" : 94,
-        "in-broadcast-pkts" : 0,
-        "in-multicast-pkts" : 0,
-        "in-discards" : 0,
-        "in-errors" : 0,
-        "in-unknown-protos" : 0,
-        "out-octets" : 89363,
-        "out-unicast-pkts" : 209,
-        "out-broadcast-pkts" : 0,
-        "out-multicast-pkts" : 0,
-        "out-discards" : 0,
-        "out-errors" : 0
+  "ietf-interfaces:interfaces": {
+    "interface": [
+      {
+        "name": "GigabitEthernet1",
+        "type": "ianaift:ethernetCsmacd",
+        "admin-status": "up",
+        "oper-status": "up",
+        "last-change": "2024-02-03T11:22:41.081+00:00",
+        "if-index": 1,
+        "phys-address": "0c:00:00:37:d6:00",
+        "speed": 1000000000,
+        "statistics": {
+          "discontinuity-time": "2024-02-03T11:20:38+00:00",
+          "in-octets": 8157,
+          "in-unicast-pkts": 94,
+          "in-broadcast-pkts": 0,
+          "in-multicast-pkts": 0,
+          "in-discards": 0,
+          "in-errors": 0,
+          "in-unknown-protos": 0,
+          "out-octets": 89363,
+          "out-unicast-pkts": 209,
+          "out-broadcast-pkts": 0,
+          "out-multicast-pkts": 0,
+          "out-discards": 0,
+          "out-errors": 0
+        }
       }
-    },
-    "provenance-string" :
-    "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAnC4dNl5VSxkVCv8IOaiIhD7ymVZJ
-     8Ol1NFH0GZ7bhe+CrnLTOyPazKl2PK33ZqkUGwZo0HmlkPOiAb1okaCZIw=="
+    ],
+    "interfaces-provenance-augmented:interfaces-provenance":
+      "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAvzyFP5HP0nONaqTRxKmSqerrDS6C
+       QXJSK+5NdprzQZLf0QsHtAi2pxzbuDJDy9kZoy1JTvNaJmMxGTLdm4ktug=="
   }
 }
+
 ~~~
 
 The second enclosing method would translate into a notification including the "provenance" element as follows:
