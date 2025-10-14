@@ -1123,7 +1123,7 @@ The third enclosing method, applicable if the instance is to be stored as YANG i
      kjGQjIDRizhu3WMwi9Je+VUf5sqwlhSwQCdv5u7mRXa6Pd9dhCwdxdRCA==",
     "content-data" : {
       "ietf-interfaces:interfaces": {
-        "interface": [ 
+        "interface": [
           {
             "name": "GigabitEthernet1",
             "iana-if-type:type": "ianaift:ethernetCsmacd",
