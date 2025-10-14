@@ -473,7 +473,7 @@ module: ietf-yang-instance-data-provenance
     +-- provenance?   iyangprov:provenance-signature
 ~~~
 
-> **Note:** As in the second enclosing method, since this is a data structure, the `provenance` leaf appears before the `content-data` element. 
+> **Note:** As in the second enclosing method, since this is a data structure, the `provenance` leaf appears before the `content-data` element.
 
 The resulting YANG tree structure is:
 
