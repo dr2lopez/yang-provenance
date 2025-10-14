@@ -978,7 +978,6 @@ Finally, using the fourth enclosing method, the YANG instance would incorporate 
 </interfaces>
 ~~~
 
-> **Note:** Although the annotation is defined in our module with the ypmd prefix, the instance document must use the standard md: prefix, as defined in {{RFC 7952}}. This ensures consistent and interoperable handling of YANG metadata annotations across different implementations.
 
 ## JSON
 {:numbered="false"}
