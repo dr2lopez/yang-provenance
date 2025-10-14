@@ -358,7 +358,7 @@ module: ietf-notification
 ~~~
 
 Unlike the first enclosing method, in this second enclosing method the provenance leaf is added by augmenting a structure (/inotenv:envelope). The provenance leaf is inserted before the contents leaf.
-This ordering is important because the provenance signature must cover the contents of the notification but not include itself in the signature computation. This ensures the signature remains valid and verifiable. In YANG, augmented structures typically respect the convention that the <anydata> node, when present, should appear as the last element in the structure. Therefore, any newly augmented elements are automatically placed before it.
+This ordering is important because the provenance signature must cover the contents of the notification but not include itself in the signature computation. This ensures the signature remains valid and verifiable. In YANG, augmented structures typically respect the convention that the anydata node, when present, should appear as the last element in the structure. Therefore, any newly augmented elements are automatically placed before it.
 
 ### YANG Module
 
