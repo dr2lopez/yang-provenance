@@ -1,0 +1,28 @@
+module interfaces-provenance-augmented {
+  yang-version 1.1;
+  namespace "urn:example:interfaces-provenance-augmented";
+  prefix ifprov;
+
+  import ietf-interfaces {
+    prefix if;
+  }
+  import ietf-yang-provenance {
+    prefix iyangprov;
+  }
+
+  description
+    "Augments ietf-interfaces with provenance information";
+
+  revision "2025-10-08" {
+    description
+      "Initial revision of the augment module adding provenance information to ietf-interfaces.";
+  }
+
+  augment "/if:interfaces" {
+    leaf interfaces-provenance {
+      type iyangprov:provenance-signature;
+      description
+        "Signature proving provenance of the interface configuration";
+    }
+  }
+}
