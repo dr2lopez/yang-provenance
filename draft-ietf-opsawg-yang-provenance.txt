@@ -5,13 +5,13 @@
 Operations and Management Area Working Group                    D. Lopez
 Internet-Draft                                                 A. Pastor
 Intended status: Standards Track                              Telefonica
-Expires: 8 January 2026                                    A. Huang Feng
+Expires: 20 April 2026                                     A. Huang Feng
                                                                INSA-Lyon
                                                                A. Mendez
                                                               Telefonica
                                                              H. Birkholz
                                                           Fraunhofer SIT
-                                                             7 July 2025
+                                                         17 October 2025
 
 
            Applying COSE Signatures for YANG Data Provenance
@@ -65,7 +65,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 8 January 2026.
+   This Internet-Draft will expire on 20 April 2026.
 
 Copyright Notice
 
@@ -500,18 +500,19 @@ typedef provenance-signature {
 4.2.  Including a Provenance Signature in YANG-Push Notifications
 
    The signature mechanism proposed in this document MAY be used with
-   YANG-Push [RFC8641] to sign the generated notifications directly from
-   the publisher nodes.  The signature is added to the notification
-   envelope header [I-D.ietf-netconf-notif-envelope] as a new extension.
+   YANG-Push [RFC8641] to sign notifications generated directly by
+   publisher nodes.  The signature is carried inside the notification
+   envelope header defined in [I-D.ietf-netconf-notif-envelope] as a new
+   extension.
 
    The YANG content to be processed MUST consist of the content defined
-   by the "contents" element [I-D.ietf-netconf-notif-envelope].
+   by the "contents" element in [I-D.ietf-netconf-notif-envelope].
 
-   The following sections define the YANG module augmenting the "ietf-
-   yp-notification" module.  It extends the notification envelope header
-   with a new leaf for the provenance signature and an augmentation to
-   the "ietf-notification-capabilities" to enable clients discover the
-   support of the provenance signature.
+   The following sections define the YANG module that augments the
+   "ietf-yp-notification" module.  It extends the notification envelope
+   header with a new leaf for the provenance signature and an
+   augmentation to the "ietf-notification-capabilities" to enable
+   clients discover the support of the provenance signature.
 
 4.2.1.  YANG Tree Diagram
 
@@ -539,11 +540,24 @@ typedef provenance-signature {
        +-- provenance?        iyangprov:provenance-signature
        +-- contents?          <anydata>
 
+   Unlike the first enclosing method, in this second enclosing method
+   the provenance leaf is added by augmenting a structure
+   (/inotenv:envelope).  The provenance leaf is inserted before the
+   contents leaf.  This ordering is important because the provenance
+   signature MUST cover the content of the notification but MUST NOT
+   include itself in the signature computation.  This ensures the
+   signature remains valid and verifiable.  YANG augmented structures
+   typically respect the convention that the anydata node, when present,
+   should appear as the last element in the structure.  Therefore, any
+   newly augmented elements are automatically placed before it.
+
 4.2.2.  YANG Module
 
-   The module augments "ietf-yp-notification" module
-   [I-D.ietf-netconf-notif-envelope] adding the signature leaf in the
-   notification envelope header.
+   The "ietf-yp-provenance" module augments "ietf-yp-notification"
+   module [I-D.ietf-netconf-notif-envelope] adding the provenance leaf
+   to the notification envelope structure.  It also adds the
+   notification-provenance capability to allow clients to discover if
+   provenance signatures are supported.
 
    <CODE BEGINS> file "ietf-yp-provenance@2024-05-09.yang"
    module ietf-yp-provenance {
@@ -649,17 +663,31 @@ typedef provenance-signature {
    signature is as follows:
 
    module: ietf-yang-instance-data-provenance
-     augment-structure instance-data-set:
-       +--provenance-string?   provenance-signature
+     augment-structure /id:instance-data-set:
+       +-- provenance?   iyangprov:provenance-signature
 
-   The provenance signature string in this enclosing method applies to
-   whole content-data element in instance-data-set, independently of
-   whether those data contain other provenance signature strings by
-   applying other enclosing methods.
+      *Note:* As in the second enclosing method, since this is a data
+      structure, the provenance leaf appears before the content-data
+      element.
+
+   The resulting YANG tree structure is:
+
+     structure instance-data-set:
+       + . . .
+       +-- timestamp?           yang:date-and-time
+       +-- provenance?          iyangprov:provenance-signature
+       +-- content-data?        <anydata>
+
+   The provenance signature defined in this enclosing method applies to
+   the whole content of the instance-data-set structure.  This is
+   independent of any other provenance signature strings that might be
+   present within the content-data itself through other enclosing
+   methods.
 
    The specific YANG content to be processed SHALL be generated by
-   taking the contents of the content-data element and applying the
-   corresponding canonicalization method.
+   taking the contents of instance-data-set structure, excluding the
+   provenance signature element itself and applying the corresponding
+   canonicalization method.
 
 4.3.1.  YANG Module
 
@@ -717,10 +745,10 @@ typedef provenance-signature {
        reference "RFC XXXX: Applying COSE Signatures for YANG Data Provenance";
      }
      sx:augment-structure "/id:instance-data-set" {
-       leaf provenance-string {
+       leaf provenance {
          type iyangprov:provenance-signature;
          description
-           "Provenance signature that applies to the full content-data block of an instance dataset.";
+           "Provenance signature that applies to the full content-data block of an instance dataset.This signature can be used to verify the integrity and authenticity of the instance data.";
        }
      }
    }
@@ -730,10 +758,10 @@ typedef provenance-signature {
 
    The use of annotations as defined in [RFC7952] seems a natural
    enclosing method, dealing with the provenance signature string as
-   metadata and not requiring modification of existing YANG schemas.
-   The provenance-string annotation is defined as follows:
+   metadata extension and not requiring modification of existing YANG
+   schemas.  The provenance-string annotation is defined as follows:
 
-    md:annotation provenance-string {
+    md:annotation provenance {
           type provenance-signature;
           description
             "This annotation contains a digital signature corresponding
@@ -741,7 +769,7 @@ typedef provenance-signature {
         }
 
    The specific YANG content to be processed SHALL be generated by
-   eliminating the provenance-string (encoded according to what is
+   eliminating the provenance annotation (encoded according to what is
    described in Section 5 of [RFC7952]) from the element it applies to,
    before invoking the corresponding canonicalization method.  In
    application of the general recursion principle for provenance
@@ -754,15 +782,12 @@ typedef provenance-signature {
    This module defines a metadata annotation to include a provenance
    signature for a YANG element.
 
-   <CODE BEGINS> file "ietf-provenance-annotation@2024-06-30.yang"
-   module yang-annotation-provenance-metadata {
+   <CODE BEGINS> file "ietf-yang-provenance-annotation@2024-06-30.yang"
+   module ietf-yang-provenance-annotation {
         yang-version 1.1;
         namespace
           "urn:ietf:params:xml:ns:yang:ietf-yang-annotation-pmd";
         prefix "ypmd";
-        import ietf-yang-types {
-          prefix "yang";
-        }
         import ietf-yang-metadata {
           prefix "md";
         }
@@ -795,13 +820,13 @@ typedef provenance-signature {
             This version of this YANG module is part of RFC XXXX; see the RFC
             itself for full legal notices.";
 
-        revision 2024-02-28 {
+        revision 2024-06-30 {
            description
            "First revision";
            reference
            "RFC XXXX: Applying COSE Signatures for YANG Data Provenance";
         }
-        md:annotation provenance-string {
+        md:annotation provenance {
           type yang:provenance-signature;
           description
             "This annotation contains the provenance signature for
@@ -878,7 +903,7 @@ typedef provenance-signature {
   prefix: yidprov
   reference: RFC XXXX
 
-     name: yang-annotation-provenance-metadata
+     name: ietf-yang-provenance-annotation
      namespace: urn:ietf:params:xml:ns:yang:ietf-yang-annotation-pmd
      prefix: ypmd
      reference: RFC XXXX
@@ -891,7 +916,10 @@ typedef provenance-signature {
    has been used to generate the examples in the appendix of this
    document, and was first demonstrated at the IETF 122 Hackathon.  Work
    is ongoing to explore its integration with other open-source YANG
-   modules.
+   modules.  A Kafka message broker integration was presented at the
+   IETF 123 Hackathon aiming at convergence with current efforts on YANG
+   Push.  The implementation is available at https://github.com/tefiros/
+   kafka-provenance (https://github.com/tefiros/kafka-provenance).
 
 8.  References
 
@@ -990,9 +1018,9 @@ typedef provenance-signature {
               Claise, B., Quilbeuf, J., Lopez, D., Martinez-Casanueva,
               I. D., and T. Graf, "A Data Manifest for Contextualized
               Telemetry Data", Work in Progress, Internet-Draft, draft-
-              ietf-opsawg-collected-data-manifest-08, 27 June 2025,
+              ietf-opsawg-collected-data-manifest-09, 21 July 2025,
               <https://datatracker.ietf.org/doc/html/draft-ietf-opsawg-
-              collected-data-manifest-08>.
+              collected-data-manifest-09>.
 
 Appendix A.  Examples of Application of the Different Enclosing Methods
 
@@ -1008,7 +1036,7 @@ XML
    monitoring interface statement, as defined in [RFC7223]:
 
 <?xml version="1.0" encoding="UTF-8"?>
-<interfaces-state xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
+<interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
     <interface>
         <name>GigabitEthernet1</name>
         <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">
@@ -1036,18 +1064,65 @@ XML
             <out-errors>0</out-errors>
         </statistics>
     </interface>
-</interfaces-state>
+</interfaces>
 
-   Applying the first enclosing method, a provenance leaf at the top
-   element (named "signature-string" in this case") would be included
-   and produce the following output:
+   Using the first enclosing method, we will demonstrate how to augment
+   the previous ietf-interfaces YANG module by defining it in the new
+   example module below:
+
+module interfaces-provenance-augmented {
+  yang-version 1.1;
+  namespace "urn:example:interfaces-provenance-augmented";
+  prefix ifprov;
+
+  import ietf-interfaces {
+    prefix if;
+  }
+  import ietf-yang-provenance {
+    prefix iyangprov;
+  }
+
+  description
+    "Augments ietf-interfaces with provenance information";
+
+  revision "2025-10-08" {
+    description
+      "Initial revision of the augment module adding provenance information to ietf-interfaces.";
+  }
+
+  augment "/if:interfaces" {
+    leaf interfaces-provenance {
+      type iyangprov:provenance-signature;
+      description
+        "Signature proving provenance of the interface configuration";
+    }
+  }
+}
+
+   The following tree diagram illustrates the augmentation of the ietf-
+   interfaces module with a provenance-signature at the root container:
+
+module: ietf-interfaces
+  +--rw interfaces
+     +--rw interface* [name]
+     |  +--rw name          string
+     |  +--rw type          identityref
+     |  ...
+     +--rw ifprov:interfaces-provenance?  iyangprov:provenance-signature
+
+   The following example illustrates how a provenance signature can be
+   attached to the root interfaces container to protect the entire set
+   of interface configuration and operational data.  This augmentation
+   adds a provenance-signature leaf at the root interfaces container
+   (named "interfaces-provenance" in this case) and produces the
+   following output:
 
 <?xml version="1.0" encoding="UTF-8"?>
-<interfaces-state xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
-    <signature-string>
-0oRRowNjeG1sBGdlYzIua2V5ASag9lhAvzyFP5HP0nONaqTRxKmSqerrDS6C
-QXJSK+5NdprzQZLf0QsHtAi2pxzbuDJDy9kZoy1JTvNaJmMxGTLdm4ktug==
-    </signature-string>
+<interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
+    <interfaces-provenance xmlns="urn:example:interfaces-provenance-augmented">
+      0oRRowNjeG1sBGdlYzIua2V5ASag9lhAvzyFP5HP0nONaqTRxKmSqerrDS6C
+      QXJSK+5NdprzQZLf0QsHtAi2pxzbuDJDy9kZoy1JTvNaJmMxGTLdm4ktug==
+    </interfaces-provenance>
     <interface>
         <name>GigabitEthernet1</name>
         <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">
@@ -1075,17 +1150,18 @@ QXJSK+5NdprzQZLf0QsHtAi2pxzbuDJDy9kZoy1JTvNaJmMxGTLdm4ktug==
             <out-errors>0</out-errors>
         </statistics>
     </interface>
-</interfaces-state>
+</interfaces>
 
-   The second enclosing method would translate into a notification
-   including the "provenance" element as follows:
+   The second enclosing method shows a notification with the provenance
+   signature included inside the notification envelope.  The provenance
+   element is placed immediately before the contents element:
 
 <?xml version="1.0" encoding="UTF-8"?>
 <envelope xmlns="urn:ietf:params:xml:ns:yang:ietf-yp-notification">
     <event-time>2024-02-03T11:37:25.94Z</event-time>
     <provenance xmlns="urn:ietf:params:xml:ns:yang:ietf-yp-provenance">
-0oRRowNjeG1sBGdlYzIua2V5ASag9lhAzyJBpvnpzI/TirrjckAA29q6Qmf
-u56L8ZhUXXhu0KFcKh1qSRFx2wGR/y+xgKigVHYicC7fp/0AlHSXWiKB2sg==
+    0oRRowNjeG1sBGdlYzIua2V5ASag9lhAzyJBpvnpzI/TirrjckAA29q6Qmf
+    u56L8ZhUXXhu0KFcKh1qSRFx2wGR/y+xgKigVHYicC7fp/0AlHSXWiKB2sg==
     </provenance>
     <contents>
         <push-update xmlns="urn:ietf:params:xml:ns:yang:ietf-yang-push">
@@ -1139,10 +1215,10 @@ u56L8ZhUXXhu0KFcKh1qSRFx2wGR/y+xgKigVHYicC7fp/0AlHSXWiKB2sg==
   </revision>
   <description>Sample for demonstrating provenance signatures</description>
   <contact>diego.r.lopez@telefonica.com</contact>
-  <provenance-string>
-0oRRowNjeG1sBGdlYzIua2V5ASag9lhAWff+fMbfNChKUYZ52UTOBmAlYPFe4
-vlZOLyZeW0CU7/2OutDeMCG28+m3rm58jqLjKbcueKLFq8qFJb4mvPY+Q==
-  </provenance-string>
+  <provenance xmlns="urn:ietf:params:xml:ns:yang:ietf-yang-instance-data-provenance">
+  0oRRowNjeG1sBGdlYzIua2V5ASag9lhAWff+fMbfNChKUYZ52UTOBmAlYPFe4
+  vlZOLyZeW0CU7/2OutDeMCG28+m3rm58jqLjKbcueKLFq8qFJb4mvPY+Q==
+  </provenance>
   <content-data>
    <interfaces-state xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
     <interface>
@@ -1178,15 +1254,15 @@ vlZOLyZeW0CU7/2OutDeMCG28+m3rm58jqLjKbcueKLFq8qFJb4mvPY+Q==
 
    Finally, using the fourth enclosing method, the YANG instance would
    incorporate the corresponding provenance metadata as an annotation,
-   using the namespace prefix specified in the yang-provenance-metadata
-   module, as introduced in Section 4.4:
+   using the namespace prefix specified in the ietf-yang-provenance-
+   annotation module, as introduced in Section 4.4:
 
 <?xml version="1.0" encoding="UTF-8"?>
 <interfaces-state xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces"
-xmlns:ypmd="urn:ietf:params:xml:ns:yang:ietf-yang-annotation-pmd"
-ypmd:provenance-string=
-"0oRRowNjeG1sBGdlYzIua2V5ASag9lhAzen3Bm9AZoyXuetpoTB70SzZqKVxeu
-OMW099sm+NXSqCfnqBKfXeuqDNEkuEr+E0XiAso986fbAHQCHbAJMOhw==">
+                  xmlns:ypmd="urn:ietf:params:xml:ns:yang:ietf-yang-annotation-pmd"
+                  ypmd:provenance=
+                  "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAzen3Bm9AZoyXuetpoTB70SzZqKVxeu
+                  OMW099sm+NXSqCfnqBKfXeuqDNEkuEr+E0XiAso986fbAHQCHbAJMOhw==">
     <interface>
         <name>GigabitEthernet1</name>
         <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">
@@ -1214,7 +1290,7 @@ OMW099sm+NXSqCfnqBKfXeuqDNEkuEr+E0XiAso986fbAHQCHbAJMOhw==">
             <out-errors>0</out-errors>
         </statistics>
     </interface>
-</interfaces-state>
+</interfaces>
 
 JSON
 
@@ -1222,71 +1298,76 @@ JSON
    same monitoring interface statement, with JSON serialization:
 
    {
-     "ietf-interfaces:interfaces-state": {
-       "interface": {
-         "name": "GigabitEthernet1",
-         "iana-if-type:type": "ianaift:ethernetCsmacd",
-         "admin-status": "up",
-         "oper-status": "up",
-         "last-change": "2024-02-03T11:22:41.081+00:00",
-         "if-index": 1,
-         "phys-address": "0c:00:00:37:d6:00",
-         "speed": 1000000000,
-         "statistics": {
-           "discontinuity-time": "2024-02-03T11:20:38+00:00",
-           "in-octets": 8157,
-           "in-unicast-pkts": 94,
-           "in-broadcast-pkts": 0,
-           "in-multicast-pkts": 0,
-           "in-discards": 0,
-           "in-errors": 0,
-           "in-unknown-protos": 0,
-           "out-octets": 89363,
-           "out-unicast-pkts": 209,
-           "out-broadcast-pkts": 0,
-           "out-multicast-pkts": 0,
-           "out-discards": 0,
-           "out-errors": 0
+     "ietf-interfaces:interfaces": {
+       "interface": [
+         {
+           "name": "GigabitEthernet1",
+           "type": "ianaift:ethernetCsmacd",
+           "admin-status": "up",
+           "oper-status": "up",
+           "last-change": "2024-02-03T11:22:41.081+00:00",
+           "if-index": 1,
+           "phys-address": "0c:00:00:37:d6:00",
+           "speed": 1000000000,
+           "statistics": {
+             "discontinuity-time": "2024-02-03T11:20:38+00:00",
+             "in-octets": 8157,
+             "in-unicast-pkts": 94,
+             "in-broadcast-pkts": 0,
+             "in-multicast-pkts": 0,
+             "in-discards": 0,
+             "in-errors": 0,
+             "in-unknown-protos": 0,
+             "out-octets": 89363,
+             "out-unicast-pkts": 209,
+             "out-broadcast-pkts": 0,
+             "out-multicast-pkts": 0,
+             "out-discards": 0,
+             "out-errors": 0
+           }
          }
-       }
+       ]
      }
    }
 
-   Applying the first enclosing method, a provenance leaf at the top
-   element (named "provenance-string" in this case") would be included
-   and produce the following output:
+   Applying the first enclosing method, a provenance-signature leaf at
+   the top element (named "interfaces-provenance" in this case") would
+   be included following the augmentation module previously defined for
+   the XML example.  This will produce the following output:
 
    {
-     "ietf-interfaces:interfaces-state" : {
-       "interface" : {
-         "name" : "GigabitEthernet1",
-         "iana-if-type:type" : "ianaift:ethernetCsmacd",
-         "admin-status" : "up",
-         "oper-status" : "up",
-         "last-change" : "2024-02-03T11:22:41.081+00:00",
-         "if-index" : 1,
-         "phys-address" : "0c:00:00:37:d6:00",
-         "speed" : 1000000000,
-         "statistics" : {
-           "discontinuity-time" : "2024-02-03T11:20:38+00:00",
-           "in-octets" : 8157,
-           "in-unicast-pkts" : 94,
-           "in-broadcast-pkts" : 0,
-           "in-multicast-pkts" : 0,
-           "in-discards" : 0,
-           "in-errors" : 0,
-           "in-unknown-protos" : 0,
-           "out-octets" : 89363,
-           "out-unicast-pkts" : 209,
-           "out-broadcast-pkts" : 0,
-           "out-multicast-pkts" : 0,
-           "out-discards" : 0,
-           "out-errors" : 0
+     "ietf-interfaces:interfaces": {
+       "interface": [
+         {
+           "name": "GigabitEthernet1",
+           "type": "ianaift:ethernetCsmacd",
+           "admin-status": "up",
+           "oper-status": "up",
+           "last-change": "2024-02-03T11:22:41.081+00:00",
+           "if-index": 1,
+           "phys-address": "0c:00:00:37:d6:00",
+           "speed": 1000000000,
+           "statistics": {
+             "discontinuity-time": "2024-02-03T11:20:38+00:00",
+             "in-octets": 8157,
+             "in-unicast-pkts": 94,
+             "in-broadcast-pkts": 0,
+             "in-multicast-pkts": 0,
+             "in-discards": 0,
+             "in-errors": 0,
+             "in-unknown-protos": 0,
+             "out-octets": 89363,
+             "out-unicast-pkts": 209,
+             "out-broadcast-pkts": 0,
+             "out-multicast-pkts": 0,
+             "out-discards": 0,
+             "out-errors": 0
+           }
          }
-       },
-       "provenance-string" :
-       "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAnC4dNl5VSxkVCv8IOaiIhD7ymVZJ
-        8Ol1NFH0GZ7bhe+CrnLTOyPazKl2PK33ZqkUGwZo0HmlkPOiAb1okaCZIw=="
+       ],
+       "interfaces-provenance-augmented:interfaces-provenance":
+         "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAvzyFP5HP0nONaqTRxKmSqerrDS6C
+          QXJSK+5NdprzQZLf0QsHtAi2pxzbuDJDy9kZoy1JTvNaJmMxGTLdm4ktug=="
      }
    }
 
@@ -1296,6 +1377,9 @@ JSON
    {
      "ietf-yp-notification:envelope" : {
        "event-time" : "2013-12-21T00:01:00Z",
+       "ietf-yp-provenance:provenance":
+       "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAiKEKLQKJT12LsNgxt8WllEI65lyi
+        E/m12drCfl+wh7T61cTYhFGdEeX8A5F0vmUWROZebq/VVFewUZeVYGZBOQ==",
        "contents": {
          "ietf-yang-push:push-update": {
            "subscription-id": 2147483648,
@@ -1331,10 +1415,7 @@ JSON
              }
            }
          }
-       },
-       "ietf-yp-provenance:provenance":
-       "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAiKEKLQKJT12LsNgxt8WllEI65lyi
-        E/m12drCfl+wh7T61cTYhFGdEeX8A5F0vmUWROZebq/VVFewUZeVYGZBOQ=="
+       }
      }
    }
 
@@ -1347,39 +1428,41 @@ JSON
        "name" : "interfaces-labTID-status",
        "contact" : "sofia.garciarincon.practicas@telefonica.com",
        "timestamp" : "Thu Jul 18 11:42:06 CEST 2024",
-       "content-data" : {
-         "ietf-interfaces:interfaces-state": {
-           "interface": {
-             "name": "GigabitEthernet1",
-             "iana-if-type:type": "ianaift:ethernetCsmacd",
-             "admin-status": "up",
-             "oper-status": "up",
-             "last-change": "2024-02-03T11:22:41.081+00:00",
-             "if-index": 1,
-             "phys-address": "0c:00:00:37:d6:00",
-             "speed": 1000000000,
-             "statistics": {
-               "discontinuity-time": "2024-02-03T11:20:38+00:00",
-               "in-octets": 8157,
-               "in-unicast-pkts": 94,
-               "in-broadcast-pkts": 0,
-               "in-multicast-pkts": 0,
-               "in-discards": 0,
-               "in-errors": 0,
-               "in-unknown-protos": 0,
-               "out-octets": 89363,
-               "out-unicast-pkts": 209,
-               "out-broadcast-pkts": 0,
-               "out-multicast-pkts": 0,
-               "out-discards": 0,
-               "out-errors": 0
-             }
-           }
-         }
-       },
-       "ietf-yang-instance-data-provenance:provenance-string" :
+       "ietf-yang-instance-data-provenance:provenance" :
        "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAmop/c7wMcjRmiSPVy65F/N6O21dsG
-        kjGQjIDRizhu3WMwi9Je+VUf5sqwlhSwQCdv5u7mRXa6Pd9dhCwdxdRCA=="
+        kjGQjIDRizhu3WMwi9Je+VUf5sqwlhSwQCdv5u7mRXa6Pd9dhCwdxdRCA==",
+       "content-data" : {
+         "ietf-interfaces:interfaces": {
+           "interface": [
+             {
+               "name": "GigabitEthernet1",
+               "iana-if-type:type": "ianaift:ethernetCsmacd",
+               "admin-status": "up",
+               "oper-status": "up",
+               "last-change": "2024-02-03T11:22:41.081+00:00",
+               "if-index": 1,
+               "phys-address": "0c:00:00:37:d6:00",
+               "speed": 1000000000,
+               "statistics": {
+                 "discontinuity-time": "2024-02-03T11:20:38+00:00",
+                 "in-octets": 8157,
+                 "in-unicast-pkts": 94,
+                 "in-broadcast-pkts": 0,
+                 "in-multicast-pkts": 0,
+                 "in-discards": 0,
+                 "in-errors": 0,
+                 "in-unknown-protos": 0,
+                 "out-octets": 89363,
+                 "out-unicast-pkts": 209,
+                 "out-broadcast-pkts": 0,
+                 "out-multicast-pkts": 0,
+                 "out-discards": 0,
+                 "out-errors": 0
+               }
+             }
+           ]
+         }
+       }
      }
    }
 
@@ -1389,39 +1472,41 @@ JSON
    module, as introduced in Section 4.4, and the recommendations in
    section 5.2.3 of [RFC7952]:
 
-   {
-     "ietf-interfaces:interfaces-state" : {
-       "interface" : {
-         "name" : "GigabitEthernet1",
-         "iana-if-type:type" : "ianaift:ethernetCsmacd",
-         "admin-status" : "up",
-         "oper-status" : "up",
-         "last-change" : "2024-02-03T11:22:41.081+00:00",
-         "if-index" : 1,
-         "phys-address" : "0c:00:00:37:d6:00",
-         "speed" : 1000000000,
-         "statistics" : {
-           "discontinuity-time" : "2024-02-03T11:20:38+00:00",
-           "in-octets" : 8157,
-           "in-unicast-pkts" : 94,
-           "in-broadcast-pkts" : 0,
-           "in-multicast-pkts" : 0,
-           "in-discards" : 0,
-           "in-errors" : 0,
-           "in-unknown-protos" : 0,
-           "out-octets" : 89363,
-           "out-unicast-pkts" : 209,
-           "out-broadcast-pkts" : 0,
-           "out-multicast-pkts" : 0,
-           "out-discards" : 0,
-           "out-errors" : 0
-         }
-       },
-       "@ypmd:provenance-string" :
-       "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAM/Dx3HVc4GL91jmuU5nWgcmOPPVp
-        ARLJkWo5wwQYvGFJpKMXTkjAtArPp8v6Sl1ZD1qHimKMhAoHLMHVxBtrcA=="
-     }
-   }
+{
+  "ietf-interfaces:interfaces" : {
+    "@": {
+      "ypmd:provenance": "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAM/Dx3HVc4GL91jmuU5nWgcmOPPVpARLJkWo5wwQYvGFJpKMXTkjAtArPp8v6Sl1ZD1qHimKMhAoHLMHVxBtrcA=="
+    },
+    "interface" : [
+      {
+        "name" : "GigabitEthernet1",
+        "iana-if-type:type" : "ianaift:ethernetCsmacd",
+        "admin-status" : "up",
+        "oper-status" : "up",
+        "last-change" : "2024-02-03T11:22:41.081+00:00",
+        "if-index" : 1,
+        "phys-address" : "0c:00:00:37:d6:00",
+        "speed" : 1000000000,
+        "statistics" : {
+          "discontinuity-time" : "2024-02-03T11:20:38+00:00",
+          "in-octets" : 8157,
+          "in-unicast-pkts" : 94,
+          "in-broadcast-pkts" : 0,
+          "in-multicast-pkts" : 0,
+          "in-discards" : 0,
+          "in-errors" : 0,
+          "in-unknown-protos" : 0,
+          "out-octets" : 89363,
+          "out-unicast-pkts" : 209,
+          "out-broadcast-pkts" : 0,
+          "out-multicast-pkts" : 0,
+          "out-discards" : 0,
+          "out-errors" : 0
+        }
+      }
+    ]
+  }
+}
 
 CBOR
 
@@ -1434,10 +1519,10 @@ Acknowledgments
    approach, providing a first proof of concept of YANG provenance
    signatures.
 
-   This document is based on work partially funded by the EU H2020
-   project SPIRS (grant 952622), and the EU Horizon Europe projects
-   PRIVATEER (grant 101096110), HORSE (grant 101096342), MARE (grant
-   101191436), ACROSS (grant 101097122) and CYBERNEMO (grant 101168182).
+   This document is based on work partially funded by the EU Horizon
+   Europe projects PRIVATEER (grant 101096110), HORSE (grant 101096342),
+   MARE (grant 101191436), ACROSS (grant 101097122), iTrust6G (grant
+   101139198) and CYBERNEMO (grant 101168182).
 
 Authors' Addresses
 
