@@ -1,7 +1,7 @@
 module ietf-yang-provenance-annotation {
      yang-version 1.1;
      namespace
-       "urn:ietf:params:xml:ns:yang:ietf-yang-annotation-pmd";
+       "urn:ietf:params:xml:ns:yang:ietf-yang-annotation";
      prefix "ypmd";
      import ietf-yang-metadata {
        prefix "md";

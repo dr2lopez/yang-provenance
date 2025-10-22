@@ -366,7 +366,7 @@ The "ietf-yp-provenance" module augments "ietf-yp-notification" module {{I-D.iet
 It also adds the notification-provenance capability to allow clients to discover if provenance signatures are supported.
 
 ~~~
-<CODE BEGINS> file "ietf-yp-provenance@2024-05-09.yang"
+<CODE BEGINS> file "ietf-yp-provenance@2025-05-09.yang"
 module ietf-yp-provenance {
   yang-version 1.1;
   namespace
@@ -505,7 +505,7 @@ module ietf-yang-instance-data-provenance {
     reference
      “RFC 9195 A File Format for YANG Instance Data”
   }
-import ietf-yang-provenance {
+  import ietf-yang-provenance {
     prefix iyangprov;
     reference
       "RFC XXXX: Applying COSE Signatures for YANG Data Provenance";
@@ -579,7 +579,7 @@ This module defines a metadata annotation to include a provenance signature for 
 module ietf-yang-provenance-annotation {
      yang-version 1.1;
      namespace
-       "urn:ietf:params:xml:ns:yang:ietf-yang-annotation-pmd";
+       "urn:ietf:params:xml:ns:yang:ietf-yang-annotation";
      prefix "ypmd";
      import ietf-yang-metadata {
        prefix "md";
@@ -620,7 +620,7 @@ module ietf-yang-provenance-annotation {
         "RFC XXXX: Applying COSE Signatures for YANG Data Provenance";
      }
      md:annotation provenance {
-       type yang:provenance-signature;
+       type iyangprov:provenance-signature;
        description
          "This annotation contains the provenance signature for
           the YANG element associated with it";
