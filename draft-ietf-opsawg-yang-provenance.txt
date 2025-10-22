@@ -5,13 +5,13 @@
 Operations and Management Area Working Group                    D. Lopez
 Internet-Draft                                                 A. Pastor
 Intended status: Standards Track                              Telefonica
-Expires: 20 April 2026                                     A. Huang Feng
+Expires: 25 April 2026                                     A. Huang Feng
                                                                INSA-Lyon
                                                                A. Mendez
                                                               Telefonica
                                                              H. Birkholz
                                                           Fraunhofer SIT
-                                                         17 October 2025
+                                                         22 October 2025
 
 
            Applying COSE Signatures for YANG Data Provenance
@@ -65,7 +65,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 20 April 2026.
+   This Internet-Draft will expire on 25 April 2026.
 
 Copyright Notice
 
@@ -559,7 +559,7 @@ typedef provenance-signature {
    notification-provenance capability to allow clients to discover if
    provenance signatures are supported.
 
-   <CODE BEGINS> file "ietf-yp-provenance@2024-05-09.yang"
+   <CODE BEGINS> file "ietf-yp-provenance@2025-05-09.yang"
    module ietf-yp-provenance {
      yang-version 1.1;
      namespace
@@ -705,7 +705,7 @@ typedef provenance-signature {
        reference
         “RFC 9195 A File Format for YANG Instance Data”
      }
-   import ietf-yang-provenance {
+     import ietf-yang-provenance {
        prefix iyangprov;
        reference
          "RFC XXXX: Applying COSE Signatures for YANG Data Provenance";
@@ -786,7 +786,7 @@ typedef provenance-signature {
    module ietf-yang-provenance-annotation {
         yang-version 1.1;
         namespace
-          "urn:ietf:params:xml:ns:yang:ietf-yang-annotation-pmd";
+          "urn:ietf:params:xml:ns:yang:ietf-yang-annotation";
         prefix "ypmd";
         import ietf-yang-metadata {
           prefix "md";
@@ -827,7 +827,7 @@ typedef provenance-signature {
            "RFC XXXX: Applying COSE Signatures for YANG Data Provenance";
         }
         md:annotation provenance {
-          type yang:provenance-signature;
+          type iyangprov:provenance-signature;
           description
             "This annotation contains the provenance signature for
              the YANG element associated with it";
@@ -929,9 +929,9 @@ typedef provenance-signature {
               Feng, A. H., Francois, P., Graf, T., and B. Claise,
               "Extensible YANG Model for YANG-Push Notifications", Work
               in Progress, Internet-Draft, draft-ietf-netconf-notif-
-              envelope-02, 17 June 2025,
+              envelope-03, 20 October 2025,
               <https://datatracker.ietf.org/doc/html/draft-ietf-netconf-
-              notif-envelope-02>.
+              notif-envelope-03>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -1018,9 +1018,9 @@ typedef provenance-signature {
               Claise, B., Quilbeuf, J., Lopez, D., Martinez-Casanueva,
               I. D., and T. Graf, "A Data Manifest for Contextualized
               Telemetry Data", Work in Progress, Internet-Draft, draft-
-              ietf-opsawg-collected-data-manifest-09, 21 July 2025,
+              ietf-opsawg-collected-data-manifest-10, 20 October 2025,
               <https://datatracker.ietf.org/doc/html/draft-ietf-opsawg-
-              collected-data-manifest-09>.
+              collected-data-manifest-10>.
 
 Appendix A.  Examples of Application of the Different Enclosing Methods
 

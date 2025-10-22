@@ -5,7 +5,7 @@
 Operations and Management Area Working Group                    D. Lopez
 Internet-Draft                                                 A. Pastor
 Intended status: Standards Track                              Telefonica
-Expires: 20 April 2026                                     A. Huang Feng
+Expires: 25 April 2026                                     A. Huang Feng
                                                                INSA-Lyon
                                                                A. Mendez
                                                               Telefonica
@@ -13,7 +13,7 @@ Expires: 20 April 2026                                     A. Huang Feng
                                                           Fraunhofer SIT
                                                                S. Garcia
                                                                     UC3M
-                                                         17 October 2025
+                                                         22 October 2025
 
 
            Applying COSE Signatures for YANG Data Provenance
@@ -66,7 +66,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 20 April 2026.
+   This Internet-Draft will expire on 25 April 2026.
 
 Copyright Notice
 
@@ -835,9 +835,9 @@ module: ietf-notification
               Claise, B., Quilbeuf, J., Lopez, D., Martinez-Casanueva,
               I. D., and T. Graf, "A Data Manifest for Contextualized
               Telemetry Data", Work in Progress, Internet-Draft, draft-
-              ietf-opsawg-collected-data-manifest-09, 21 July 2025,
+              ietf-opsawg-collected-data-manifest-10, 20 October 2025,
               <https://datatracker.ietf.org/doc/html/draft-ietf-opsawg-
-              collected-data-manifest-09>.
+              collected-data-manifest-10>.
 
 Appendix A.  Examples of Application of the Different Enclosing Methods
 
