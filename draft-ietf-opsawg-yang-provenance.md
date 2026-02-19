@@ -74,7 +74,7 @@ informative:
 
 --- abstract
 
-This document defines a mechanism based on COSE signatures to provide and verify the provenance of YANG data, so it is possible to verify the origin and integrity of a dataset, even when those data are going to be processed and/or applied in workflows where a crypto-enabled data transport directly from the original data stream is not available. As the application of evidence-based OAM automation and the use of tools such as AI/ML grow, provenance validation becomes more relevant in all scenarios, in support of the assuring the origin and integritu of datasets and/or data streams. The use of compact signatures facilitates the inclusion of provenance strings in any YANG schema requiring them.
+This document defines a mechanism based on COSE signatures to provide and verify the provenance of YANG data, so it is possible to verify the origin and integrity of a dataset, even when those data are going to be processed and/or applied in workflows where a crypto-enabled data transport directly from the original data stream(?) is not available. As the application of evidence-based OAM automation and the use of tools such as AI/ML grow, provenance validation becomes more relevant in all scenarios, in support of the assuring the origin and integritu of datasets and/or data streams (?). The use of compact signatures facilitates the inclusion of provenance strings in any YANG schema requiring them.
 
 --- middle
 
@@ -96,7 +96,7 @@ The provenance mechanisms described in this document are designed to be flexible
 
 * Device Configuration Integrity: Digital signatures may be applied to device configuration elements to ensure that specific configuration fragments originate from an authorized source (e.g., controller, automation system) and have not been altered in transit. This is useful for zero-touch provisioning and secure configuration distribution in programmable networks.
 
-* Telemetry and Monitoring Data: When applied to operational state or streaming telemetry data (e.g., YANG-Push updates or Subscription Notifications), provenance signatures can help verify the integrity and authenticity of data collected from network elements, especially when the data may traverse untrusted collection pipelines.
+* Telemetry and Monitoring Data: When applied to operational state or streaming(?) telemetry data (e.g., YANG-Push updates or Subscription Notifications), provenance signatures can help verify the integrity and authenticity of data collected from network elements, especially when the data may traverse untrusted collection pipelines.
 
 * Network-Wide Service Orchestration: In multi-vendor or multi-domain environments, provenance can be used to track and validate contributions from different orchestrators or domain controllers in composite service models. This enables trustable service chaining and auditability.
 
