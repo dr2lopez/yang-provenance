@@ -713,7 +713,6 @@ A ".sid" file is proposed in Appendix B.
 
 
 
-
 # Implementation Status
 
 An open-source reference implementation, written in Java, is available at <https://github.com/tefiros/cose-provenance>. This implementation has been used to generate the examples in the appendix of this document, and was first demonstrated at the IETF 122 Hackathon. Work is ongoing to explore its integration with other open-source YANG modules. A Kafka message broker integration was presented at the IETF 123 Hackathon aiming at convergence with current efforts on YANG Push. The implementation is available at <https://github.com/tefiros/kafka-provenance>.
@@ -1218,6 +1217,7 @@ Finally, using the fourth enclosing method, the YANG instance would incorporate 
 TBD, as the reference implementation evolves.
 
 # Appendix B. Provisional YANG SID File (.sid) for `ietf-yang-provenance`
+{:numbered="false"}
 
 The following `.sid` file is provided as a provisional example for implementers. It maps schema nodes defined in the `ietf-yang-provenance` module to numeric SIDs for use in CBOR compact encoding. These SIDs are provisional and will be replaced by IANA-assigned values upon publication of the RFC.
 
