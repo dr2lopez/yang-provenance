@@ -665,7 +665,6 @@ This document registers the following URIs in the "IETF XML Registry" {{RFC3688}
   XML: N/A; the requested URI is an XML namespace.
 ~~~
 
-
 ## YANG Module Name
 
 This document registers the following YANG modules in the "YANG Module Names" registry {{RFC6020}}:
@@ -697,6 +696,22 @@ This document registers the following YANG modules in the "YANG Module Names" re
   prefix: ypmd
   reference: RFC XXXX
 ~~~
+
+## YANG SID-file
+
+IANA is requested to register a new ".sid" file in the "IETF YANG SID Registry" {{RFC9595}}:
+
+~~~
+SID range entry point: TBD
+SID range size: 20
+YANG module name: ietf-yp-notification
+reference: RFC-to-be
+~~~
+
+A ".sid" file is proposed in Appendix B.
+
+
+
 
 # Implementation Status
 
@@ -1200,6 +1215,45 @@ Finally, using the fourth enclosing method, the YANG instance would incorporate 
 {:numbered="false"}
 
 TBD, as the reference implementation evolves.
+
+# Appendix B. Provisional YANG SID File (.sid) for `ietf-yang-provenance`
+
+The following `.sid` file is provided as a provisional example for implementers. It maps schema nodes defined in the `ietf-yang-provenance` module to numeric SIDs for use in CBOR compact encoding. These SIDs are provisional and will be replaced by IANA-assigned values upon publication of the RFC.
+
+~~~
+<CODE BEGINS> file "ietf-yang-provenance@2025-05-09.yang"
+
+{
+    "ietf-sid-file:sid-file": {
+        "module-name": "ietf-yang-provenance",
+        "module-revision": "2025-05-09",
+        "sid-file-status": "unpublished",
+        "description": "Provisional SIDs for ietf-yang-provenance module",
+        "reference": "RFC-to-be: Applying COSE Signatures for YANG Data Provenance",
+        "dependency-revision": [],
+        "assignment-range": [
+            {
+                "entry-point": "1000",
+                "size": "20"
+            }
+        ],
+        "item": [
+            {
+                "status": "unstable",
+                "namespace": "module",
+                "identifier": "ietf-yang-provenance",
+                "sid": "1000"
+            },
+            {
+                "status": "unstable",
+                "namespace": "data",
+                "identifier": "/ietf-yang-provenance:provenance-signature",
+                "sid": "1001"
+            }
+        ]
+    }
+}
+<CODE ENDS>
 
 
 # Acknowledgments
