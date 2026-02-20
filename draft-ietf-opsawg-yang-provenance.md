@@ -866,7 +866,7 @@ The second enclosing method shows a notification with the provenance signature i
     </provenance>
     <contents>
         <push-update xmlns="urn:ietf:params:xml:ns:yang:ietf-yang-push">
-            <subscription-id>2147483648</subscription-id>
+            <id>1011</id>
             <datastore-contents>
                 <interfaces-state xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
                     <interface>
@@ -1081,12 +1081,9 @@ The second enclosing method would translate into a notification including the "p
 {
   "ietf-yp-notification:envelope" : {
     "event-time" : "2013-12-21T00:01:00Z",
-    "ietf-yp-provenance:provenance":
-    "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAiKEKLQKJT12LsNgxt8WllEI65lyi
-     E/m12drCfl+wh7T61cTYhFGdEeX8A5F0vmUWROZebq/VVFewUZeVYGZBOQ==",
     "contents": {
       "ietf-yang-push:push-update": {
-        "subscription-id": 2147483648,
+        "id": 1011,
         "datastore-contents": {
           "ietf-interfaces:interfaces-state": {
             "interface": [ {
@@ -1119,7 +1116,10 @@ The second enclosing method would translate into a notification including the "p
           }
         }
       }
-    }
+    },
+    "ietf-yp-provenance:provenance":
+    "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAiKEKLQKJT12LsNgxt8WllEI65lyi
+    E/m12drCfl+wh7T61cTYhFGdEeX8A5F0vmUWROZebq/VVFewUZeVYGZBOQ=="
   }
 }
 ~~~
@@ -1132,9 +1132,6 @@ The third enclosing method, applicable if the instance is to be stored as YANG i
     "name" : "interfaces-labTID-status",
     "contact" : "sofia.garciarincon.practicas@telefonica.com",
     "timestamp" : "Thu Jul 18 11:42:06 CEST 2024",
-    "ietf-yang-instance-data-provenance:provenance" :
-    "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAmop/c7wMcjRmiSPVy65F/N6O21dsG
-     kjGQjIDRizhu3WMwi9Je+VUf5sqwlhSwQCdv5u7mRXa6Pd9dhCwdxdRCA==",
     "content-data" : {
       "ietf-interfaces:interfaces": {
         "interface": [
@@ -1166,7 +1163,10 @@ The third enclosing method, applicable if the instance is to be stored as YANG i
           }
         ]
       }
-    }
+    },
+    "ietf-yang-instance-data-provenance:provenance" :
+    "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAmop/c7wMcjRmiSPVy65F/N6O21dsG
+    kjGQjIDRizhu3WMwi9Je+VUf5sqwlhSwQCdv5u7mRXa6Pd9dhCwdxdRCA=="
   }
 }
 ~~~
@@ -1176,9 +1176,7 @@ Finally, using the fourth enclosing method, the YANG instance would incorporate 
 ~~~
 {
   "ietf-interfaces:interfaces" : {
-    "@": {
-      "ypmd:provenance": "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAM/Dx3HVc4GL91jmuU5nWgcmOPPVpARLJkWo5wwQYvGFJpKMXTkjAtArPp8v6Sl1ZD1qHimKMhAoHLMHVxBtrcA=="
-    },
+
     "interface" : [
       {
         "name" : "GigabitEthernet1",
@@ -1206,7 +1204,10 @@ Finally, using the fourth enclosing method, the YANG instance would incorporate 
           "out-errors" : 0
         }
       }
-    ]
+    ],
+    "@": {
+        "ypmd:provenance": "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAM/Dx3HVc4GL91jmuU5nWgcmOPPVpARLJkWo5wwQYvGFJpKMXTkjAtArPp8v6Sl1ZD1qHimKMhAoHLMHVxBtrcA=="
+    }
   }
 }
 ~~~
@@ -1214,7 +1215,111 @@ Finally, using the fourth enclosing method, the YANG instance would incorporate 
 ## CBOR
 {:numbered="false"}
 
-TBD, as the reference implementation evolves.
+YANG data instances augmented with provenance information can be encoded in CBOR using either YANG names or YANG SIDs as map keys.
+
+When encoded using names, the CBOR representation follows the same structure as the JSON encoding described above and in Section 3.3 of {{RFC9254}}. CBOR text strings are used as keys. A namespace-qualified name MUST be used when the namespace of the data node differs from that of its parent. Otherwise, the simple name of the node is used.
+The CBOR diagnostic notation for the  using name keys would be similar in this case to the JSON encoding showed in the section before. To avoid repetition of the JSON section  we will only address the second enclosing method since it clearly demonstrates CBOR encoding in its draft {{I-D.ietf-netconf-notif-envelope}}.
+
+The following example illustrates the Notification-based enclosing method (second method) described in before, encoded in CBOR diagnostic notation using names as keys.
+
+~~~
+{
+    "ietf-yp-notification:envelope": {
+        "event-time": "2013-12-21T00:01:00Z",
+        "contents": {
+            "ietf-yang-push:push-update": {
+                "id": 1011,
+                "datastore-contents": {
+                    "ietf-interfaces:interfaces-state": {
+                        "interface": [
+                            {
+                                "name": "GigabitEthernet1",
+                                "type": "iana-if-type:ethernetCsmacd",
+                                "admin-status": "up",
+                                "oper-status": "up",
+                                "last-change": "2024-02-03T11:22:41.081+00:00",
+                                "if-index": 1,
+                                "phys-address": h'0C000037D600',
+                                "speed": 1000000000,
+                                "statistics": {
+                                    "discontinuity-time": "2024-02-03T11:20:38+00:00",
+                                    "in-octets": 8157,
+                                    "in-unicast-pkts": 94,
+                                    "in-broadcast-pkts": 0,
+                                    "in-multicast-pkts": 0,
+                                    "in-discards": 0,
+                                    "in-errors": 0,
+                                    "in-unknown-protos": 0,
+                                    "out-octets": 89363,
+                                    "out-unicast-pkts": 209,
+                                    "out-broadcast-pkts": 0,
+                                    "out-multicast-pkts": 0,
+                                    "out-discards": 0,
+                                    "out-errors": 0
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        "ietf-yp-provenance:provenance": h'0oRRowNjeG1sBGdlYzIua2V5ASag9lhA...'
+    }
+}
+~~~
+
+Note that in CBOR encoding, the phys-address leaf defined asyang:phys-address MAY be encoded as a byte string (major type 2), rather than as a text string, as shown above. The provenance signature, which contains a COSE signature over the data, MAY also be encoded as a CBOR byte string.
+
+The following example shows the same structure encoded using YANG SIDs. The SID values shown below are illustrative and MUST be replaced by IANA-assigned values before publication.
+
+~~~
+{
+    2957: {                     / envelope /
+        2: "2013-12-21T00:01:00Z", / event-time /
+            1: {                      / contents /
+                4000: {                 / push-update /
+                    1: 1011,              / id /
+                    2: {                  / datastore-contents /
+                        1550: {             / interfaces-state /
+                            1: [              / interface (list) /
+                            {
+                                2: "GigabitEthernet1",   / name /
+                                3: 1800,                / type (identityref) /
+                                6: 1,                   / admin-status (up) /
+                                7: 1,                   / oper-status (up) /
+                                8: "2024-02-03T11:22:41.081+00:00",
+                                9: 1,                   / if-index /
+                                10: h'0C000037D600',     / phys-address /
+                                11: 1000000000,
+                                12: {                   / statistics /
+                                    1: "2024-02-03T11:20:38+00:00",
+                                    2: 8157,
+                                    3: 94,
+                                    4: 0,
+                                    5: 0,
+                                    6: 0,
+                                    7: 0,
+                                    8: 0,
+                                    9: 89363,
+                                    10: 209,
+                                    11: 0,
+                                    12: 0,
+                                    13: 0,
+                                    14: 0
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        1001: h'0oRRowNjeG1sBGdlYzIua2V5ASag9lhA...',  / provenance (SID from Appendix B) /
+    }
+}
+~~~
+When SIDs are used throughout the structure, inner nodes are encoded asdeltas relative to their parent SID by default. Absolute SIDs MAY beused by applying CBOR tag 47 as defined in {{RFC9254}}.
+
+Note to the RFC Editor: Replace the illustrative SID values with the final values allocated by IANA according to {{RFC9595}}.
 
 # Appendix B. Provisional YANG SID File (.sid) for `ietf-yang-provenance`
 {:numbered="false"}
