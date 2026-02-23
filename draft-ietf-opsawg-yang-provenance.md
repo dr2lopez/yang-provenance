@@ -1251,8 +1251,8 @@ The following example illustrates the first enclosing method with YANG names as 
         }
       }
     ],
-    "interfaces-provenance-augmented:interfaces-provenance": h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70'  
-  }
+    "interfaces-provenance-augmented:interfaces-provenance": h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70'
+    }
 }
 
 ~~~
@@ -1303,7 +1303,7 @@ The following example illustrates the notification-based enclosing method (secon
                 }
             }
         },
-        "ietf-yp-provenance:provenance": h'0oRRowNjeG1sBGdlYzIua2V5ASag9lhAM/Dx3HVc4GL91jmuU5nWgcmOPPVpARLJkWo5wwQYvGFJpKMXTkjAtArPp8v6Sl1ZD1qHimKMhAoHLMHVxBtrcA=='
+        "ietf-yp-provenance:provenance": h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70'
     }
 }
 ~~~
@@ -1415,7 +1415,7 @@ For the first enclosing method:
     1501: [                     / interface list /
       {
         1502: "GigabitEthernet1",     / name /
-        1503: 1800,                   / type (identityref) /
+        1503: 1800,                   / type identityref /
         1504: 1,                      / admin-status: up /
         1505: 1,                      / oper-status: up /
         1506: "2024-02-03T11:22:41.081+00:00", / last-change /
@@ -1457,7 +1457,7 @@ For the second enclosing method:
             1501: [                    / interface list /
               {
                 1502: "GigabitEthernet1",    / name /
-                1503: 1800,                  / type (identityref) /
+                1503: 1800,                  / type identityref /
                 1504: 1,                     / admin-status: up /
                 1505: 1,                     / oper-status: up /
                 1506: "2024-02-03T11:22:41.081+00:00", / last-change /
