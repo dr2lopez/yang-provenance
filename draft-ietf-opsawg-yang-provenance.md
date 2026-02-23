@@ -1218,7 +1218,49 @@ Finally, using the fourth enclosing method, the YANG instance would incorporate 
 
 According to {{RFC9254}}, provenance information MAY be represented in CBOR using either YANG names (CBOR diagnostic notation) or YANG SIDs as map keys. In consequence, the CBOR diagnostic notation when using name keys would be essentially similar to the JSON encoding showed in the previous section. Both representations are included in the examples below to improve readability.
 
-The following example illustrates the Notification-based enclosing method (second method) described in before, representation in CBOR diagnostic notation.
+The following example illustrates the first enclosing method with YANG names as keys:
+
+~~~
+{
+  "ietf-interfaces:interfaces": {
+    "interface": [
+      {
+        "name": "GigabitEthernet1",
+        "type": "ianaift:ethernetCsmacd",
+        "admin-status": "up",
+        "oper-status": "up",
+        "last-change": "2024-02-03T11:22:41.081+00:00",
+        "if-index": 1,
+        "phys-address": "0c:00:00:37:d6:00",
+        "speed": 1000000000,
+        "statistics": {
+          "discontinuity-time": "2024-02-03T11:20:38+00:00",
+          "in-octets": 8157,
+          "in-unicast-pkts": 94,
+          "in-broadcast-pkts": 0,
+          "in-multicast-pkts": 0,
+          "in-discards": 0,
+          "in-errors": 0,
+          "in-unknown-protos": 0,
+          "out-octets": 89363,
+          "out-unicast-pkts": 209,
+          "out-broadcast-pkts": 0,
+          "out-multicast-pkts": 0,
+          "out-discards": 0,
+          "out-errors": 0
+        }
+      }
+    ],
+    "interfaces-provenance-augmented:interfaces-provenance": h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70'  
+  }
+}
+
+~~~
+
+Note that the provenance leaf in JSON would be represented in BASE64 value and in CBOR diagnostic is a byte string represented with an hexadecimal value.
+
+The following example illustrates the notification-based enclosing method (second method) described before, represented in CBOR diagnostic notation.
+
 
 ~~~
 {
@@ -1237,7 +1279,7 @@ The following example illustrates the Notification-based enclosing method (secon
                                 "oper-status": "up",
                                 "last-change": "2024-02-03T11:22:41.081+00:00",
                                 "if-index": 1,
-                                "phys-address": h'0C000037D600',
+                                "phys-address": "0c:00:00:37:d6:00",
                                 "speed": 1000000000,
                                 "statistics": {
                                     "discontinuity-time": "2024-02-03T11:20:38+00:00",
@@ -1261,59 +1303,277 @@ The following example illustrates the Notification-based enclosing method (secon
                 }
             }
         },
-        "ietf-yp-provenance:provenance": h'0oRRowNjeG1sBGdlYzIua2V5ASag9lhA...'
+        "ietf-yp-provenance:provenance": h'0oRRowNjeG1sBGdlYzIua2V5ASag9lhAM/Dx3HVc4GL91jmuU5nWgcmOPPVpARLJkWo5wwQYvGFJpKMXTkjAtArPp8v6Sl1ZD1qHimKMhAoHLMHVxBtrcA=='
     }
 }
 ~~~
 
-The following example shows the same structure encoded using YANG SIDs. The SID values shown below are illustrative and MUST be replaced by IANA-assigned values before publication.
+The following example illustrates the third enclosing method, represented in CBOR diagnostic notation.
+
+
+~~~
+
+{
+  "ietf-yang-instance-data:instance-data-set": {
+    "name": "interfaces-labTID-status",
+    "contact": "sofia.garciarincon.practicas@telefonica.com",
+    "timestamp": "Thu Jul 18 11:42:06 CEST 2024",
+    "content-data": {
+      "ietf-interfaces:interfaces": {
+        "interface": [
+          {
+            "name": "GigabitEthernet1",
+            "iana-if-type:type": "ianaift:ethernetCsmacd",
+            "admin-status": "up",
+            "oper-status": "up",
+            "last-change": "2024-02-03T11:22:41.081+00:00",
+            "if-index": 1,
+            "phys-address": "0c:00:00:37:d6:00",
+            "speed": 1000000000,
+            "statistics": {
+              "discontinuity-time": "2024-02-03T11:20:38+00:00",
+              "in-octets": 8157,
+              "in-unicast-pkts": 94,
+              "in-broadcast-pkts": 0,
+              "in-multicast-pkts": 0,
+              "in-discards": 0,
+              "in-errors": 0,
+              "in-unknown-protos": 0,
+              "out-octets": 89363,
+              "out-unicast-pkts": 209,
+              "out-broadcast-pkts": 0,
+              "out-multicast-pkts": 0,
+              "out-discards": 0,
+              "out-errors": 0
+            }
+          }
+        ]
+      }
+    },
+    "ietf-yang-instance-data-provenance:provenance":
+      h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70'
+  }
+}
+~~~
+
+The following example illustrates the fourth and last enclosing method with YANG names as keys:
+
 
 ~~~
 {
-    2957: {                     / envelope /
-        2: "2013-12-21T00:01:00Z", / event-time /
-            1: {                      / contents /
-                4000: {                 / push-update /
-                    1: 1011,              / id /
-                    2: {                  / datastore-contents /
-                        1550: {             / interfaces-state /
-                            1: [              / interface (list) /
-                            {
-                                2: "GigabitEthernet1",   / name /
-                                3: 1800,                / type (identityref) /
-                                6: 1,                   / admin-status (up) /
-                                7: 1,                   / oper-status (up) /
-                                8: "2024-02-03T11:22:41.081+00:00",
-                                9: 1,                   / if-index /
-                                10: h'0C000037D600',     / phys-address /
-                                11: 1000000000,
-                                12: {                   / statistics /
-                                    1: "2024-02-03T11:20:38+00:00",
-                                    2: 8157,
-                                    3: 94,
-                                    4: 0,
-                                    5: 0,
-                                    6: 0,
-                                    7: 0,
-                                    8: 0,
-                                    9: 89363,
-                                    10: 209,
-                                    11: 0,
-                                    12: 0,
-                                    13: 0,
-                                    14: 0
-                                }
-                            }
-                        ]
-                    }
-                }
-            }
-        },
-        3162: h'0oRRowNjeG1sBGdlYzIua2V5ASag9lhA...',  / provenance (SID from Appendix B) /
+  "ietf-interfaces:interfaces": {
+
+    "interface": [
+      {
+        "name": "GigabitEthernet1",
+        "iana-if-type:type": "ianaift:ethernetCsmacd",
+        "admin-status": "up",
+        "oper-status": "up",
+        "last-change": "2024-02-03T11:22:41.081+00:00",
+        "if-index": 1,
+        "phys-address": "0c:00:00:37:d6:00",
+        "speed": 1000000000,
+        "statistics": {
+          "discontinuity-time": "2024-02-03T11:20:38+00:00",
+          "in-octets": 8157,
+          "in-unicast-pkts": 94,
+          "in-broadcast-pkts": 0,
+          "in-multicast-pkts": 0,
+          "in-discards": 0,
+          "in-errors": 0,
+          "in-unknown-protos": 0,
+          "out-octets": 89363,
+          "out-unicast-pkts": 209,
+          "out-broadcast-pkts": 0,
+          "out-multicast-pkts": 0,
+          "out-discards": 0,
+          "out-errors": 0
+        }
+      }
+    ],
+
+    "@": {
+      "ypmd:provenance":
+        h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70'
     }
+  }
 }
 ~~~
-When SIDs are used throughout the structure, inner nodes are encoded asdeltas relative to their parent SID by default. Absolute SIDs MAY beused by applying CBOR tag 47 as defined in {{RFC9254}}.
+
+
+The following examples show the same structure encoded using YANG SIDs. The SID values shown below are illustrative and MUST be replaced by IANA-assigned values before publication.
+
+
+
+
+For the first enclosing method:
+
+
+~~~
+{
+  1500: {                      / ietf-interfaces:interfaces /
+    1501: [                     / interface list /
+      {
+        1502: "GigabitEthernet1",     / name /
+        1503: 1800,                   / type (identityref) /
+        1504: 1,                      / admin-status: up /
+        1505: 1,                      / oper-status: up /
+        1506: "2024-02-03T11:22:41.081+00:00", / last-change /
+        1507: 1,                      / if-index /
+        1508: "0c:00:00:37:d6:00",        / phys-address /
+        1509: 1000000000,             / speed /
+        1510: {                       / statistics /
+          1511: "2024-02-03T11:20:38+00:00",
+          1512: 8157,
+          1513: 94,
+          1514: 0,
+          1515: 0,
+          1516: 0,
+          1517: 0,
+          1518: 0,
+          1519: 89363,
+          1520: 209,
+          1521: 0,
+          1522: 0,
+          1523: 0,
+          1524: 0
+        }
+      }
+    ],
+    3162: h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70'   / provenance-signature leaf /
+  }
+}
+~~~
+For the second enclosing method:
+~~~
+{
+  2957: {                           / ietf-yp-notification:envelope /
+    2959: "2024-10-10T08:00:11.22Z", / event-time /
+    2958: {                           / contents /
+      4000: {                         / push-update /
+        4001: 1011,                   / id /
+        4002: {                       / datastore-contents /
+          1500: {                     / ietf-interfaces:interfaces /
+            1501: [                    / interface list /
+              {
+                1502: "GigabitEthernet1",    / name /
+                1503: 1800,                  / type (identityref) /
+                1504: 1,                     / admin-status: up /
+                1505: 1,                     / oper-status: up /
+                1506: "2024-02-03T11:22:41.081+00:00", / last-change /
+                1507: 1,                     / if-index /
+                1508: "0c:00:00:37:d6:00",       / phys-address /
+                1509: 1000000000,            / speed /
+                1510: {                     / statistics /
+                  1511: "2024-02-03T11:20:38+00:00", / discontinuity-time /
+                  1512: 8157,
+                  1513: 94,
+                  1514: 0,
+                  1515: 0,
+                  1516: 0,
+                  1517: 0,
+                  1518: 0,
+                  1519: 89363,
+                  1520: 209,
+                  1521: 0,
+                  1522: 0,
+                  1523: 0,
+                  1524: 0
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    3162: h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70'  / provenance-signature/
+  }
+}
+
+~~~
+For the third enclosing method:
+~~~
+{
+  3170: {                             / ietf-yang-instance-data:instance-data-set /
+    3171: "interfaces-labTID-status", / name /
+    3172: "sofia.garciarincon.practicas@telefonica.com", / contact /
+    3173: "Thu Jul 18 11:42:06 CEST 2024", / timestamp /
+    3174: {                             / content-data /
+      1500: {                           / ietf-interfaces:interfaces /
+        1501: [                          / interface list /
+          {
+            1502: "GigabitEthernet1",
+            1503: 1800,
+            1504: 1,
+            1505: 1,
+            1506: "2024-02-03T11:22:41.081+00:00",
+            1507: 1,
+            1508: "0c:00:00:37:d6:00",
+            1509: 1000000000,
+            1510: {
+              1511: "2024-02-03T11:20:38+00:00",
+              1512: 8157,
+              1513: 94,
+              1514: 0,
+              1515: 0,
+              1516: 0,
+              1517: 0,
+              1518: 0,
+              1519: 89363,
+              1520: 209,
+              1521: 0,
+              1522: 0,
+              1523: 0,
+              1524: 0
+            }
+          }
+        ]
+      }
+    },
+    3162: h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70'   / provenance-signature /
+  }
+}
+~~~
+The assigned SID for ietf-yang-instance-data:instance-data-set is not registered in the IANA, it is provisional, for the example.
+
+For the fourth enclosing method:
+~~~
+{
+  1500: {                             / ietf-interfaces:interfaces /
+    1501: [                              / interface list /
+      {
+        1502: "GigabitEthernet1",
+        1503: 1800,
+        1504: 1,
+        1505: 1,
+        1506: "2024-02-03T11:22:41.081+00:00",
+        1507: 1,
+        1508: "0c:00:00:37:d6:00",
+        1509: 1000000000,
+        1510: {
+          1511: "2024-02-03T11:20:38+00:00",
+          1512: 8157,
+          1513: 94,
+          1514: 0,
+          1515: 0,
+          1516: 0,
+          1517: 0,
+          1518: 0,
+          1519: 89363,
+          1520: 209,
+          1521: 0,
+          1522: 0,
+          1523: 0,
+          1524: 0
+        }
+      }
+    ],
+    3162: h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70'  / provenance-signature/
+  }
+}
+
+~~~
+In the example above, the provenance-signature leaf is represented using its assigned SID (3162). The representation of this leaf is the same whether it is added via the first enclosing method (as a direct augmentation of the interfaces container) or via the fourth enclosing method (as an annotation using the yp-provenance-metadata module). The only difference between these methods is the semantic context and location of the leaf within the YANG data: in the first method it is part of the root container structure, while in the fourth method it is included as metadata in the @ annotation object. From the perspective of CBOR representation, SIDs are identical in both methods.
 
 Note to the RFC Editor: Replace the illustrative SID values with the final values allocated by IANA according to {{RFC9595}}.
 
@@ -1335,7 +1595,7 @@ The following `.sid` file is provided as a provisional example for implementers.
         "dependency-revision": [],
         "assignment-range": [
             {
-                "entry-point": "1000",
+                "entry-point": "3161",
                 "size": "20"
             }
         ],
