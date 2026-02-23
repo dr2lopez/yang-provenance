@@ -1572,8 +1572,8 @@ For the fourth enclosing method:
     3162: h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70'  / provenance-signature/
   }
 }
-
 ~~~
+
 In the example above, the provenance-signature leaf is represented using its assigned SID (3162). The representation of this leaf is the same whether it is added via the first enclosing method (as a direct augmentation of the interfaces container) or via the fourth enclosing method (as an annotation using the yp-provenance-metadata module). The only difference between these methods is the semantic context and location of the leaf within the YANG data: in the first method it is part of the root container structure, while in the fourth method it is included as metadata in the @ annotation object. From the perspective of CBOR representation, SIDs are identical in both methods.
 
 Note to the RFC Editor: Replace the illustrative SID values with the final values allocated by IANA according to {{RFC9595}}.
