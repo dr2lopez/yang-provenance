@@ -75,7 +75,7 @@ informative:
 
 --- abstract
 
-This document defines a mechanism based on COSE signatures to provide and verify the provenance of YANG data, so it is possible to verify the origin and integrity of a dataset, even when those data are going to be processed and/or applied in workflows where a crypto-enabled data transport directly from the original data stream(?) is not available. As the application of evidence-based OAM automation and the use of tools such as AI/ML grow, provenance validation becomes more relevant in all scenarios, in support of the assuring the origin and integritu of datasets and/or data streams (?). The use of compact signatures facilitates the inclusion of provenance strings in any YANG schema requiring them.
+This document defines a mechanism based on COSE signatures to provide and verify the provenance of YANG data, so it is possible to verify the origin and integrity of a dataset, even when those data are going to be processed and/or applied in workflows where a crypto-enabled data transport directly from the original data source is not available. As the application of evidence-based OAM automation and the use of tools such as AI/ML grow, provenance validation becomes more relevant in all scenarios, in support of the assuring the origin and integrity of data. The use of compact signatures facilitates the inclusion of provenance strings in any YANG schema requiring them.
 
 --- middle
 
@@ -97,7 +97,7 @@ The provenance mechanisms described in this document are designed to be flexible
 
 * Device Configuration Integrity: Digital signatures may be applied to device configuration elements to ensure that specific configuration fragments originate from an authorized source (e.g., controller, automation system) and have not been altered in transit. This is useful for zero-touch provisioning and secure configuration distribution in programmable networks.
 
-* Telemetry and Monitoring Data: When applied to operational state or streaming(?) telemetry data (e.g., YANG-Push updates or Subscription Notifications), provenance signatures can help verify the integrity and authenticity of data collected from network elements, especially when the data may traverse untrusted collection pipelines.
+* Telemetry and Monitoring Data: When applied to operational state or telemetry data (e.g., YANG-Push updates or Subscription Notifications), provenance signatures can help verify the integrity and authenticity of data collected from network elements, especially when the data may traverse untrusted collection pipelines.
 
 * Network-Wide Service Orchestration: In multi-vendor or multi-domain environments, provenance can be used to track and validate contributions from different orchestrators or domain controllers in composite service models. This enables trustable service chaining and auditability.
 
@@ -705,7 +705,7 @@ IANA is requested to register a new ".sid" file in the "IETF YANG SID Registry" 
 ~~~
 SID range entry point: TBD
 SID range size: 20
-YANG module name: ietf-yp-notification
+YANG module name: ietf-yang-provenance
 reference: RFC-to-be
 ~~~
 
@@ -1215,12 +1215,10 @@ Finally, using the fourth enclosing method, the YANG instance would incorporate 
 ## CBOR
 {:numbered="false"}
 
-YANG data instances augmented with provenance information can be encoded in CBOR using either YANG names or YANG SIDs as map keys.
 
-When encoded using names, the CBOR representation follows the same structure as the JSON encoding described above and in Section 3.3 of {{RFC9254}}. CBOR text strings are used as keys. A namespace-qualified name MUST be used when the namespace of the data node differs from that of its parent. Otherwise, the simple name of the node is used.
-The CBOR diagnostic notation for the  using name keys would be similar in this case to the JSON encoding showed in the section before. To avoid repetition of the JSON section  we will only address the second enclosing method since it clearly demonstrates CBOR encoding in its draft {{I-D.ietf-netconf-notif-envelope}}.
+According to {{RFC9254}}, provenance information MAY be represented in CBOR using either YANG names (CBOR diagnostic notation) or YANG SIDs as map keys. In consequence, the CBOR diagnostic notation when using name keys would be essentially similar to the JSON encoding showed in the previous section. Both representations are included in the examples below to improve readability.
 
-The following example illustrates the Notification-based enclosing method (second method) described in before, encoded in CBOR diagnostic notation using names as keys.
+The following example illustrates the Notification-based enclosing method (second method) described in before, representation in CBOR diagnostic notation.
 
 ~~~
 {
@@ -1268,8 +1266,6 @@ The following example illustrates the Notification-based enclosing method (secon
 }
 ~~~
 
-Note that in CBOR encoding, the phys-address leaf defined asyang:phys-address MAY be encoded as a byte string (major type 2), rather than as a text string, as shown above. The provenance signature, which contains a COSE signature over the data, MAY also be encoded as a CBOR byte string.
-
 The following example shows the same structure encoded using YANG SIDs. The SID values shown below are illustrative and MUST be replaced by IANA-assigned values before publication.
 
 ~~~
@@ -1313,7 +1309,7 @@ The following example shows the same structure encoded using YANG SIDs. The SID 
                 }
             }
         },
-        1001: h'0oRRowNjeG1sBGdlYzIua2V5ASag9lhA...',  / provenance (SID from Appendix B) /
+        3162: h'0oRRowNjeG1sBGdlYzIua2V5ASag9lhA...',  / provenance (SID from Appendix B) /
     }
 }
 ~~~
@@ -1348,13 +1344,13 @@ The following `.sid` file is provided as a provisional example for implementers.
                 "status": "unstable",
                 "namespace": "module",
                 "identifier": "ietf-yang-provenance",
-                "sid": "1000"
+                "sid": "3161"
             },
             {
                 "status": "unstable",
                 "namespace": "data",
                 "identifier": "/ietf-yang-provenance:provenance-signature",
-                "sid": "1001"
+                "sid": "3162"
             }
         ]
     }
