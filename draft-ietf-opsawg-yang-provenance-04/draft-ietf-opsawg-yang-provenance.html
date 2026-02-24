@@ -1,0 +1,3124 @@
+<!DOCTYPE html>
+<html lang="en" class="Internet-Draft">
+<head>
+<meta charset="utf-8">
+<meta content="Common,Latin" name="scripts">
+<meta content="initial-scale=1.0" name="viewport">
+<title>Applying COSE Signatures for YANG Data Provenance</title>
+<meta content="Diego Lopez" name="author">
+<meta content="Antonio Pastor" name="author">
+<meta content="Alex Huang Feng" name="author">
+<meta content="Ana Mendez" name="author">
+<meta content="Henk Birkholz" name="author">
+<meta content="
+       This document defines a mechanism based on COSE signatures to provide and verify the provenance of YANG data, so it is possible to verify the origin and integrity of a dataset, even when those data are going to be processed and/or applied in workflows where a crypto-enabled data transport directly from the original data source is not available. As the application of evidence-based OAM automation and the use of tools such as AI/ML grow, provenance validation becomes more relevant in all scenarios, in support of the assuring the origin and integrity of data. The use of compact signatures facilitates the inclusion of provenance strings in any YANG schema requiring them. 
+    " name="description">
+<meta content="xml2rfc 3.31.0" name="generator">
+<meta content="provenance" name="keyword">
+<meta content="signature" name="keyword">
+<meta content="COSE" name="keyword">
+<meta content="metadata" name="keyword">
+<meta content="draft-ietf-opsawg-yang-provenance-latest" name="ietf.draft">
+<!-- Generator version information:
+  xml2rfc 3.31.0
+    Python 3.12.12
+    ConfigArgParse 1.7
+    google-i18n-address 3.1.1
+    intervaltree 3.2.1
+    Jinja2 3.1.6
+    lxml 6.0.2
+    platformdirs 4.5.1
+    pycountry 24.6.1
+    PyYAML 6.0.3
+    requests 2.32.5
+    wcwidth 0.3.0
+-->
+<link href="draft-ietf-opsawg-yang-provenance.xml" rel="alternate" type="application/rfc+xml">
+<link href="#copyright" rel="license">
+<style type="text/css">@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-cyrillic.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-cyrillic.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Lora SemiBold'), local('Lora-SemiBold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-semibold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+}
+
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-greek.woff2') format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-greek.woff2') format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  color-scheme: light dark;
+  --background-color: #fff;
+  --text-color: #222;
+  --title-color: #191919;
+  --link-color: #2a6496;
+  --highlight-color: #f9f9f9;
+  --line-color: #eee;
+  --pilcrow-weak: #ddd;
+  --pilcrow-strong: #bbb;
+  --small-font-size: 14.5px;
+  --font-mono: 'Oxygen Mono', monospace;
+  --font-title: "Sofia Sans Semi Condensed", sans-serif;
+  scrollbar-color: #bbb #eee;
+}
+body {
+  max-width: 600px;
+  margin: 75px auto;
+  padding: 0 5px;
+  color: var(--text-color);
+  background-color: var(--background-color);
+  font: 16px/22px "Lora", serif;
+  scroll-behavior: smooth;
+}
+
+.ears {
+  display: none;
+}
+
+/* headings */
+section {
+  clear: both;
+}
+.section-number {
+  padding-right: 0.5em;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-title);
+  font-weight: 680;
+  margin: 0.8em 0 0.3em;
+  font-size-adjust: 0.5;
+  color: var(--title-color);
+}
+h1#title {
+  font-size: 32px;
+  line-height: 40px;
+  clear: both;
+}
+h1#title, h1#rfcnum {
+  margin: 1.5em 0 0.2em;
+}
+h1#rfcnum + h1#title {
+  margin: 0.2em 0;
+}
+
+h1, h2, h3 {
+  font-size: 22px;
+  line-height: 27px;
+}
+h4, h5, h6 {
+  font-size: 20px;
+  line-height: 24px;
+}
+
+/* general structure */
+.author {
+  padding-bottom: 0.3em;
+  vertical-align: top;
+}
+#abstract+p {
+  font-size: 18px;
+  line-height: 24px;
+}
+#abstract+p code, #abstract+p samp, #abstract+p tt {
+  font-size: 16px;
+  line-height: 0;
+}
+
+p {
+  padding: 0;
+  margin: 0.5em 0;
+  text-align: left;
+}
+div {
+  margin: 0;
+}
+.alignRight.art-text {
+  background-color: var(--highlight-color);
+  border: 1px solid var(--line-color);
+  border-radius: 3px;
+  padding: 0.5em 1em 0;
+  margin-bottom: 0.5em;
+}
+.alignRight.art-text pre {
+  padding: 0;
+  width: auto;
+}
+.alignRight {
+  margin: 1em 0;
+}
+.alignRight > *:first-child {
+  border: none;
+  margin: 0;
+  float: right;
+  clear: both;
+}
+.alignRight > *:nth-child(2) {
+  clear: both;
+  display: block;
+  border: none;
+}
+svg {
+  display: block;
+}
+/* font-family isn't space-separated, but =~ will have to do */
+svg[font-family~="monospace" i], svg [font-family~="monospace" i] {
+  font-family: var(--font-mono);
+}
+.alignCenter.art-text {
+  background-color: var(--highlight-color);
+  border: 1px solid var(--line-color);
+  border-radius: 3px;
+  padding: 0.5em 1em 0;
+  margin-bottom: 0.5em;
+}
+.alignCenter.art-text pre {
+  padding: 0;
+  width: auto;
+}
+.alignCenter {
+  margin: 1em 0;
+}
+.alignCenter > *:first-child {
+  border: none;
+  /* this isn't optimal, but it's an existence proof.  PrinceXML doesn't
+     support flexbox yet.
+  */
+  display: table;
+  margin: 0 auto;
+}
+
+/* lists */
+ol, ul {
+  padding: 0;
+  margin: 0 0 0.5em 2em;
+  & :is(ol, ul) {
+    margin-left: 1em;
+  }
+}
+li {
+  margin: 0 0 0.25em 0;
+}
+ul.empty, .ulEmpty {
+  list-style-type: none;
+  & li {
+    margin-top: 0.5em;
+  }
+}
+:is(ul, ol).compact, .ulCompact, .olCompact {
+  margin: 0 0 0 2em;
+  & li {
+    margin: 0;
+    & :first-child { margin-top: 0; }
+    & :last-child { margin-bottom: 0; }
+  }
+}
+
+/* definition lists */
+dl {
+  clear: left;
+  --indent: 3ch;
+  /* --indent: attr(indent ch); not supported in any browser, but we can dream */
+  &.olPercent {
+    --indent: 5ch;
+    & > dt {
+      min-width: calc(var(--indent) - 2ch);
+    }
+  }
+  &.olPercent > dt {
+    float: none;
+  }
+
+  dl > dd > & {
+    margin-top: 0.5em;
+    margin-bottom: 0;
+  }
+}
+dl:not(.dlNewline) > dt {
+  float: left;
+  margin-right: 2ch;
+  min-width: 8ch;
+}
+dl > dd {
+  margin-bottom: .8em;
+  margin-left: var(--indent) !important; /* stupid element overrides */
+  min-height: 2ex;
+}
+:is(dl.compact, .dlCompact) > dd {
+  margin-bottom: 0;
+  & > :is(:first-child, .break:first-child + *) {
+    margin-top: 0;
+  }
+  & > :is(:last-child) {
+    margin-bottom: 0;
+  }
+}
+:is(dd, span).break {
+  display: none;
+}
+
+/* links */
+a, a[href].selfRef:hover {
+  text-decoration: none;
+}
+a[href] {
+  color: var(--link-color);
+}
+a[href].selfRef, .iref + a[href].internal {
+  color: var(--text-color);
+}
+a[href]:hover {
+  text-decoration: underline;
+}
+a[href].selfRef:hover {
+  background-color: var(--highlight-color);
+}
+a.xref:is(.cite, .auto), :is(#status-of-memo, #copyright) a {
+  white-space: nowrap;
+}
+
+/* Figures */
+tt, code, pre {
+  background-color: var(--highlight-color);
+  font: 14px/22px var(--font-mono);
+}
+tt, code {
+  /* changing the font for inline elements leads to different ascender
+     and descender heights; as we want to retain baseline alignment,
+     remove leading to avoid altering the final height of lines
+     note: this fails if these blocks take an entire line,
+     a different solution would be great */
+  line-height: 0;
+}
+:is(h1, h2, h3, h4, h5, h6) :is(tt, code) {
+  font-size: 84%;
+}
+pre {
+  border: 1px solid var(--line-color);
+  font-size: 13.5px;
+  line-height: 16px;
+  letter-spacing: -0.2px;
+  margin: 5px;
+  padding: 5px;
+}
+img {
+  max-width: 100%;
+}
+figure {
+  margin: 0.5em 0;
+  padding: 0;
+}
+figure blockquote {
+  margin: 0.8em 0.4em 0.4em;
+}
+figcaption, caption {
+  font-style: italic;
+  margin: 0.5em 1.5em;
+  text-align: left;
+  caption-side: bottom;
+}
+@media screen {
+  /* Auto-collapse boilerplate. */
+  :is(#status-of-memo, #copyright) p {
+    margin: -2px 0;
+    max-height: 0;
+    transition: max-height 2s ease, margin 0.5s ease 0.5s;
+    overflow: hidden;
+  }
+  :is(#status-of-memo, #copyright):hover p,
+  :is(#status-of-memo, #copyright) h2:target ~ p {
+    margin: 0.5em 0;
+    max-height: 500px;
+    overflow: auto;
+  }
+  pre, svg {
+    display: inline-block;
+    /* In the horizontal direction, sometimes people make over-sized figures.
+       Scrollbars for those is therefore necessary: auto adds them as necessary..
+       In the vertical direction, the line-height can combine with the font
+       asender/descender height to produce scrollbars: hidden avoids that. */
+    overflow: auto hidden;
+  }
+  pre {
+    max-width: 100%;
+    width: calc(100% - 22px - 1em);
+  }
+  svg {
+    max-width: calc(100% - 22px - 1em);
+  }
+  figure pre {
+    display: block;
+    width: calc(100% - 25px);
+  }
+  :is(pre, svg) + .pilcrow {
+    display: inline-block;
+    vertical-align: text-bottom;
+    padding-bottom: 8px;
+  }
+}
+
+/* aside, blockquote */
+aside, blockquote {
+  margin-left: 0;
+  padding: 0 2em;
+  font-style: italic;
+}
+blockquote {
+  margin: 1em 0;
+  border-left: 2px var(--pilcrow-strong) solid;
+}
+cite {
+  display: block;
+  text-align: right;
+  font-style: italic;
+}
+
+/* tables */
+table {
+  width: auto;
+  max-width: 100%;
+  margin: 0 0 1em;
+  border-collapse: collapse;
+}
+table.right {
+  margin-left: auto;
+}
+table.center {
+  margin-left: auto;
+  margin-right: auto;
+}
+table.left {
+  margin-right: auto;
+}
+table .text-left {
+  text-align: left;
+}
+table .text-center {
+  text-align: center;
+}
+table .text-right {
+  text-align: right;
+}
+
+thead, tbody {
+  border: 1px solid var(--line-color);
+}
+th, td {
+  text-align: left;
+  vertical-align: top;
+  padding: 5px 10px;
+}
+th {
+  background-color: var(--line-color);
+}
+:is(tr:nth-child(2n), thead+tbody > tr:nth-child(2n+1)) > td {
+  background-color: var(--background-color);
+}
+:is(tr:nth-child(2n+1), thead+tbody > tr:nth-child(2n)) > td {
+  background-color: var(--highlight-color);
+}
+table caption {
+  margin: 0;
+  padding: 3px 0 3px 1em;
+}
+table p {
+  margin: 0;
+}
+
+/* pilcrow */
+a.pilcrow {
+  margin-left: 3px;
+  opacity: 0.2;
+  user-select: none;
+  &[href] {
+    color: var(--pilcrow-weak);
+    &:hover { text-decoration: none; }
+  }
+}
+@media not print {
+  :hover > a.pilcrow, a.pilcrow:focus {
+    opacity: 1;
+  }
+  a.pilcrow[href]:hover {
+    color: var(--pilcrow-strong);
+    background-color: transparent;
+  }
+}
+@media print {
+  a.pilcrow {
+    display: none;
+  }
+}
+
+/* misc */
+hr {
+  border: 0;
+  border-top: 1px solid var(--line-color);
+}
+.bcp14 {
+  font-variant: small-caps;
+  font-weight: 600;
+  font-size: var(--small-font-size);
+}
+.role {
+  font-variant: all-small-caps;
+}
+sub, sup {
+  line-height: 1;
+  font-size: 80%;
+}
+
+/* info block */
+#identifiers {
+  margin: 0;
+  font-size: var(--small-font-size);
+  line-height: 18px;
+  --identifier-width: 15ch;
+  & dt {
+    width: var(--identifier-width);
+    min-width: var(--identifier-width);
+    clear: left;
+    float: left;
+    text-align: right;
+    margin-right: 1ch;
+  }
+  & dd {
+    margin: 0;
+    margin-left: calc(1em + var(--identifier-width)) !important;
+    min-width: 5em;
+  }
+  & .authors {
+    & .author {
+      display: inline-block;
+      margin-right: 1.5em;
+    }
+    & .org {
+      font-style: italic;
+    }
+  }
+}
+
+/* The prepared/rendered info at the very bottom of the page */
+.docInfo {
+  color: #999;
+  font-size: 0.9em;
+  font-style: italic;
+  margin-top: 2em;
+}
+.docInfo .prepared {
+  float: right;
+}
+
+/* table of contents */
+#toc {
+  padding: 0.75em 0 2em 0;
+  margin-bottom: 1em;
+
+  & nav {
+    & ul {
+      margin: 0 0.5em 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    & li {
+      line-height: 1.3em;
+      margin: 2px 0;
+      padding-left: 1.2em;
+      text-indent: -1.2em;
+    }
+  }
+  & a.xref {
+    white-space: normal;
+  }
+}
+
+.references {
+  & > dt {
+    text-align: right;
+    font-weight: bold;
+    min-width: 10ch;
+    margin-right: 1.5ch;
+    &:target::before {
+      content: "⇒";
+      margin: 0 10px 0 -25px;
+    }
+  }
+  & > dd {
+    margin-left: 12ch !important;
+    overflow: visible;
+    & .refInstance {
+      margin-bottom: 0.8em;
+    }
+    & .ascii {
+      margin-bottom: 0.25em;
+    }
+  }
+}
+
+#rfc\.index\.index + ul {
+  margin-left: 0;
+}
+
+/* authors */
+address.vcard {
+  font-style: normal;
+  max-width: 20em;
+  margin: 1em auto 1em 0;
+
+  & .nameRole {
+    font-weight: 700;
+    margin-left: 0;
+  }
+  & .label {
+    margin: 0.5em 0;
+  }
+  & .type {
+    display: none;
+  }
+  & .alternative-contact {
+    margin: 0.5em 0 0.25em 0;
+  }
+  & .non-ascii {
+    margin: 0 0 0 2em;
+  }
+  & div.left {
+    text-align: left;
+  }
+  & div.right {
+    text-align: right;
+  }
+}
+
+hr.addr {
+  border-top: 1px dashed;
+  margin: 0;
+  color: #ddd;
+  max-width: calc(100% - 16px);
+}
+@media (min-width: 500px) {
+  #authors-addresses > section {
+    column-count: 2;
+    column-gap: 20px;
+  }
+  #authors-addresses > section > h2 {
+    column-span: all;
+  }
+  /* hack for break-inside: avoid-column */
+  #authors-addresses address {
+    display: inline-block;
+    break-inside: avoid-column;
+  }
+}
+
+/* Comments */
+.rfcEditorRemove p:first-of-type {
+  font-style: italic;
+}
+.cref {
+  background-color: rgba(249, 232, 105, 0.3);
+  padding: 2px 4px;
+}
+.crefSource {
+  font-style: italic;
+}
+
+@media screen {
+  #toc nav {
+    font-family: var(--font-title);
+    font-weight: 360;
+    & > ul { margin-bottom: 2em; }
+    & ul {
+      margin: 0 0 0 4px;
+      & :is(p, li) {
+        margin: 2px 0;
+      }
+    }
+  }
+  #toc a.toplink {
+    float: right;
+  }
+}
+@media not screen {
+  #toc a.toplink {
+    display: none;
+  }
+}
+
+
+/* TOC layout for smaller screens */
+@media screen and (max-width: 929px) {
+  #toc {
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    padding: 1px 0 0 0;
+    margin: 0;
+    border-bottom: 1px solid #ccc;
+    opacity: 0.6;
+  }
+  #toc h2 {
+    margin: 0;
+    padding: 2px 0 2px 6px;
+    padding-right: 1em;
+    font-size: 18px;
+    line-height: 24px;
+    min-width: 190px;
+    text-align: right;
+    background-color: #444;
+    color: white;
+    cursor: pointer;
+    &::before { /* css hamburger */
+      float: right;
+      position: relative;
+      width: 1em;
+      height: 1px;
+      left: -164px;
+      margin: 8px 0 0 0;
+      background: white none repeat scroll 0 0;
+      box-shadow: 0 4px 0 0 white, 0 8px 0 0 white;
+      content: "";
+    }
+  }
+  #toc nav {
+    display: none;
+    background-color: var(--background-color);
+    padding: 0.5em 1em 1em;
+    overflow: auto;
+    overscroll-behavior: contain;
+    height: calc(100vh - 48px);
+    border-left: 1px solid #ddd;
+  }
+  #toc.active {
+    opacity: 1;
+    & nav { display: block; }
+  }
+  /* Make the collapsed ToC header render white on gray also when it's a link */
+  #toc h2 a,
+  #toc h2 a:is(:link, :focus, :hover),
+  #toc a.toplink,
+  #toc a.toplink:hover {
+    color: white;
+    background-color: #444;
+    text-decoration: none;
+  }
+  #toc a.toplink {
+    margin: 2px 0.5em 0;
+  }
+}
+
+/* TOC layout for wide screens */
+@media screen and (min-width: 930px) {
+  body {
+    padding-right: 360px;
+    padding-right: calc(min(180px + 20%, 500px));
+  }
+  #toc {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    right: calc(50vw - 480px);
+    width: 312px;
+    margin: 0;
+    padding: 0;
+    z-index: 1;
+  }
+  #toc h2 {
+    margin: 0;
+    padding: 0.25em 1em 1em 0;
+  }
+  #toc nav {
+    display: block;
+    height: calc(90vh - 84px);
+    bottom: 0;
+    padding: 0.5em 0 2em;
+    overflow: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+  img { /* future proofing */
+    max-width: 100%;
+    height: auto;
+  }
+  #toc a.toplink {
+    margin: 8px 0.5em 0;
+  }
+}
+
+/* pagination */
+@media print {
+  body {
+    width: 100%;
+  }
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+  #n-copyright-notice {
+    border-bottom: none;
+  }
+  #toc, #n-introduction {
+    page-break-before: always;
+  }
+  #toc {
+    border-top: none;
+    padding-top: 0;
+  }
+  figure, pre, .vcard {
+    page-break-inside: avoid;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+  :is(h2, h3, h4, h5, h6)+*, dd {
+    page-break-before: avoid;
+  }
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 10pt;
+  }
+  table {
+    border: 1px solid #ddd;
+  }
+  td {
+    border-top: 1px solid #ddd;
+  }
+}
+
+@page :first {
+  padding-top: 0;
+  @top-left {
+    content: normal;
+    border: none;
+  }
+  @top-center {
+    content: normal;
+    border: none;
+  }
+  @top-right {
+    content: normal;
+    border: none;
+  }
+}
+
+@page {
+  size: A4;
+  margin-bottom: 45mm;
+  padding-top: 20px;
+}
+
+/* Dark mode. */
+@media (prefers-color-scheme: dark) {
+:root {
+  --background-color: #121212;
+  --text-color: #f0f0f0;
+  --title-color: #fff;
+  --link-color: #4da4f0;
+  --highlight-color: #282828;
+  --line-color: #444;
+  --pilcrow-weak: #444;
+  --pilcrow-strong: #666;
+  scrollbar-color: #777 #333;
+}
+}
+
+/* SVG Trick: a prefix match works because only black and white are allowed */
+svg :is([stroke="black"], [stroke^="#000"]) {
+  stroke: var(--text-color);
+}
+svg :is([stroke="white"], [stroke^="#fff"]) {
+  stroke: var(--background-color);
+}
+svg :is([fill="black"], [fill^="#000"], :not([fill])) {
+  fill: var(--text-color);
+}
+svg :is([fill="white"], [fill^="#fff"]) {
+  fill: var(--background-color);
+}
+</style>
+
+</head>
+<body class="xml2rfc">
+<table class="ears">
+<thead><tr>
+<td class="left">Internet-Draft</td>
+<td class="center">yang-data-provenance</td>
+<td class="right">February 2026</td>
+</tr></thead>
+<tfoot><tr>
+<td class="left">Lopez, et al.</td>
+<td class="center">Expires 28 August 2026</td>
+<td class="right">[Page]</td>
+</tr></tfoot>
+</table>
+<div id="external-metadata" class="document-information"></div>
+<div id="internal-metadata" class="document-information">
+<dl id="identifiers">
+<dt class="label-workgroup">Workgroup:</dt>
+<dd class="workgroup">Operations and Management Area Working Group</dd>
+<dt class="label-internet-draft">Internet-Draft:</dt>
+<dd class="internet-draft">draft-ietf-opsawg-yang-provenance-latest</dd>
+<dt class="label-published">Published:</dt>
+<dd class="published">
+<time datetime="2026-02-24" class="published">24 February 2026</time>
+    </dd>
+<dt class="label-intended-status">Intended Status:</dt>
+<dd class="intended-status">Standards Track</dd>
+<dt class="label-expires">Expires:</dt>
+<dd class="expires"><time datetime="2026-08-28">28 August 2026</time></dd>
+<dt class="label-authors">Authors:</dt>
+<dd class="authors">
+<div class="author">
+      <div class="author-name">D. Lopez</div>
+<div class="org">Telefonica</div>
+</div>
+<div class="author">
+      <div class="author-name">A. Pastor</div>
+<div class="org">Telefonica</div>
+</div>
+<div class="author">
+      <div class="author-name">A. Huang Feng</div>
+<div class="org">INSA-Lyon</div>
+</div>
+<div class="author">
+      <div class="author-name">A. Mendez</div>
+<div class="org">Telefonica</div>
+</div>
+<div class="author">
+      <div class="author-name">H. Birkholz</div>
+<div class="org">Fraunhofer SIT</div>
+</div>
+</dd>
+</dl>
+</div>
+<h1 id="title">Applying COSE Signatures for YANG Data Provenance</h1>
+<section id="section-abstract">
+      <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
+<p id="section-abstract-1">This document defines a mechanism based on COSE signatures to provide and verify the provenance of YANG data, so it is possible to verify the origin and integrity of a dataset, even when those data are going to be processed and/or applied in workflows where a crypto-enabled data transport directly from the original data source is not available. As the application of evidence-based OAM automation and the use of tools such as AI/ML grow, provenance validation becomes more relevant in all scenarios, in support of the assuring the origin and integrity of data. The use of compact signatures facilitates the inclusion of provenance strings in any YANG schema requiring them.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+</section>
+<section class="note rfcEditorRemove" id="section-note.1">
+      <h2 id="name-about-this-document">
+<a href="#name-about-this-document" class="section-name selfRef">About This Document</a>
+      </h2>
+<p id="section-note.1-1">This note is to be removed before publishing as an RFC.<a href="#section-note.1-1" class="pilcrow">¶</a></p>
+<p id="section-note.1-2">
+        The latest revision of this draft can be found at <span><a href="https://dr2lopez.github.io/yang-provenance/draft-ietf-opsawg-yang-provenance.html">https://dr2lopez.github.io/yang-provenance/draft-ietf-opsawg-yang-provenance.html</a></span>.
+        Status information for this document may be found at <span><a href="https://datatracker.ietf.org/doc/draft-ietf-opsawg-yang-provenance/">https://datatracker.ietf.org/doc/draft-ietf-opsawg-yang-provenance/</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
+<p id="section-note.1-3">
+        Discussion of this document takes place on the
+        Operations and Management Area Working Group Working Group mailing list (<span><a href="mailto:opsawg@ietf.org">mailto:opsawg@ietf.org</a></span>),
+        which is archived at <span><a href="https://mailarchive.ietf.org/arch/browse/opsawg/">https://mailarchive.ietf.org/arch/browse/opsawg/</a></span>.
+        Subscribe at <span><a href="https://www.ietf.org/mailman/listinfo/opsawg/">https://www.ietf.org/mailman/listinfo/opsawg/</a></span>.<a href="#section-note.1-3" class="pilcrow">¶</a></p>
+<p id="section-note.1-4">Source for this draft and an issue tracker can be found at
+        <span><a href="https://github.com/dr2lopez/yang-provenance">https://github.com/dr2lopez/yang-provenance</a></span>.<a href="#section-note.1-4" class="pilcrow">¶</a></p>
+</section>
+<div id="status-of-memo">
+<section id="section-boilerplate.1">
+        <h2 id="name-status-of-this-memo">
+<a href="#name-status-of-this-memo" class="section-name selfRef">Status of This Memo</a>
+        </h2>
+<p id="section-boilerplate.1-1">
+        This Internet-Draft is submitted in full conformance with the
+        provisions of BCP 78 and BCP 79.<a href="#section-boilerplate.1-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-2">
+        Internet-Drafts are working documents of the Internet Engineering Task
+        Force (IETF). Note that other groups may also distribute working
+        documents as Internet-Drafts. The list of current Internet-Drafts is
+        at <span><a href="https://datatracker.ietf.org/drafts/current/">https://datatracker.ietf.org/drafts/current/</a></span>.<a href="#section-boilerplate.1-2" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-3">
+        Internet-Drafts are draft documents valid for a maximum of six months
+        and may be updated, replaced, or obsoleted by other documents at any
+        time. It is inappropriate to use Internet-Drafts as reference
+        material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-4">
+        This Internet-Draft will expire on 28 August 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="copyright">
+<section id="section-boilerplate.2">
+        <h2 id="name-copyright-notice">
+<a href="#name-copyright-notice" class="section-name selfRef">Copyright Notice</a>
+        </h2>
+<p id="section-boilerplate.2-1">
+            Copyright (c) 2026 IETF Trust and the persons identified as the
+            document authors. All rights reserved.<a href="#section-boilerplate.2-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.2-2">
+            This document is subject to BCP 78 and the IETF Trust's Legal
+            Provisions Relating to IETF Documents
+            (<span><a href="https://trustee.ietf.org/license-info">https://trustee.ietf.org/license-info</a></span>) in effect on the date of
+            publication of this document. Please review these documents
+            carefully, as they describe your rights and restrictions with
+            respect to this document. Code Components extracted from this
+            document must include Revised BSD License text as described in
+            Section 4.e of the Trust Legal Provisions and are provided without
+            warranty as described in the Revised BSD License.<a href="#section-boilerplate.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="toc">
+<section id="section-toc.1">
+        <a href="#" onclick="scroll(0,0)" class="toplink">▲</a><h2 id="name-table-of-contents">
+<a href="#name-table-of-contents" class="section-name selfRef">Table of Contents</a>
+        </h2>
+<nav class="toc"><ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
+            <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.1">
+                <p id="section-toc.1-1.1.2.1.1" class="keepWithNext"><a href="#section-1.1" class="auto internal xref">1.1</a>.  <a href="#name-target-deployment-scenarios" class="internal xref">Target Deployment Scenarios</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
+            <p id="section-toc.1-1.2.1" class="keepWithNext"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-conventions-and-definitions" class="internal xref">Conventions and Definitions</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-defining-provenance-element" class="internal xref">Defining Provenance Elements</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1">
+                <p id="section-toc.1-1.3.2.1.1"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-provenance-signature-string" class="internal xref">Provenance Signature Strings</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2">
+                <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-signature-and-verification-" class="internal xref">Signature and Verification Procedures</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3">
+                <p id="section-toc.1-1.3.2.3.1"><a href="#section-3.3" class="auto internal xref">3.3</a>.  <a href="#name-canonicalization" class="internal xref">Canonicalization</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.4">
+                <p id="section-toc.1-1.3.2.4.1"><a href="#section-3.4" class="auto internal xref">3.4</a>.  <a href="#name-provenance-signature-yang-m" class="internal xref">Provenance-Signature YANG Module</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-enclosing-methods" class="internal xref">Enclosing Methods</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1">
+                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-including-a-provenance-leaf" class="internal xref">Including a Provenance Leaf in a YANG Element</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2">
+                <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="auto internal xref">4.2</a>.  <a href="#name-including-a-provenance-sign" class="internal xref">Including a Provenance Signature in YANG-Push Notifications</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2.2.1">
+                    <p id="section-toc.1-1.4.2.2.2.1.1"><a href="#section-4.2.1" class="auto internal xref">4.2.1</a>.  <a href="#name-yang-tree-diagram" class="internal xref">YANG Tree Diagram</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2.2.2">
+                    <p id="section-toc.1-1.4.2.2.2.2.1"><a href="#section-4.2.2" class="auto internal xref">4.2.2</a>.  <a href="#name-yang-module" class="internal xref">YANG Module</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.3">
+                <p id="section-toc.1-1.4.2.3.1"><a href="#section-4.3" class="auto internal xref">4.3</a>.  <a href="#name-including-provenance-as-met" class="internal xref">Including Provenance as Metadata in YANG Instance Data</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.3.2.1">
+                    <p id="section-toc.1-1.4.2.3.2.1.1"><a href="#section-4.3.1" class="auto internal xref">4.3.1</a>.  <a href="#name-yang-module-2" class="internal xref">YANG Module</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.4">
+                <p id="section-toc.1-1.4.2.4.1"><a href="#section-4.4" class="auto internal xref">4.4</a>.  <a href="#name-including-provenance-in-yan" class="internal xref">Including Provenance in YANG Annotations</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.4.2.1">
+                    <p id="section-toc.1-1.4.2.4.2.1.1"><a href="#section-4.4.1" class="auto internal xref">4.4.1</a>.  <a href="#name-yang-module-3" class="internal xref">YANG Module</a></p>
+</li>
+                </ul>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1">
+                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="auto internal xref">6.1</a>.  <a href="#name-ietf-xml-registry" class="internal xref">IETF XML Registry</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2">
+                <p id="section-toc.1-1.6.2.2.1"><a href="#section-6.2" class="auto internal xref">6.2</a>.  <a href="#name-yang-module-name" class="internal xref">YANG Module Name</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.3">
+                <p id="section-toc.1-1.6.2.3.1"><a href="#section-6.3" class="auto internal xref">6.3</a>.  <a href="#name-yang-sid-file" class="internal xref">YANG SID-file</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
+            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-implementation-status" class="internal xref">Implementation Status</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
+            <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-references" class="internal xref">References</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.1">
+                <p id="section-toc.1-1.8.2.1.1"><a href="#section-8.1" class="auto internal xref">8.1</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.2">
+                <p id="section-toc.1-1.8.2.2.1"><a href="#section-8.2" class="auto internal xref">8.2</a>.  <a href="#name-informative-references" class="internal xref">Informative References</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
+            <p id="section-toc.1-1.9.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-appendix-a-examples-of-appl" class="internal xref">Appendix A. Examples of Application of the Different Enclosing Methods</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.1">
+                <p id="section-toc.1-1.9.2.1.1"><a href="#appendix-A.1" class="auto internal xref"></a><a href="#name-xml" class="internal xref">XML</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.2">
+                <p id="section-toc.1-1.9.2.2.1"><a href="#appendix-A.2" class="auto internal xref"></a><a href="#name-json" class="internal xref">JSON</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.3">
+                <p id="section-toc.1-1.9.2.3.1"><a href="#appendix-A.3" class="auto internal xref"></a><a href="#name-cbor" class="internal xref">CBOR</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
+            <p id="section-toc.1-1.10.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-appendix-b-provisional-yang" class="internal xref">Appendix B. Provisional YANG SID File (.sid) for <code>ietf-yang-provenance</code></a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
+            <p id="section-toc.1-1.11.1"><a href="#appendix-C" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12">
+            <p id="section-toc.1-1.12.1"><a href="#appendix-D" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
+</li>
+        </ul>
+</nav>
+</section>
+</div>
+<div id="introduction">
+<section id="section-1">
+      <h2 id="name-introduction">
+<a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
+      </h2>
+<p id="section-1-1">OAM automation, generally based on closed-loop principles, requires at least two datasets to be used. Using the common terms in Control Theory, we need those from the plant (the network device or segment under control) and those to be used as reference (the desired values of the relevant data). The usual automation behavior compares these values and takes a decision, by whatever the method (algorithmic, rule-based, an AI model tuned by ML...) to decide on a control action according to this comparison. Assurance of the origin and integrity of these datasets, what we refer in this document as "provenance", becomes essential to guarantee a proper behavior of closed-loop automation.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">When datasets are made available as an online data flow, provenance can be assessed by properties of the data transport protocol, as long as some kind of cryptographic protocol is used for source authentication, with TLS, SSH and IPsec as the main examples. But when these datasets are stored, go through some pre-processing or aggregation stages, or even cryptographic data transport is not available, provenance must be assessed by other means.<a href="#section-1-2" class="pilcrow">¶</a></p>
+<p id="section-1-3">The original use case for this provenance mechanism is associated with <span>[<a href="#YANGmanifest" class="cite xref">YANGmanifest</a>]</span>, in order to provide a proof of the origin and integrity of the provided metadata, and therefore the examples in this document use the modules described there, but it soon became clear that it could be extended to any YANG datamodel to support provenance evidence. An analysis of other potential use cases suggested the interest of defining an independent, generally applicable mechanism.<a href="#section-1-3" class="pilcrow">¶</a></p>
+<p id="section-1-4">Provenance verification by signatures incorporated in YANG data can be applied to any data processing pipeline, whether they rely on an online flow or use some kind of data store, such as data lakes or time-series databases. The application of recorded data for ML training or validation constitute the most relevant examples of these scenarios.<a href="#section-1-4" class="pilcrow">¶</a></p>
+<p id="section-1-5">This document provides a mechanism for including digital signatures within YANG data. It applies COSE <span>[<a href="#RFC9052" class="cite xref">RFC9052</a>]</span> to make the signature compact and reduce the resources required for calculating it. This mechanism is applicable to any serialization of the YANG data supporting a clear method for canonicalization, but this document considers three base ones: CBOR, JSON and XML.<a href="#section-1-5" class="pilcrow">¶</a></p>
+<div id="target-deployment-scenarios">
+<section id="section-1.1">
+        <h3 id="name-target-deployment-scenarios">
+<a href="#section-1.1" class="section-number selfRef">1.1. </a><a href="#name-target-deployment-scenarios" class="section-name selfRef">Target Deployment Scenarios</a>
+        </h3>
+<p id="section-1.1-1">The provenance mechanisms described in this document are designed to be flexible and applicable in multiple deployment contexts within operational and management practices. The following non-exhaustive list provides examples of intended deployment scenarios:<a href="#section-1.1-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1.1-2.1">
+            <p id="section-1.1-2.1.1">Device Configuration Integrity: Digital signatures may be applied to device configuration elements to ensure that specific configuration fragments originate from an authorized source (e.g., controller, automation system) and have not been altered in transit. This is useful for zero-touch provisioning and secure configuration distribution in programmable networks.<a href="#section-1.1-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-1.1-2.2">
+            <p id="section-1.1-2.2.1">Telemetry and Monitoring Data: When applied to operational state or telemetry data (e.g., YANG-Push updates or Subscription Notifications), provenance signatures can help verify the integrity and authenticity of data collected from network elements, especially when the data may traverse untrusted collection pipelines.<a href="#section-1.1-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-1.1-2.3">
+            <p id="section-1.1-2.3.1">Network-Wide Service Orchestration: In multi-vendor or multi-domain environments, provenance can be used to track and validate contributions from different orchestrators or domain controllers in composite service models. This enables trustable service chaining and auditability.<a href="#section-1.1-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+</section>
+</div>
+<div id="conventions-and-definitions">
+<section id="section-2">
+      <h2 id="name-conventions-and-definitions">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-conventions-and-definitions" class="section-name selfRef">Conventions and Definitions</a>
+      </h2>
+<p id="section-2-1">The key words "<span class="bcp14">MUST</span>", "<span class="bcp14">MUST NOT</span>", "<span class="bcp14">REQUIRED</span>", "<span class="bcp14">SHALL</span>", "<span class="bcp14">SHALL NOT</span>", "<span class="bcp14">SHOULD</span>", "<span class="bcp14">SHOULD NOT</span>", "<span class="bcp14">RECOMMENDED</span>", "<span class="bcp14">NOT RECOMMENDED</span>",
+"<span class="bcp14">MAY</span>", and "<span class="bcp14">OPTIONAL</span>" in this document are to be interpreted as
+described in BCP 14 <span>[<a href="#RFC2119" class="cite xref">RFC2119</a>]</span> <span>[<a href="#RFC8174" class="cite xref">RFC8174</a>]</span> when, and only when, they
+appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶</a></p>
+<p id="section-2-2">The term "data provenance" refers to a documented trail accounting for the origin of a piece of data and where it has moved from to where it is presently. The signature mechanism provided here can be recursively applied to allow this accounting for YANG data.<a href="#section-2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="defining-provenance-elements">
+<section id="section-3">
+      <h2 id="name-defining-provenance-element">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-defining-provenance-element" class="section-name selfRef">Defining Provenance Elements</a>
+      </h2>
+<p id="section-3-1">The provenance for a given YANG element <span class="bcp14">MUST</span> be convened by a leaf element, containing the COSE signature bitstring built according to the procedure defined below in this section. The provenance leaf <span class="bcp14">MUST</span> be of type provenance-signature, defined as follows:<a href="#section-3-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-3-2">
+<pre>
+typedef provenance-signature {
+     type binary;
+     description
+      "The provenance-signature type represents a digital signature
+       corresponding to the associated YANG element. The signature is based
+       on COSE and generated using a canonicalized version of the
+       associated element.";
+     reference
+      "RFC 9052: CBOR Object Signing and Encryption (COSE): Structures and Process
+       draft-ietf-opsawg-yang-provenance";
+}
+</pre><a href="#section-3-2" class="pilcrow">¶</a>
+</div>
+<p id="section-3-3">The use of this type is the proper method for identifying signature leaves, and therefore whenever this type is used for a leaf element, it <span class="bcp14">MUST</span> be considered a provenance signature element, to be generated or verified according to the procedures described in this section.<a href="#section-3-3" class="pilcrow">¶</a></p>
+<div id="provenance-signature-strings">
+<section id="section-3.1">
+        <h3 id="name-provenance-signature-string">
+<a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-provenance-signature-string" class="section-name selfRef">Provenance Signature Strings</a>
+        </h3>
+<p id="section-3.1-1">Provenance signature strings are COSE single signature messages with [nil] payload, according to COSE conventions and registries, and with the following structure (as defined by <span>[<a href="#RFC9052" class="cite xref">RFC9052</a>], <a href="https://rfc-editor.org/rfc/rfc9052#section-4.2" class="relref">Section 4.2</a></span>):<a href="#section-3.1-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-3.1-2">
+<pre>
+COSE_Sign1 = [
+protected /algorithm-identifier, kid, serialization-method/
+unprotected /algorithm-parameters/
+signature /using as external data the content of the YANG
+           (meta-)data without the signature leaf/
+]
+</pre><a href="#section-3.1-2" class="pilcrow">¶</a>
+</div>
+<p id="section-3.1-3">The COSE_Sign1 procedure yields a bitstring when building the signature and expects a bitstring for checking it, hence the proposed type for provenance signature leaves. The structure of the COSE_Sign1 consists of:<a href="#section-3.1-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-3.1-4.1">
+            <p id="section-3.1-4.1.1">The algorithm-identifier, which <span class="bcp14">MUST</span> follow COSE conventions and registries.<a href="#section-3.1-4.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.1-4.2">
+            <p id="section-3.1-4.2.1">The kid (Key ID), to be locally agreed, used and interpreted by the signer and the signature validator. URIs <span>[<a href="#RFC3986" class="cite xref">RFC3986</a>]</span> and RFC822-style <span>[<a href="#RFC5322" class="cite xref">RFC5322</a>]</span> identifiers are typical values to be used as kid.<a href="#section-3.1-4.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.1-4.3">
+            <p id="section-3.1-4.3.1">The serialization-method, a string identifying the YANG serialization in use. It <span class="bcp14">MUST</span> be one of the three possible values "xml" (for XML serialization <span>[<a href="#RFC7950" class="cite xref">RFC7950</a>]</span>), "json" (for JSON serialization <span>[<a href="#RFC7951" class="cite xref">RFC7951</a>]</span>) or "cbor" (for CBOR serialization <span>[<a href="#RFC9254" class="cite xref">RFC9254</a>]</span>).<a href="#section-3.1-4.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.1-4.4">
+            <p id="section-3.1-4.4.1">The value algorithm-parameters, which <span class="bcp14">MUST</span> follow the COSE conventions for providing relevant parameters to the signing algorithm.<a href="#section-3.1-4.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.1-4.5">
+            <p id="section-3.1-4.5.1">The signature for the YANG element provenance is being established for, to be produced and verified according to the procedure described below for each one of the enclosing methods for the provenance string described below.<a href="#section-3.1-4.5.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="signature-and-verification-procedures">
+<section id="section-3.2">
+        <h3 id="name-signature-and-verification-">
+<a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-signature-and-verification-" class="section-name selfRef">Signature and Verification Procedures</a>
+        </h3>
+<p id="section-3.2-1">To keep a concise signature and avoid the need for wrapping YANG constructs in COSE envelopes, the whole signature <span class="bcp14">MUST</span> be built and verified by means of externally supplied data, as defined in <span>[<a href="#RFC9052" class="cite xref">RFC9052</a>], <a href="https://rfc-editor.org/rfc/rfc9052#section-4.3" class="relref">Section 4.3</a></span>, with a [nil] payload.<a href="#section-3.2-1" class="pilcrow">¶</a></p>
+<p id="section-3.2-2">The byte strings to be used as input to the signature and verification procedures <span class="bcp14">MUST</span> be built by:<a href="#section-3.2-2" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-3.2-3.1">
+            <p id="section-3.2-3.1.1">Selecting the exact YANG content to be used, according to the corresponding enclosing methods.<a href="#section-3.2-3.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.2-3.2">
+            <p id="section-3.2-3.2.1">Applying the corresponding canonicalization method as described in the following section.<a href="#section-3.2-3.2.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-3.2-4">In order to guarantee proper verification, the signature procedure <span class="bcp14">MUST</span> be the last action to be taken before the YANG construct being signed is made available, whatever the means (sent as a reply to a poll or a notification, written to a file or record, etc.), and verification <span class="bcp14">SHOULD</span> take place in advance of any processing by the consuming application. The actions to be taken if the verification fails are specific to the consuming application, but it is <span class="bcp14">RECOMMENDED</span> to at least issue an error warning.<a href="#section-3.2-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="canonicalization">
+<section id="section-3.3">
+        <h3 id="name-canonicalization">
+<a href="#section-3.3" class="section-number selfRef">3.3. </a><a href="#name-canonicalization" class="section-name selfRef">Canonicalization</a>
+        </h3>
+<p id="section-3.3-1">Signature generation and verification require a canonicalization method to be applied, that depends on the serialization used. According to the three types of serialization defined, the following canonicalization methods <span class="bcp14">MUST</span> be applied:<a href="#section-3.3-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-3.3-2.1">
+            <p id="section-3.3-2.1.1">For CBOR, length-first core deterministic encoding, as defined by <span>[<a href="#RFC8949" class="cite xref">RFC8949</a>]</span>.<a href="#section-3.3-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.3-2.2">
+            <p id="section-3.3-2.2.1">For JSON, JSON Canonicalization Scheme (JCS), as defined by <span>[<a href="#RFC8785" class="cite xref">RFC8785</a>]</span>.<a href="#section-3.3-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.3-2.3">
+            <p id="section-3.3-2.3.1">For XML, Exclusive XML Canonicalization 1.0, as defined by <span>[<a href="#XMLSig" class="cite xref">XMLSig</a>]</span>.<a href="#section-3.3-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="provenance-signature-yang-module">
+<section id="section-3.4">
+        <h3 id="name-provenance-signature-yang-m">
+<a href="#section-3.4" class="section-number selfRef">3.4. </a><a href="#name-provenance-signature-yang-m" class="section-name selfRef">Provenance-Signature YANG Module</a>
+        </h3>
+<p id="section-3.4-1">This module defines a provenance-signature type to be used in other YANG modules.<a href="#section-3.4-1" class="pilcrow">¶</a></p>
+<div class="breakable sourcecode" id="section-3.4-2">
+<pre>&lt;CODE BEGINS&gt; file "ietf-yang-provenance@2025-05-09.yang"
+
+module ietf-yang-provenance {
+  yang-version 1.1;
+  namespace
+    "urn:ietf:params:xml:ns:yang:ietf-yang-provenance";
+  prefix iyangprov;
+
+  organization "IETF OPSAWG (Operations and Management Area Working Group)";
+  contact
+    "WG Web:   &lt;https://datatracker.ietf.org/wg/opsawg/&gt;
+     WG List:  &lt;mailto:opsawg@ietf.org&gt;
+
+     Authors:  Alex Huang Feng
+               &lt;mailto:alex.huang-feng@insa-lyon.fr&gt;
+               Diego Lopez
+               &lt;mailto:diego.r.lopez@telefonica.com&gt;
+               Antonio Pastor
+               &lt;mailto:antonio.pastorperales@telefonica.com&gt;
+               Henk Birkholz
+               &lt;mailto:henk.birkholz@sit.fraunhofer.de&gt;";
+
+  description
+    "Defines a binary provenance-signature type to be used in other YANG
+    modules.
+
+    Copyright (c) 2025 IETF Trust and the persons identified as
+    authors of the code.  All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, is permitted pursuant to, and subject to the license
+    terms contained in, the Revised BSD License set forth in Section
+    4.c of the IETF Trust's Legal Provisions Relating to IETF Documents
+    (https://trustee.ietf.org/license-info).
+
+    This version of this YANG module is part of RFC XXXX; see the RFC
+    itself for full legal notices.";
+
+  revision 2025-05-09 {
+    description
+      "First revision";
+    reference
+      "RFC XXXX: Applying COSE Signatures for YANG Data Provenance";
+  }
+
+  typedef provenance-signature {
+    type binary;
+    description
+      "The provenance-signature type represents a digital signature
+      corresponding to the associated YANG element. The signature is based
+      on COSE and generated using a canonicalized version of the
+      associated element.";
+    reference
+      "RFC XXXX: Applying COSE Signatures for YANG Data Provenance";
+  }
+}
+
+&lt;CODE ENDS&gt;</pre><a href="#section-3.4-2" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="enclosing-methods">
+<section id="section-4">
+      <h2 id="name-enclosing-methods">
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-enclosing-methods" class="section-name selfRef">Enclosing Methods</a>
+      </h2>
+<p id="section-4-1">Once defined the procedures for generating and verifying the provenance signature string, let's consider how these signatures can be integrated with the associated YANG data by enclosing the signature in the data structure. This document considers four different enclosing methods, suitable for different stages of the YANG schema and usage patterns of the YANG data. The enclosing method defines not only how the provenance signature string is combined with the signed YANG data but also the specific procedure for selecting the specific YANG content to be processed when signing and verifying.<a href="#section-4-1" class="pilcrow">¶</a></p>
+<p id="section-4-2">Appendix A includes a set of examples of the different enclosing methods, applied to the same YANG fragment, to illustrate their use.<a href="#section-4-2" class="pilcrow">¶</a></p>
+<div id="including-a-provenance-leaf-in-a-yang-element">
+<section id="section-4.1">
+        <h3 id="name-including-a-provenance-leaf">
+<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-including-a-provenance-leaf" class="section-name selfRef">Including a Provenance Leaf in a YANG Element</a>
+        </h3>
+<p id="section-4.1-1">This enclosing method requires a specific element in the YANG schema defining the element to be signed (the enclosing element), and thus implies considering provenance signatures when defining a YANG module, or the use of augmentation to include the provenance signature element in a existing YANG module.<a href="#section-4.1-1" class="pilcrow">¶</a></p>
+<p id="section-4.1-2">When defining a provenance signature leaf element to appear in a YANG schema by means of this enclosing method, the provenance-signature leaf <span class="bcp14">MAY</span> be defined to be at any position in the enclosing element, but only one such leaf <span class="bcp14">MUST</span> be defined for this enclosing element. If the enclosing element contains other non-leaf elements, they <span class="bcp14">MAY</span> define their own provenance-signature leaf, according to the same rule. In this case, the provenance-signature leaves in the children elements are applicable to the specific child element where they are enclosed, while the provenance-signature leaf enclosed in the top-most element is applicable to the whole element contents, including the children provenance-signature leaf themselves. This allows for recursive provenance validation, data aggregation, and the application of provenance verification of relevant children elements at different stages of any data processing pipeline.<a href="#section-4.1-2" class="pilcrow">¶</a></p>
+<p id="section-4.1-3">The specific YANG content to be processed <span class="bcp14">SHALL</span> be generated by taking the whole enclosing element and eliminiating the leaf containing the provenance signature string.<a href="#section-4.1-3" class="pilcrow">¶</a></p>
+<p id="section-4.1-4">As example, let us consider the two modules proposed in <span>[<a href="#YANGmanifest" class="cite xref">YANGmanifest</a>]</span>. For the platform-manifest module, the provenance for a platform would be provided by augmenting the current schema with the optional platform-provenance leaf shown below:<a href="#section-4.1-4" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-4.1-5">
+<pre>
+module: ietf-platform-manifest
+  +--ro platforms
+     +--ro platform* [id]
+       +--ro id                      string
+       +--ro name?                   string
+       +--ro vendor?                 string
+       +--ro vendor-pen?             uint32
+       +--ro software-version?       string
+       +--ro software-flavor?        string
+       +--ro os-version?             string
+       +--ro os-type?                string
+       +--ro platform-provenance?    provenance-signature
+       +--ro yang-push-streams
+       |  +--ro stream* [name]
+       |     +--ro name
+       |     +--ro description?
+       +--ro yang-library
+       + . . .
+       .
+       .
+       .
+</pre><a href="#section-4.1-5" class="pilcrow">¶</a>
+</div>
+<p id="section-4.1-6">For data collections, the provenance of each one would be provided by augmenting the schema with an optional collector-provenance leaf, as shown below:<a href="#section-4.1-6" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-4.1-7">
+<pre>
+module: ietf-data-collection-manifest
+  +--ro data-collections
+     +--ro data-collection* [platform-id]
+     +--ro platform-id
+     |       -&gt; /p-mf:platforms/platform/id
+     +--ro collector-provenance?   provenance-signature
+     +--ro yang-push-subscriptions
+       +--ro subscription* [id]
+         +--ro id
+         |      sn:subscription-id
+         +
+         .
+         .
+         .
+     + . . .
+     |
+     .
+     .
+     .
+</pre><a href="#section-4.1-7" class="pilcrow">¶</a>
+</div>
+<p id="section-4.1-8">Note how, in the two examples, the element bearing the provenance signature appears at different positions in the enclosing element. And note that, for processing the element for signature generation and verification, the signature element <span class="bcp14">MUST</span> be eliminated from the enclosing element before applying the corresponding canonicalization method.<a href="#section-4.1-8" class="pilcrow">¶</a></p>
+<p id="section-4.1-9">Note that, in application of the recursion mechanism described above, a provenance element could be included at the top of any of the collections, supporting the verification of the provenance of the collection itself (as provided by a specific collector), without interfering with the verification of the provenance of each of the collection elements. As an example, in the case of the platform manifests it would look like:<a href="#section-4.1-9" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-4.1-10">
+<pre>
+module: ietf-platform-manifest
+  +--ro platforms
+     +--ro platform-collection-provenance? provenance-signature
+     +--ro platform* [id]
+       +--ro platform-provenance?          provenance-signature
+       +--ro id                            string
+       +--ro name?                         string
+       +--ro vendor?                       string
+       + . . .
+       .
+       .
+       .
+</pre><a href="#section-4.1-10" class="pilcrow">¶</a>
+</div>
+<p id="section-4.1-11">Note here that, to generate the YANG content to be processed in the case of the collection the provenance leafs of the indivual elements <span class="bcp14">SHALL NOT</span> be eliminated, as it <span class="bcp14">SHALL</span> be the case when generating the YANG content to be processed for each individual element in the collection.<a href="#section-4.1-11" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="including-a-provenance-signature-in-yang-push-notifications">
+<section id="section-4.2">
+        <h3 id="name-including-a-provenance-sign">
+<a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-including-a-provenance-sign" class="section-name selfRef">Including a Provenance Signature in YANG-Push Notifications</a>
+        </h3>
+<p id="section-4.2-1">The signature mechanism proposed in this document <span class="bcp14">MAY</span> be used with YANG-Push <span>[<a href="#RFC8641" class="cite xref">RFC8641</a>]</span> to sign notifications generated  directly by publisher nodes. The signature is carried inside the notification envelope header defined in <span>[<a href="#I-D.ietf-netconf-notif-envelope" class="cite xref">I-D.ietf-netconf-notif-envelope</a>]</span> as a new extension.<a href="#section-4.2-1" class="pilcrow">¶</a></p>
+<p id="section-4.2-2">The YANG content to be processed <span class="bcp14">MUST</span> consist of the content defined by the "contents" element in <span>[<a href="#I-D.ietf-netconf-notif-envelope" class="cite xref">I-D.ietf-netconf-notif-envelope</a>]</span>.<a href="#section-4.2-2" class="pilcrow">¶</a></p>
+<p id="section-4.2-3">The following sections define the YANG module that augments the "ietf-yp-notification" module. It extends the notification envelope header with a new leaf for the provenance signature and an augmentation to the "ietf-notification-capabilities" to enable clients discover the support of the provenance signature.<a href="#section-4.2-3" class="pilcrow">¶</a></p>
+<div id="yang-tree-diagram">
+<section id="section-4.2.1">
+          <h4 id="name-yang-tree-diagram">
+<a href="#section-4.2.1" class="section-number selfRef">4.2.1. </a><a href="#name-yang-tree-diagram" class="section-name selfRef">YANG Tree Diagram</a>
+          </h4>
+<p id="section-4.2.1-1">The following is the YANG tree diagram <span>[<a href="#RFC8340" class="cite xref">RFC8340</a>]</span> for the "ietf-yp-provenance" module.<a href="#section-4.2.1-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-4.2.1-2">
+<pre>
+module: ietf-yp-provenance
+
+  augment /sysc:system-capabilities/notc:subscription-capabilities
+            /inotenv:notification-metadata/inotenv:metadata:
+    +--ro notification-provenance?   boolean
+
+  augment-structure /inotenv:envelope:
+    +-- provenance?   iyangprov:provenance-signature
+</pre><a href="#section-4.2.1-2" class="pilcrow">¶</a>
+</div>
+<p id="section-4.2.1-3">And the following is the full YANG tree diagram for the notification structure.<a href="#section-4.2.1-3" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-4.2.1-4">
+<pre>
+module: ietf-notification
+
+  structure envelope:
+    +-- event-time         yang:date-and-time
+    +-- hostname?          inet:host
+    +-- sequence-number?   yang:counter32
+    +-- provenance?        iyangprov:provenance-signature
+    +-- contents?          &lt;anydata&gt;
+</pre><a href="#section-4.2.1-4" class="pilcrow">¶</a>
+</div>
+<p id="section-4.2.1-5">Unlike the first enclosing method, in this second enclosing method the provenance leaf is added by augmenting a structure (/inotenv:envelope). The provenance leaf is inserted before the contents leaf.
+This ordering is important because the provenance signature <span class="bcp14">MUST</span> cover the content of the notification but <span class="bcp14">MUST NOT</span> include itself in the signature computation. This ensures the signature remains valid and verifiable. YANG augmented structures typically respect the convention that the anydata node, when present, should appear as the last element in the structure. Therefore, any newly augmented elements are automatically placed before it.<a href="#section-4.2.1-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="yang-module">
+<section id="section-4.2.2">
+          <h4 id="name-yang-module">
+<a href="#section-4.2.2" class="section-number selfRef">4.2.2. </a><a href="#name-yang-module" class="section-name selfRef">YANG Module</a>
+          </h4>
+<p id="section-4.2.2-1">The "ietf-yp-provenance" module augments "ietf-yp-notification" module <span>[<a href="#I-D.ietf-netconf-notif-envelope" class="cite xref">I-D.ietf-netconf-notif-envelope</a>]</span> adding the provenance leaf to the notification envelope structure.
+It also adds the notification-provenance capability to allow clients to discover if provenance signatures are supported.<a href="#section-4.2.2-1" class="pilcrow">¶</a></p>
+<div class="breakable sourcecode" id="section-4.2.2-2">
+<pre>&lt;CODE BEGINS&gt; file "ietf-yp-provenance@2025-05-09.yang"
+
+module ietf-yp-provenance {
+  yang-version 1.1;
+  namespace
+    "urn:ietf:params:xml:ns:yang:ietf-yp-provenance";
+  prefix inotifprov;
+
+  import ietf-system-capabilities {
+    prefix sysc;
+    reference
+      "RFC 9196: YANG Modules Describing Capabilities for
+       Systems and Datastore Update Notifications";
+  }
+  import ietf-notification-capabilities {
+    prefix notc;
+    reference
+      "RFC 9196: YANG Modules Describing Capabilities for
+       Systems and Datastore Update Notifications";
+  }
+  import ietf-yang-provenance {
+    prefix iyangprov;
+    reference
+      "RFC XXXX: Applying COSE Signatures for YANG Data Provenance";
+  }
+  import ietf-yang-structure-ext {
+    prefix sx;
+    reference
+      "RFC 8791: YANG Data Structure Extensions";
+  }
+  import ietf-yp-notification {
+    prefix inotenv;
+    reference
+      "RFC YYYY: Extensible YANG Model for YANG-Push Notifications";
+  }
+
+  organization "IETF OPSAWG (Operations and Management Area Working Group)";
+  contact
+    "WG Web:   &lt;https://datatracker.ietf.org/wg/opsawg/&gt;
+     WG List:  &lt;mailto:opsawg@ietf.org&gt;
+
+     Authors:  Alex Huang Feng
+               &lt;mailto:alex.huang-feng@insa-lyon.fr&gt;
+               Diego Lopez
+               &lt;mailto:diego.r.lopez@telefonica.com&gt;
+               Antonio Pastor
+               &lt;mailto:antonio.pastorperales@telefonica.com&gt;";
+
+  description
+    "Defines a bynary provenance-signature type to be used in other YANG
+    modules.
+
+    Copyright (c) 2025 IETF Trust and the persons identified as
+    authors of the code.  All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, is permitted pursuant to, and subject to the license
+    terms contained in, the Revised BSD License set forth in Section
+    4.c of the IETF Trust's Legal Provisions Relating to IETF Documents
+    (https://trustee.ietf.org/license-info).
+
+    This version of this YANG module is part of RFC XXXX; see the RFC
+    itself for full legal notices.";
+
+  revision 2025-05-09 {
+    description
+      "First revision";
+    reference
+      "RFC XXXX: Applying COSE Signatures for YANG Data Provenance";
+  }
+
+  sx:augment-structure "/inotenv:envelope" {
+    leaf provenance {
+      type iyangprov:provenance-signature;
+      description
+        "COSE signature of the content of the Notification for
+        provenance verification.";
+    }
+  }
+
+  augment "/sysc:system-capabilities"
+        + "/notc:subscription-capabilities"
+        + "/inotenv:notification-metadata/inotenv:metadata" {
+    description
+      "Extensions to Notification Capabilities enabling clients to
+      know whether the provenance signature is supported.";
+    leaf notification-provenance {
+      type boolean;
+      default "false";
+      description
+        "Support of the provenance signature on YANG-Push
+        Notifications.";
+    }
+  }
+}
+
+&lt;CODE ENDS&gt;</pre><a href="#section-4.2.2-2" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="including-provenance-as-metadata-in-yang-instance-data">
+<section id="section-4.3">
+        <h3 id="name-including-provenance-as-met">
+<a href="#section-4.3" class="section-number selfRef">4.3. </a><a href="#name-including-provenance-as-met" class="section-name selfRef">Including Provenance as Metadata in YANG Instance Data</a>
+        </h3>
+<p id="section-4.3-1">Provenance signature strings can be included as part of the metadata in YANG instance data files, as defined in <span>[<a href="#RFC9195" class="cite xref">RFC9195</a>]</span> for data at rest. The augmented YANG tree diagram including the provenance signature is as follows:<a href="#section-4.3-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-4.3-2">
+<pre>
+module: ietf-yang-instance-data-provenance
+  augment-structure /id:instance-data-set:
+    +-- provenance?   iyangprov:provenance-signature
+</pre><a href="#section-4.3-2" class="pilcrow">¶</a>
+</div>
+<ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-4.3-3.1">
+            <p id="section-4.3-3.1.1"><strong>Note:</strong> As in the second enclosing method, since this is a data structure, the <code>provenance</code> leaf appears before the <code>content-data</code> element.<a href="#section-4.3-3.1.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-4.3-4">The resulting YANG tree structure is:<a href="#section-4.3-4" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-4.3-5">
+<pre>
+  structure instance-data-set:
+    + . . .
+    +-- timestamp?           yang:date-and-time
+    +-- provenance?          iyangprov:provenance-signature
+    +-- content-data?        &lt;anydata&gt;
+</pre><a href="#section-4.3-5" class="pilcrow">¶</a>
+</div>
+<p id="section-4.3-6">The provenance signature defined in this enclosing method applies to the whole content of the instance-data-set structure. This is independent of any other provenance signature strings that might be present within the content-data itself through other enclosing methods.<a href="#section-4.3-6" class="pilcrow">¶</a></p>
+<p id="section-4.3-7">The specific YANG content to be processed <span class="bcp14">SHALL</span> be generated by taking the contents of instance-data-set structure, excluding the provenance signature element itself and applying the corresponding canonicalization method.<a href="#section-4.3-7" class="pilcrow">¶</a></p>
+<div id="yang-module-1">
+<section id="section-4.3.1">
+          <h4 id="name-yang-module-2">
+<a href="#section-4.3.1" class="section-number selfRef">4.3.1. </a><a href="#name-yang-module-2" class="section-name selfRef">YANG Module</a>
+          </h4>
+<p id="section-4.3.1-1">This module defines the provenance signature element to be included as metadata of a YANG data instance.<a href="#section-4.3.1-1" class="pilcrow">¶</a></p>
+<div class="breakable sourcecode" id="section-4.3.1-2">
+<pre>&lt;CODE BEGINS&gt; file "ietf-yang-instance-data-provenance@2025-07-07.yang"
+
+module ietf-yang-instance-data-provenance {
+  yang-version 1.1;
+  namespace "urn:ietf:params:xml:ns:yang:ietf-yang-instance-data-provenance";
+  prefix "yidprov";
+  import ietf-yang-instance-data {
+    prefix "id";
+    reference
+     “RFC 9195 A File Format for YANG Instance Data”
+  }
+  import ietf-yang-provenance {
+    prefix iyangprov;
+    reference
+      "RFC XXXX: Applying COSE Signatures for YANG Data Provenance";
+  }
+  import ietf-yang-structure-ext {
+    prefix sx;
+    reference
+      "RFC 8791: YANG Data Structure Extensions";
+  }
+  organization "IETF OPSAWG (Operations and Management Area Working Group)";
+  contact
+    "WG Web:   &lt;https://datatracker.ietf.org/wg/opsawg/&gt;
+     WG List:  &lt;mailto:opsawg@ietf.org&gt;
+
+     Authors:  Ana Mendez
+               &lt;mailto:ana.mendezperz@telefonica.com&gt;
+               Diego Lopez
+               &lt;mailto:diego.r.lopez@telefonica.com&gt;";
+  description
+        "Defines a binary provenance-signature type to be used as metadata
+         in a YANG data instance.
+
+         Copyright (c) 2025 IETF Trust and the persons identified as
+         authors of the code.  All rights reserved.
+
+         Redistribution and use in source and binary forms, with or without
+         modification, is permitted pursuant to, and subject to the license
+         terms contained in, the Revised BSD License set forth in Section
+         4.c of the IETF Trust's Legal Provisions Relating to IETF Documents
+         (https://trustee.ietf.org/license-info).
+
+         This version of this YANG module is part of RFC XXXX; see the RFC
+         itself for full legal notices.";
+
+  revision 2025-07-07 {
+    description "First revision.";
+    reference "RFC XXXX: Applying COSE Signatures for YANG Data Provenance";
+  }
+  sx:augment-structure "/id:instance-data-set" {
+    leaf provenance {
+      type iyangprov:provenance-signature;
+      description
+        "Provenance signature that applies to the full content-data block of an instance dataset.This signature can be used to verify the integrity and authenticity of the instance data.";
+    }
+  }
+}
+
+&lt;CODE ENDS&gt;</pre><a href="#section-4.3.1-2" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="EMannotations">
+<section id="section-4.4">
+        <h3 id="name-including-provenance-in-yan">
+<a href="#section-4.4" class="section-number selfRef">4.4. </a><a href="#name-including-provenance-in-yan" class="section-name selfRef">Including Provenance in YANG Annotations</a>
+        </h3>
+<p id="section-4.4-1">The use of annotations as defined in <span>[<a href="#RFC7952" class="cite xref">RFC7952</a>]</span> seems a natural enclosing method, dealing with the provenance signature string as metadata extension and not requiring modification of existing YANG schemas. The provenance-string annotation is defined as follows:<a href="#section-4.4-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-4.4-2">
+<pre>
+ md:annotation provenance {
+       type provenance-signature;
+       description
+         "This annotation contains a digital signature corresponding
+          to the YANG element in which it appears.";
+     }
+</pre><a href="#section-4.4-2" class="pilcrow">¶</a>
+</div>
+<p id="section-4.4-3">The specific YANG content to be processed <span class="bcp14">SHALL</span> be generated by eliminating the provenance annotation (encoded according to what is described in Section 5 of <span>[<a href="#RFC7952" class="cite xref">RFC7952</a>]</span>) from the element it applies to, before invoking the corresponding canonicalization method. In application of the general recursion principle for provenance signature strings, any other provenance strings within the element to which the provenance-string applies <span class="bcp14">SHALL</span> be left as they appear, whatever the enclosing method used for them.<a href="#section-4.4-3" class="pilcrow">¶</a></p>
+<div id="yang-module-2">
+<section id="section-4.4.1">
+          <h4 id="name-yang-module-3">
+<a href="#section-4.4.1" class="section-number selfRef">4.4.1. </a><a href="#name-yang-module-3" class="section-name selfRef">YANG Module</a>
+          </h4>
+<p id="section-4.4.1-1">This module defines a metadata annotation to include a provenance signature for a YANG element.<a href="#section-4.4.1-1" class="pilcrow">¶</a></p>
+<div class="breakable sourcecode" id="section-4.4.1-2">
+<pre>&lt;CODE BEGINS&gt; file "ietf-yang-provenance-annotation@2024-06-30.yang"
+
+module ietf-yang-provenance-annotation {
+     yang-version 1.1;
+     namespace
+       "urn:ietf:params:xml:ns:yang:ietf-yang-annotation";
+     prefix "ypmd";
+     import ietf-yang-metadata {
+       prefix "md";
+     }
+     organization "IETF OPSAWG (Operations and Management Area Working Group)";
+     contact
+       "WG Web:   &lt;https://datatracker.ietf.org/wg/opsawg/&gt;
+        WG List:  &lt;mailto:opsawg@ietf.org&gt;
+
+        Authors: Diego Lopez
+                 &lt;mailto:diego.r.lopez@telefonica.com&gt;
+                 Alex Huang Feng
+                 &lt;mailto:alex.huang-feng@insa-lyon.fr&gt;
+                 Antonio Pastor
+                 &lt;mailto:antonio.pastorperales@telefonica.com&gt;
+                 Henk Birkholz
+                 &lt;mailto:henk.birkholz@sit.fraunhofer.de&gt;";
+        description
+        "Defines a binary provenance-signature type to be used in YANG
+         metadata annotations
+
+         Copyright (c) 2024 IETF Trust and the persons identified as
+         authors of the code.  All rights reserved.
+
+         Redistribution and use in source and binary forms, with or without
+         modification, is permitted pursuant to, and subject to the license
+         terms contained in, the Revised BSD License set forth in Section
+         4.c of the IETF Trust's Legal Provisions Relating to IETF Documents
+         (https://trustee.ietf.org/license-info).
+
+         This version of this YANG module is part of RFC XXXX; see the RFC
+         itself for full legal notices.";
+
+     revision 2024-06-30 {
+        description
+        "First revision";
+        reference
+        "RFC XXXX: Applying COSE Signatures for YANG Data Provenance";
+     }
+     md:annotation provenance {
+       type iyangprov:provenance-signature;
+       description
+         "This annotation contains the provenance signature for
+          the YANG element associated with it";
+     }
+}
+
+&lt;CODE ENDS&gt;</pre><a href="#section-4.4.1-2" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="security-considerations">
+<section id="section-5">
+      <h2 id="name-security-considerations">
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+      </h2>
+<p id="section-5-1">The provenance assessment mechanism described in this document relies on COSE <span>[<a href="#RFC9052" class="cite xref">RFC9052</a>]</span> and the deterministic encoding or canonicalization procedures described by <span>[<a href="#RFC8949" class="cite xref">RFC8949</a>]</span>, <span>[<a href="#RFC8785" class="cite xref">RFC8785</a>]</span> and <span>[<a href="#XMLSig" class="cite xref">XMLSig</a>]</span>. The security considerations made in these references are fully applicable here.<a href="#section-5-1" class="pilcrow">¶</a></p>
+<p id="section-5-2">The verification step depends on the association of the kid (Key ID) with the proper public key. This is a local matter for the verifier and its specification is out of the scope of this document. Similarly, key association with reliable data sources is a deployment decision, though a couple of deployment patterns can be considered, depending on the application scenario under consideration. On the one hand, identities may be associated to controller entities (a domain controller, a person in charge of operational aspects, an organizational unit managing an administrative domain, ec.) owning the private keys to be use in generating the provenance signatures for YANG data such as configurations or telemetry. Alternatively, individual devices may hold the identities and corresponding private keys to generate provenance signatures for locally originated data (e.g., telemetry updates). The use of certificates, PKI mechanisms, or any other secure out-of-band distribution of id-public key mappings is <span class="bcp14">RECOMMENDED</span>.<a href="#section-5-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="iana-considerations">
+<section id="section-6">
+      <h2 id="name-iana-considerations">
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
+      </h2>
+<div id="ietf-xml-registry">
+<section id="section-6.1">
+        <h3 id="name-ietf-xml-registry">
+<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-ietf-xml-registry" class="section-name selfRef">IETF XML Registry</a>
+        </h3>
+<p id="section-6.1-1">This document registers the following URIs in the "IETF XML Registry" <span>[<a href="#RFC3688" class="cite xref">RFC3688</a>]</span>:<a href="#section-6.1-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-6.1-2">
+<pre>
+  URI: urn:ietf:params:xml:ns:yang:ietf-yang-provenance
+  Registrant Contact: The IESG.
+  XML: N/A; the requested URI is an XML namespace.
+</pre><a href="#section-6.1-2" class="pilcrow">¶</a>
+</div>
+<div class="alignLeft art-text artwork" id="section-6.1-3">
+<pre>
+  URI: urn:ietf:params:xml:ns:yang:ietf-yp-provenance
+  Registrant Contact: The IESG.
+  XML: N/A; the requested URI is an XML namespace.
+</pre><a href="#section-6.1-3" class="pilcrow">¶</a>
+</div>
+<div class="alignLeft art-text artwork" id="section-6.1-4">
+<pre>
+  URI: urn:ietf:params:xml:ns:yang:ietf-yang-instance-data-provenance
+  Registrant Contact: The IESG.
+  XML: N/A; the requested URI is an XML namespace.
+</pre><a href="#section-6.1-4" class="pilcrow">¶</a>
+</div>
+<div class="alignLeft art-text artwork" id="section-6.1-5">
+<pre>
+  URI: urn:ietf:params:xml:ns:yang:ietf-yang-annotation-pmd
+  Registrant Contact: The IESG.
+  XML: N/A; the requested URI is an XML namespace.
+</pre><a href="#section-6.1-5" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="yang-module-name">
+<section id="section-6.2">
+        <h3 id="name-yang-module-name">
+<a href="#section-6.2" class="section-number selfRef">6.2. </a><a href="#name-yang-module-name" class="section-name selfRef">YANG Module Name</a>
+        </h3>
+<p id="section-6.2-1">This document registers the following YANG modules in the "YANG Module Names" registry <span>[<a href="#RFC6020" class="cite xref">RFC6020</a>]</span>:<a href="#section-6.2-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-6.2-2">
+<pre>
+  name: ietf-yang-provenance
+  namespace: urn:ietf:params:xml:ns:yang:ietf-yang-provenance
+  prefix: iyangprov
+  reference: RFC XXXX
+</pre><a href="#section-6.2-2" class="pilcrow">¶</a>
+</div>
+<div class="alignLeft art-text artwork" id="section-6.2-3">
+<pre>
+  name: ietf-yp-provenance
+  namespace: urn:ietf:params:xml:ns:yang:ietf-yp-provenance
+  prefix: inotifprov
+  reference: RFC XXXX
+</pre><a href="#section-6.2-3" class="pilcrow">¶</a>
+</div>
+<div class="alignLeft art-text artwork" id="section-6.2-4">
+<pre>
+  name: ietf-yang-instance-data-provenance
+  namespace: urn:ietf:params:xml:ns:yang:ietf-yang-instance-data-provenance
+  prefix: yidprov
+  reference: RFC XXXX
+</pre><a href="#section-6.2-4" class="pilcrow">¶</a>
+</div>
+<div class="alignLeft art-text artwork" id="section-6.2-5">
+<pre>
+  name: ietf-yang-provenance-annotation
+  namespace: urn:ietf:params:xml:ns:yang:ietf-yang-annotation-pmd
+  prefix: ypmd
+  reference: RFC XXXX
+</pre><a href="#section-6.2-5" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="yang-sid-file">
+<section id="section-6.3">
+        <h3 id="name-yang-sid-file">
+<a href="#section-6.3" class="section-number selfRef">6.3. </a><a href="#name-yang-sid-file" class="section-name selfRef">YANG SID-file</a>
+        </h3>
+<p id="section-6.3-1">IANA is requested to register a new ".sid" file in the "IETF YANG SID Registry" <span>[<a href="#RFC9595" class="cite xref">RFC9595</a>]</span>:<a href="#section-6.3-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-6.3-2">
+<pre>
+SID range entry point: TBD
+SID range size: 20
+YANG module name: ietf-yang-provenance
+reference: RFC-to-be
+</pre><a href="#section-6.3-2" class="pilcrow">¶</a>
+</div>
+<p id="section-6.3-3">A ".sid" file is proposed in Appendix B.<a href="#section-6.3-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="implementation-status">
+<section id="section-7">
+      <h2 id="name-implementation-status">
+<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-implementation-status" class="section-name selfRef">Implementation Status</a>
+      </h2>
+<p id="section-7-1">An open-source reference implementation, written in Java, is available at <a href="https://github.com/tefiros/cose-provenance">https://github.com/tefiros/cose-provenance</a>. This implementation has been used to generate the examples in the appendix of this document, and was first demonstrated at the IETF 122 Hackathon. Work is ongoing to explore its integration with other open-source YANG modules. A Kafka message broker integration was presented at the IETF 123 Hackathon aiming at convergence with current efforts on YANG Push. The implementation is available at <a href="https://github.com/tefiros/kafka-provenance">https://github.com/tefiros/kafka-provenance</a>.<a href="#section-7-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="sec-combined-references">
+<section id="section-8">
+      <h2 id="name-references">
+<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-references" class="section-name selfRef">References</a>
+      </h2>
+<div id="sec-normative-references">
+<section id="section-8.1">
+        <h3 id="name-normative-references">
+<a href="#section-8.1" class="section-number selfRef">8.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+        </h3>
+<dl class="references">
+<dt id="I-D.ietf-netconf-notif-envelope">[I-D.ietf-netconf-notif-envelope]</dt>
+        <dd>
+<span class="refAuthor">Feng, A. H.</span>, <span class="refAuthor">Francois, P.</span>, <span class="refAuthor">Graf, T.</span>, and <span class="refAuthor">B. Claise</span>, <span class="refTitle">"Extensible YANG Model for YANG-Push Notifications"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-netconf-notif-envelope-04</span>, <time datetime="2026-02-06" class="refDate">6 February 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-netconf-notif-envelope-04">https://datatracker.ietf.org/doc/html/draft-ietf-netconf-notif-envelope-04</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC2119">[RFC2119]</dt>
+        <dd>
+<span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC3688">[RFC3688]</dt>
+        <dd>
+<span class="refAuthor">Mealling, M.</span>, <span class="refTitle">"The IETF XML Registry"</span>, <span class="seriesInfo">BCP 81</span>, <span class="seriesInfo">RFC 3688</span>, <span class="seriesInfo">DOI 10.17487/RFC3688</span>, <time datetime="2004-01" class="refDate">January 2004</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc3688">https://www.rfc-editor.org/rfc/rfc3688</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC3986">[RFC3986]</dt>
+        <dd>
+<span class="refAuthor">Berners-Lee, T.</span>, <span class="refAuthor">Fielding, R.</span>, and <span class="refAuthor">L. Masinter</span>, <span class="refTitle">"Uniform Resource Identifier (URI): Generic Syntax"</span>, <span class="seriesInfo">STD 66</span>, <span class="seriesInfo">RFC 3986</span>, <span class="seriesInfo">DOI 10.17487/RFC3986</span>, <time datetime="2005-01" class="refDate">January 2005</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc3986">https://www.rfc-editor.org/rfc/rfc3986</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC5322">[RFC5322]</dt>
+        <dd>
+<span class="refAuthor">Resnick, P., Ed.</span>, <span class="refTitle">"Internet Message Format"</span>, <span class="seriesInfo">RFC 5322</span>, <span class="seriesInfo">DOI 10.17487/RFC5322</span>, <time datetime="2008-10" class="refDate">October 2008</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc5322">https://www.rfc-editor.org/rfc/rfc5322</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC6020">[RFC6020]</dt>
+        <dd>
+<span class="refAuthor">Bjorklund, M., Ed.</span>, <span class="refTitle">"YANG - A Data Modeling Language for the Network Configuration Protocol (NETCONF)"</span>, <span class="seriesInfo">RFC 6020</span>, <span class="seriesInfo">DOI 10.17487/RFC6020</span>, <time datetime="2010-10" class="refDate">October 2010</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc6020">https://www.rfc-editor.org/rfc/rfc6020</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC7950">[RFC7950]</dt>
+        <dd>
+<span class="refAuthor">Bjorklund, M., Ed.</span>, <span class="refTitle">"The YANG 1.1 Data Modeling Language"</span>, <span class="seriesInfo">RFC 7950</span>, <span class="seriesInfo">DOI 10.17487/RFC7950</span>, <time datetime="2016-08" class="refDate">August 2016</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7950">https://www.rfc-editor.org/rfc/rfc7950</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC7951">[RFC7951]</dt>
+        <dd>
+<span class="refAuthor">Lhotka, L.</span>, <span class="refTitle">"JSON Encoding of Data Modeled with YANG"</span>, <span class="seriesInfo">RFC 7951</span>, <span class="seriesInfo">DOI 10.17487/RFC7951</span>, <time datetime="2016-08" class="refDate">August 2016</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7951">https://www.rfc-editor.org/rfc/rfc7951</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC7952">[RFC7952]</dt>
+        <dd>
+<span class="refAuthor">Lhotka, L.</span>, <span class="refTitle">"Defining and Using Metadata with YANG"</span>, <span class="seriesInfo">RFC 7952</span>, <span class="seriesInfo">DOI 10.17487/RFC7952</span>, <time datetime="2016-08" class="refDate">August 2016</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7952">https://www.rfc-editor.org/rfc/rfc7952</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8174">[RFC8174]</dt>
+        <dd>
+<span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8340">[RFC8340]</dt>
+        <dd>
+<span class="refAuthor">Bjorklund, M.</span> and <span class="refAuthor">L. Berger, Ed.</span>, <span class="refTitle">"YANG Tree Diagrams"</span>, <span class="seriesInfo">BCP 215</span>, <span class="seriesInfo">RFC 8340</span>, <span class="seriesInfo">DOI 10.17487/RFC8340</span>, <time datetime="2018-03" class="refDate">March 2018</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8340">https://www.rfc-editor.org/rfc/rfc8340</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8641">[RFC8641]</dt>
+        <dd>
+<span class="refAuthor">Clemm, A.</span> and <span class="refAuthor">E. Voit</span>, <span class="refTitle">"Subscription to YANG Notifications for Datastore Updates"</span>, <span class="seriesInfo">RFC 8641</span>, <span class="seriesInfo">DOI 10.17487/RFC8641</span>, <time datetime="2019-09" class="refDate">September 2019</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8641">https://www.rfc-editor.org/rfc/rfc8641</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8785">[RFC8785]</dt>
+        <dd>
+<span class="refAuthor">Rundgren, A.</span>, <span class="refAuthor">Jordan, B.</span>, and <span class="refAuthor">S. Erdtman</span>, <span class="refTitle">"JSON Canonicalization Scheme (JCS)"</span>, <span class="seriesInfo">RFC 8785</span>, <span class="seriesInfo">DOI 10.17487/RFC8785</span>, <time datetime="2020-06" class="refDate">June 2020</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8785">https://www.rfc-editor.org/rfc/rfc8785</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8949">[RFC8949]</dt>
+        <dd>
+<span class="refAuthor">Bormann, C.</span> and <span class="refAuthor">P. Hoffman</span>, <span class="refTitle">"Concise Binary Object Representation (CBOR)"</span>, <span class="seriesInfo">STD 94</span>, <span class="seriesInfo">RFC 8949</span>, <span class="seriesInfo">DOI 10.17487/RFC8949</span>, <time datetime="2020-12" class="refDate">December 2020</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8949">https://www.rfc-editor.org/rfc/rfc8949</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9052">[RFC9052]</dt>
+        <dd>
+<span class="refAuthor">Schaad, J.</span>, <span class="refTitle">"CBOR Object Signing and Encryption (COSE): Structures and Process"</span>, <span class="seriesInfo">STD 96</span>, <span class="seriesInfo">RFC 9052</span>, <span class="seriesInfo">DOI 10.17487/RFC9052</span>, <time datetime="2022-08" class="refDate">August 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9052">https://www.rfc-editor.org/rfc/rfc9052</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9195">[RFC9195]</dt>
+        <dd>
+<span class="refAuthor">Lengyel, B.</span> and <span class="refAuthor">B. Claise</span>, <span class="refTitle">"A File Format for YANG Instance Data"</span>, <span class="seriesInfo">RFC 9195</span>, <span class="seriesInfo">DOI 10.17487/RFC9195</span>, <time datetime="2022-02" class="refDate">February 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9195">https://www.rfc-editor.org/rfc/rfc9195</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9254">[RFC9254]</dt>
+        <dd>
+<span class="refAuthor">Veillette, M., Ed.</span>, <span class="refAuthor">Petrov, I., Ed.</span>, <span class="refAuthor">Pelov, A.</span>, <span class="refAuthor">Bormann, C.</span>, and <span class="refAuthor">M. Richardson</span>, <span class="refTitle">"Encoding of Data Modeled with YANG in the Concise Binary Object Representation (CBOR)"</span>, <span class="seriesInfo">RFC 9254</span>, <span class="seriesInfo">DOI 10.17487/RFC9254</span>, <time datetime="2022-07" class="refDate">July 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9254">https://www.rfc-editor.org/rfc/rfc9254</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9595">[RFC9595]</dt>
+        <dd>
+<span class="refAuthor">Veillette, M., Ed.</span>, <span class="refAuthor">Pelov, A., Ed.</span>, <span class="refAuthor">Petrov, I., Ed.</span>, <span class="refAuthor">Bormann, C.</span>, and <span class="refAuthor">M. Richardson</span>, <span class="refTitle">"YANG Schema Item iDentifier (YANG SID)"</span>, <span class="seriesInfo">RFC 9595</span>, <span class="seriesInfo">DOI 10.17487/RFC9595</span>, <time datetime="2024-07" class="refDate">July 2024</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9595">https://www.rfc-editor.org/rfc/rfc9595</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="XMLSig">[XMLSig]</dt>
+      <dd>
+<span class="refTitle">"XML Signature Syntax and Processing Version 2.0"</span>, <span>n.d.</span>, <span>&lt;<a href="https://www.w3.org/TR/xmldsig-core2/">https://www.w3.org/TR/xmldsig-core2/</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="sec-informative-references">
+<section id="section-8.2">
+        <h3 id="name-informative-references">
+<a href="#section-8.2" class="section-number selfRef">8.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
+        </h3>
+<dl class="references">
+<dt id="RFC7223">[RFC7223]</dt>
+        <dd>
+<span class="refAuthor">Bjorklund, M.</span>, <span class="refTitle">"A YANG Data Model for Interface Management"</span>, <span class="seriesInfo">RFC 7223</span>, <span class="seriesInfo">DOI 10.17487/RFC7223</span>, <time datetime="2014-05" class="refDate">May 2014</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7223">https://www.rfc-editor.org/rfc/rfc7223</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="YANGmanifest">[YANGmanifest]</dt>
+      <dd>
+<span class="refAuthor">Claise, B.</span>, <span class="refAuthor">Quilbeuf, J.</span>, <span class="refAuthor">Lopez, D.</span>, <span class="refAuthor">Martinez-Casanueva, I. D.</span>, and <span class="refAuthor">T. Graf</span>, <span class="refTitle">"A Data Manifest for Contextualized Telemetry Data"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-opsawg-collected-data-manifest-10</span>, <time datetime="2025-10-20" class="refDate">20 October 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-opsawg-collected-data-manifest-10">https://datatracker.ietf.org/doc/html/draft-ietf-opsawg-collected-data-manifest-10</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
+</section>
+</div>
+<div id="appendix-a-examples-of-application-of-the-different-enclosing-methods">
+<section id="appendix-A">
+      <h2 id="name-appendix-a-examples-of-appl">
+<a href="#name-appendix-a-examples-of-appl" class="section-name selfRef">Appendix A. Examples of Application of the Different Enclosing Methods</a>
+      </h2>
+<p id="appendix-A-1">In the examples that follow, the signature strings have been wrapped and, in some cases, indented to improve readability. If these examples are used for any kind of validation, all intermediate carriage returns and whitespace should be deleted to build the actual signature string to be considered.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
+<div id="xml">
+<section id="appendix-A.1">
+        <h3 id="name-xml">
+<a href="#name-xml" class="section-name selfRef">XML</a>
+        </h3>
+<p id="appendix-A.1-1">Let us consider the following YANG instance, corresponding to a monitoring interface statement, as defined in <span>[<a href="#RFC7223" class="cite xref">RFC7223</a>]</span>:<a href="#appendix-A.1-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-A.1-2">
+<pre>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces"&gt;
+    &lt;interface&gt;
+        &lt;name&gt;GigabitEthernet1&lt;/name&gt;
+        &lt;type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type"&gt;
+            ianaift:ethernetCsmacd&lt;/type&gt;
+        &lt;admin-status&gt;up&lt;/admin-status&gt;
+        &lt;oper-status&gt;up&lt;/oper-status&gt;
+        &lt;last-change&gt;2024-02-03T11:22:41.081+00:00&lt;/last-change&gt;
+        &lt;if-index&gt;1&lt;/if-index&gt;
+        &lt;phys-address&gt;0c:00:00:37:d6:00&lt;/phys-address&gt;
+        &lt;speed&gt;1000000000&lt;/speed&gt;
+        &lt;statistics&gt;
+            &lt;discontinuity-time&gt;2024-02-03T11:20:38+00:00&lt;/discontinuity-time&gt;
+            &lt;in-octets&gt;8157&lt;/in-octets&gt;
+            &lt;in-unicast-pkts&gt;94&lt;/in-unicast-pkts&gt;
+            &lt;in-broadcast-pkts&gt;0&lt;/in-broadcast-pkts&gt;
+            &lt;in-multicast-pkts&gt;0&lt;/in-multicast-pkts&gt;
+            &lt;in-discards&gt;0&lt;/in-discards&gt;
+            &lt;in-errors&gt;0&lt;/in-errors&gt;
+            &lt;in-unknown-protos&gt;0&lt;/in-unknown-protos&gt;
+            &lt;out-octets&gt;89363&lt;/out-octets&gt;
+            &lt;out-unicast-pkts&gt;209&lt;/out-unicast-pkts&gt;
+            &lt;out-broadcast-pkts&gt;0&lt;/out-broadcast-pkts&gt;
+            &lt;out-multicast-pkts&gt;0&lt;/out-multicast-pkts&gt;
+            &lt;out-discards&gt;0&lt;/out-discards&gt;
+            &lt;out-errors&gt;0&lt;/out-errors&gt;
+        &lt;/statistics&gt;
+    &lt;/interface&gt;
+&lt;/interfaces&gt;
+</pre><a href="#appendix-A.1-2" class="pilcrow">¶</a>
+</div>
+<p id="appendix-A.1-3">Using the first enclosing method, we will demonstrate how to augment the previous ietf-interfaces YANG module by defining it in the new example module below:<a href="#appendix-A.1-3" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-A.1-4">
+<pre>
+module interfaces-provenance-augmented {
+  yang-version 1.1;
+  namespace "urn:example:interfaces-provenance-augmented";
+  prefix ifprov;
+
+  import ietf-interfaces {
+    prefix if;
+  }
+  import ietf-yang-provenance {
+    prefix iyangprov;
+  }
+
+  description
+    "Augments ietf-interfaces with provenance information";
+
+  revision "2025-10-08" {
+    description
+      "Initial revision of the augment module adding provenance information to ietf-interfaces.";
+  }
+
+  augment "/if:interfaces" {
+    leaf interfaces-provenance {
+      type iyangprov:provenance-signature;
+      description
+        "Signature proving provenance of the interface configuration";
+    }
+  }
+}
+
+
+</pre><a href="#appendix-A.1-4" class="pilcrow">¶</a>
+</div>
+<p id="appendix-A.1-5">The following tree diagram illustrates the augmentation of the ietf-interfaces module with a provenance-signature at the root container:<a href="#appendix-A.1-5" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-A.1-6">
+<pre>
+module: ietf-interfaces
+  +--rw interfaces
+     +--rw interface* [name]
+     |  +--rw name          string
+     |  +--rw type          identityref
+     |  ...
+     +--rw ifprov:interfaces-provenance?  iyangprov:provenance-signature
+</pre><a href="#appendix-A.1-6" class="pilcrow">¶</a>
+</div>
+<p id="appendix-A.1-7">The following example illustrates how a provenance signature can be attached to the root interfaces container to protect the entire set of interface configuration and operational data.
+This augmentation adds a provenance-signature leaf at the root interfaces container (named "interfaces-provenance" in this case) and produces the following output:<a href="#appendix-A.1-7" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-A.1-8">
+<pre>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces"&gt;
+    &lt;interfaces-provenance xmlns="urn:example:interfaces-provenance-augmented"&gt;
+      0oRRowNjeG1sBGdlYzIua2V5ASag9lhAvzyFP5HP0nONaqTRxKmSqerrDS6C
+      QXJSK+5NdprzQZLf0QsHtAi2pxzbuDJDy9kZoy1JTvNaJmMxGTLdm4ktug==
+    &lt;/interfaces-provenance&gt;
+    &lt;interface&gt;
+        &lt;name&gt;GigabitEthernet1&lt;/name&gt;
+        &lt;type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type"&gt;
+            ianaift:ethernetCsmacd&lt;/type&gt;
+        &lt;admin-status&gt;up&lt;/admin-status&gt;
+        &lt;oper-status&gt;up&lt;/oper-status&gt;
+        &lt;last-change&gt;2024-02-03T11:22:41.081+00:00&lt;/last-change&gt;
+        &lt;if-index&gt;1&lt;/if-index&gt;
+        &lt;phys-address&gt;0c:00:00:37:d6:00&lt;/phys-address&gt;
+        &lt;speed&gt;1000000000&lt;/speed&gt;
+        &lt;statistics&gt;
+            &lt;discontinuity-time&gt;2024-02-03T11:20:38+00:00&lt;/discontinuity-time&gt;
+            &lt;in-octets&gt;8157&lt;/in-octets&gt;
+            &lt;in-unicast-pkts&gt;94&lt;/in-unicast-pkts&gt;
+            &lt;in-broadcast-pkts&gt;0&lt;/in-broadcast-pkts&gt;
+            &lt;in-multicast-pkts&gt;0&lt;/in-multicast-pkts&gt;
+            &lt;in-discards&gt;0&lt;/in-discards&gt;
+            &lt;in-errors&gt;0&lt;/in-errors&gt;
+            &lt;in-unknown-protos&gt;0&lt;/in-unknown-protos&gt;
+            &lt;out-octets&gt;89363&lt;/out-octets&gt;
+            &lt;out-unicast-pkts&gt;209&lt;/out-unicast-pkts&gt;
+            &lt;out-broadcast-pkts&gt;0&lt;/out-broadcast-pkts&gt;
+            &lt;out-multicast-pkts&gt;0&lt;/out-multicast-pkts&gt;
+            &lt;out-discards&gt;0&lt;/out-discards&gt;
+            &lt;out-errors&gt;0&lt;/out-errors&gt;
+        &lt;/statistics&gt;
+    &lt;/interface&gt;
+&lt;/interfaces&gt;
+</pre><a href="#appendix-A.1-8" class="pilcrow">¶</a>
+</div>
+<p id="appendix-A.1-9">The second enclosing method shows a notification with the provenance signature included inside the notification envelope. The provenance element is placed immediately before the contents element:<a href="#appendix-A.1-9" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-A.1-10">
+<pre>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;envelope xmlns="urn:ietf:params:xml:ns:yang:ietf-yp-notification"&gt;
+    &lt;event-time&gt;2024-02-03T11:37:25.94Z&lt;/event-time&gt;
+    &lt;provenance xmlns="urn:ietf:params:xml:ns:yang:ietf-yp-provenance"&gt;
+    0oRRowNjeG1sBGdlYzIua2V5ASag9lhAzyJBpvnpzI/TirrjckAA29q6Qmf
+    u56L8ZhUXXhu0KFcKh1qSRFx2wGR/y+xgKigVHYicC7fp/0AlHSXWiKB2sg==
+    &lt;/provenance&gt;
+    &lt;contents&gt;
+        &lt;push-update xmlns="urn:ietf:params:xml:ns:yang:ietf-yang-push"&gt;
+            &lt;id&gt;1011&lt;/id&gt;
+            &lt;datastore-contents&gt;
+                &lt;interfaces-state xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces"&gt;
+                    &lt;interface&gt;
+                        &lt;name&gt;GigabitEthernet1&lt;/name&gt;
+                        &lt;type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type"&gt;
+                            ianaift:ethernetCsmacd&lt;/type&gt;
+                        &lt;admin-status&gt;up&lt;/admin-status&gt;
+                        &lt;oper-status&gt;up&lt;/oper-status&gt;
+                        &lt;last-change&gt;2024-02-03T11:22:41.081+00:00&lt;/last-change&gt;
+                        &lt;if-index&gt;1&lt;/if-index&gt;
+                        &lt;phys-address&gt;0c:00:00:37:d6:00&lt;/phys-address&gt;
+                        &lt;speed&gt;1000000000&lt;/speed&gt;
+                        &lt;statistics&gt;
+                            &lt;discontinuity-time&gt;2024-02-03T11:20:38+00:00&lt;/discontinuity-time&gt;
+                            &lt;in-octets&gt;8157&lt;/in-octets&gt;
+                            &lt;in-unicast-pkts&gt;94&lt;/in-unicast-pkts&gt;
+                            &lt;in-broadcast-pkts&gt;0&lt;/in-broadcast-pkts&gt;
+                            &lt;in-multicast-pkts&gt;0&lt;/in-multicast-pkts&gt;
+                            &lt;in-discards&gt;0&lt;/in-discards&gt;
+                            &lt;in-errors&gt;0&lt;/in-errors&gt;
+                            &lt;in-unknown-protos&gt;0&lt;/in-unknown-protos&gt;
+                            &lt;out-octets&gt;89363&lt;/out-octets&gt;
+                            &lt;out-unicast-pkts&gt;209&lt;/out-unicast-pkts&gt;
+                            &lt;out-broadcast-pkts&gt;0&lt;/out-broadcast-pkts&gt;
+                            &lt;out-multicast-pkts&gt;0&lt;/out-multicast-pkts&gt;
+                            &lt;out-discards&gt;0&lt;/out-discards&gt;
+                            &lt;out-errors&gt;0&lt;/out-errors&gt;
+                        &lt;/statistics&gt;
+                    &lt;/interface&gt;
+                &lt;/interfaces-state&gt;
+            &lt;/datastore-contents&gt;
+        &lt;/push-update&gt;
+    &lt;/contents&gt;
+&lt;/envelope&gt;
+</pre><a href="#appendix-A.1-10" class="pilcrow">¶</a>
+</div>
+<p id="appendix-A.1-11">The third enclosing method, applicable if the instance is to be stored as YANG instance data at rest, by adding the corresponding metadata, would produce a results as shown below:<a href="#appendix-A.1-11" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-A.1-12">
+<pre>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;instance-data-set xmlns="urn:ietf:params:xml:ns:yang:ietf-yang-instance-data"&gt;
+  &lt;name&gt;atRestYANG&lt;/name&gt;
+  &lt;content-schema&gt;&lt;/content-schema&gt;
+  &lt;revision&gt;
+    &lt;date&gt;2024-11-03&lt;/date&gt;
+    &lt;description&gt;For demos&lt;/description&gt;
+  &lt;/revision&gt;
+  &lt;description&gt;Sample for demonstrating provenance signatures&lt;/description&gt;
+  &lt;contact&gt;diego.r.lopez@telefonica.com&lt;/contact&gt;
+  &lt;provenance xmlns="urn:ietf:params:xml:ns:yang:ietf-yang-instance-data-provenance"&gt;
+  0oRRowNjeG1sBGdlYzIua2V5ASag9lhAWff+fMbfNChKUYZ52UTOBmAlYPFe4
+  vlZOLyZeW0CU7/2OutDeMCG28+m3rm58jqLjKbcueKLFq8qFJb4mvPY+Q==
+  &lt;/provenance&gt;
+  &lt;content-data&gt;
+   &lt;interfaces-state xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces"&gt;
+    &lt;interface&gt;
+        &lt;name&gt;GigabitEthernet1&lt;/name&gt;
+        &lt;type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type"&gt;
+            ianaift:ethernetCsmacd&lt;/type&gt;
+        &lt;admin-status&gt;up&lt;/admin-status&gt;
+        &lt;oper-status&gt;up&lt;/oper-status&gt;
+        &lt;last-change&gt;2024-02-03T11:22:41.081+00:00&lt;/last-change&gt;
+        &lt;if-index&gt;1&lt;/if-index&gt;
+        &lt;phys-address&gt;0c:00:00:37:d6:00&lt;/phys-address&gt;
+        &lt;speed&gt;1000000000&lt;/speed&gt;
+        &lt;statistics&gt;
+            &lt;discontinuity-time&gt;2024-02-03T11:20:38+00:00&lt;/discontinuity-time&gt;
+            &lt;in-octets&gt;8157&lt;/in-octets&gt;
+            &lt;in-unicast-pkts&gt;94&lt;/in-unicast-pkts&gt;
+            &lt;in-broadcast-pkts&gt;0&lt;/in-broadcast-pkts&gt;
+            &lt;in-multicast-pkts&gt;0&lt;/in-multicast-pkts&gt;
+            &lt;in-discards&gt;0&lt;/in-discards&gt;
+            &lt;in-errors&gt;0&lt;/in-errors&gt;
+            &lt;in-unknown-protos&gt;0&lt;/in-unknown-protos&gt;
+            &lt;out-octets&gt;89363&lt;/out-octets&gt;
+            &lt;out-unicast-pkts&gt;209&lt;/out-unicast-pkts&gt;
+            &lt;out-broadcast-pkts&gt;0&lt;/out-broadcast-pkts&gt;
+            &lt;out-multicast-pkts&gt;0&lt;/out-multicast-pkts&gt;
+            &lt;out-discards&gt;0&lt;/out-discards&gt;
+            &lt;out-errors&gt;0&lt;/out-errors&gt;
+        &lt;/statistics&gt;
+    &lt;/interface&gt;
+   &lt;/interfaces-state&gt;
+ &lt;/content-data&gt;
+&lt;/instance-data-set&gt;
+</pre><a href="#appendix-A.1-12" class="pilcrow">¶</a>
+</div>
+<p id="appendix-A.1-13">Finally, using the fourth enclosing method, the YANG instance would incorporate the corresponding provenance metadata as an annotation, using the namespace prefix specified in the ietf-yang-provenance-annotation module, as introduced in <a href="#EMannotations" class="auto internal xref">Section 4.4</a>:<a href="#appendix-A.1-13" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-A.1-14">
+<pre>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;interfaces-state xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces"
+                  xmlns:ypmd="urn:ietf:params:xml:ns:yang:ietf-yang-annotation-pmd"
+                  ypmd:provenance=
+                  "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAzen3Bm9AZoyXuetpoTB70SzZqKVxeu
+                  OMW099sm+NXSqCfnqBKfXeuqDNEkuEr+E0XiAso986fbAHQCHbAJMOhw=="&gt;
+    &lt;interface&gt;
+        &lt;name&gt;GigabitEthernet1&lt;/name&gt;
+        &lt;type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type"&gt;
+            ianaift:ethernetCsmacd&lt;/type&gt;
+        &lt;admin-status&gt;up&lt;/admin-status&gt;
+        &lt;oper-status&gt;up&lt;/oper-status&gt;
+        &lt;last-change&gt;2024-02-03T11:22:41.081+00:00&lt;/last-change&gt;
+        &lt;if-index&gt;1&lt;/if-index&gt;
+        &lt;phys-address&gt;0c:00:00:37:d6:00&lt;/phys-address&gt;
+        &lt;speed&gt;1000000000&lt;/speed&gt;
+        &lt;statistics&gt;
+            &lt;discontinuity-time&gt;2024-02-03T11:20:38+00:00&lt;/discontinuity-time&gt;
+            &lt;in-octets&gt;8157&lt;/in-octets&gt;
+            &lt;in-unicast-pkts&gt;94&lt;/in-unicast-pkts&gt;
+            &lt;in-broadcast-pkts&gt;0&lt;/in-broadcast-pkts&gt;
+            &lt;in-multicast-pkts&gt;0&lt;/in-multicast-pkts&gt;
+            &lt;in-discards&gt;0&lt;/in-discards&gt;
+            &lt;in-errors&gt;0&lt;/in-errors&gt;
+            &lt;in-unknown-protos&gt;0&lt;/in-unknown-protos&gt;
+            &lt;out-octets&gt;89363&lt;/out-octets&gt;
+            &lt;out-unicast-pkts&gt;209&lt;/out-unicast-pkts&gt;
+            &lt;out-broadcast-pkts&gt;0&lt;/out-broadcast-pkts&gt;
+            &lt;out-multicast-pkts&gt;0&lt;/out-multicast-pkts&gt;
+            &lt;out-discards&gt;0&lt;/out-discards&gt;
+            &lt;out-errors&gt;0&lt;/out-errors&gt;
+        &lt;/statistics&gt;
+    &lt;/interface&gt;
+&lt;/interfaces&gt;
+</pre><a href="#appendix-A.1-14" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="json">
+<section id="appendix-A.2">
+        <h3 id="name-json">
+<a href="#name-json" class="section-name selfRef">JSON</a>
+        </h3>
+<p id="appendix-A.2-1">Let us consider the following YANG instance, corresponding to the same monitoring interface statement, with JSON serialization:<a href="#appendix-A.2-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-A.2-2">
+<pre>
+{
+  "ietf-interfaces:interfaces": {
+    "interface": [
+      {
+        "name": "GigabitEthernet1",
+        "type": "ianaift:ethernetCsmacd",
+        "admin-status": "up",
+        "oper-status": "up",
+        "last-change": "2024-02-03T11:22:41.081+00:00",
+        "if-index": 1,
+        "phys-address": "0c:00:00:37:d6:00",
+        "speed": 1000000000,
+        "statistics": {
+          "discontinuity-time": "2024-02-03T11:20:38+00:00",
+          "in-octets": 8157,
+          "in-unicast-pkts": 94,
+          "in-broadcast-pkts": 0,
+          "in-multicast-pkts": 0,
+          "in-discards": 0,
+          "in-errors": 0,
+          "in-unknown-protos": 0,
+          "out-octets": 89363,
+          "out-unicast-pkts": 209,
+          "out-broadcast-pkts": 0,
+          "out-multicast-pkts": 0,
+          "out-discards": 0,
+          "out-errors": 0
+        }
+      }
+    ]
+  }
+}
+</pre><a href="#appendix-A.2-2" class="pilcrow">¶</a>
+</div>
+<p id="appendix-A.2-3">Applying the first enclosing method, a provenance-signature leaf at the top element (named "interfaces-provenance" in this case") would be included following the augmentation module previously defined for the XML example. This will produce the following output:<a href="#appendix-A.2-3" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-A.2-4">
+<pre>
+{
+  "ietf-interfaces:interfaces": {
+    "interface": [
+      {
+        "name": "GigabitEthernet1",
+        "type": "ianaift:ethernetCsmacd",
+        "admin-status": "up",
+        "oper-status": "up",
+        "last-change": "2024-02-03T11:22:41.081+00:00",
+        "if-index": 1,
+        "phys-address": "0c:00:00:37:d6:00",
+        "speed": 1000000000,
+        "statistics": {
+          "discontinuity-time": "2024-02-03T11:20:38+00:00",
+          "in-octets": 8157,
+          "in-unicast-pkts": 94,
+          "in-broadcast-pkts": 0,
+          "in-multicast-pkts": 0,
+          "in-discards": 0,
+          "in-errors": 0,
+          "in-unknown-protos": 0,
+          "out-octets": 89363,
+          "out-unicast-pkts": 209,
+          "out-broadcast-pkts": 0,
+          "out-multicast-pkts": 0,
+          "out-discards": 0,
+          "out-errors": 0
+        }
+      }
+    ],
+    "interfaces-provenance-augmented:interfaces-provenance":
+      "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAvzyFP5HP0nONaqTRxKmSqerrDS6C
+       QXJSK+5NdprzQZLf0QsHtAi2pxzbuDJDy9kZoy1JTvNaJmMxGTLdm4ktug=="
+  }
+}
+
+</pre><a href="#appendix-A.2-4" class="pilcrow">¶</a>
+</div>
+<p id="appendix-A.2-5">The second enclosing method would translate into a notification including the "provenance" element as follows:<a href="#appendix-A.2-5" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-A.2-6">
+<pre>
+{
+  "ietf-yp-notification:envelope" : {
+    "event-time" : "2013-12-21T00:01:00Z",
+    "contents": {
+      "ietf-yang-push:push-update": {
+        "id": 1011,
+        "datastore-contents": {
+          "ietf-interfaces:interfaces-state": {
+            "interface": [ {
+                "name": "GigabitEthernet1",
+                "type": "ianaift:ethernetCsmacd",
+                "admin-status": "up",
+                "oper-status": "up",
+                "last-change": "2024-02-03T11:22:41.081+00:00",
+                "if-index": 1,
+                "phys-address": "0c:00:00:37:d6:00",
+                "speed": 1000000000,
+                "statistics": {
+                  "discontinuity-time": "2024-02-03T11:20:38+00:00",
+                  "in-octets": 8157,
+                  "in-unicast-pkts": 94,
+                  "in-broadcast-pkts": 0,
+                  "in-multicast-pkts": 0,
+                  "in-discards": 0,
+                  "in-errors": 0,
+                  "in-unknown-protos": 0,
+                  "out-octets": 89363,
+                  "out-unicast-pkts": 209,
+                  "out-broadcast-pkts": 0,
+                  "out-multicast-pkts": 0,
+                  "out-discards": 0,
+                  "out-errors": 0
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "ietf-yp-provenance:provenance":
+    "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAiKEKLQKJT12LsNgxt8WllEI65lyi
+    E/m12drCfl+wh7T61cTYhFGdEeX8A5F0vmUWROZebq/VVFewUZeVYGZBOQ=="
+  }
+}
+</pre><a href="#appendix-A.2-6" class="pilcrow">¶</a>
+</div>
+<p id="appendix-A.2-7">The third enclosing method, applicable if the instance is to be stored as YANG instance data at rest, by adding the corresponding metadata, would produce a results as shown below:<a href="#appendix-A.2-7" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-A.2-8">
+<pre>
+{
+  "ietf-yang-instance-data:instance-data-set" : {
+    "name" : "interfaces-labTID-status",
+    "contact" : "sofia.garciarincon.practicas@telefonica.com",
+    "timestamp" : "Thu Jul 18 11:42:06 CEST 2024",
+    "content-data" : {
+      "ietf-interfaces:interfaces": {
+        "interface": [
+          {
+            "name": "GigabitEthernet1",
+            "iana-if-type:type": "ianaift:ethernetCsmacd",
+            "admin-status": "up",
+            "oper-status": "up",
+            "last-change": "2024-02-03T11:22:41.081+00:00",
+            "if-index": 1,
+            "phys-address": "0c:00:00:37:d6:00",
+            "speed": 1000000000,
+            "statistics": {
+              "discontinuity-time": "2024-02-03T11:20:38+00:00",
+              "in-octets": 8157,
+              "in-unicast-pkts": 94,
+              "in-broadcast-pkts": 0,
+              "in-multicast-pkts": 0,
+              "in-discards": 0,
+              "in-errors": 0,
+              "in-unknown-protos": 0,
+              "out-octets": 89363,
+              "out-unicast-pkts": 209,
+              "out-broadcast-pkts": 0,
+              "out-multicast-pkts": 0,
+              "out-discards": 0,
+              "out-errors": 0
+            }
+          }
+        ]
+      }
+    },
+    "ietf-yang-instance-data-provenance:provenance" :
+    "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAmop/c7wMcjRmiSPVy65F/N6O21dsG
+    kjGQjIDRizhu3WMwi9Je+VUf5sqwlhSwQCdv5u7mRXa6Pd9dhCwdxdRCA=="
+  }
+}
+</pre><a href="#appendix-A.2-8" class="pilcrow">¶</a>
+</div>
+<p id="appendix-A.2-9">Finally, using the fourth enclosing method, the YANG instance would incorporate the corresponding provenance metadata as an annotation, using the namespace prefix specified in the yang-provenance-metadata module, as introduced in <a href="#EMannotations" class="auto internal xref">Section 4.4</a>, and the recommendations in section 5.2.3 of <span>[<a href="#RFC7952" class="cite xref">RFC7952</a>]</span>:<a href="#appendix-A.2-9" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-A.2-10">
+<pre>
+{
+  "ietf-interfaces:interfaces" : {
+
+    "interface" : [
+      {
+        "name" : "GigabitEthernet1",
+        "iana-if-type:type" : "ianaift:ethernetCsmacd",
+        "admin-status" : "up",
+        "oper-status" : "up",
+        "last-change" : "2024-02-03T11:22:41.081+00:00",
+        "if-index" : 1,
+        "phys-address" : "0c:00:00:37:d6:00",
+        "speed" : 1000000000,
+        "statistics" : {
+          "discontinuity-time" : "2024-02-03T11:20:38+00:00",
+          "in-octets" : 8157,
+          "in-unicast-pkts" : 94,
+          "in-broadcast-pkts" : 0,
+          "in-multicast-pkts" : 0,
+          "in-discards" : 0,
+          "in-errors" : 0,
+          "in-unknown-protos" : 0,
+          "out-octets" : 89363,
+          "out-unicast-pkts" : 209,
+          "out-broadcast-pkts" : 0,
+          "out-multicast-pkts" : 0,
+          "out-discards" : 0,
+          "out-errors" : 0
+        }
+      }
+    ],
+    "@": {
+        "ypmd:provenance": "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAM/Dx3HVc4GL91jmuU5nWgcmOPPVpARLJkWo5wwQYvGFJpKMXTkjAtArPp8v6Sl1ZD1qHimKMhAoHLMHVxBtrcA=="
+    }
+  }
+}
+</pre><a href="#appendix-A.2-10" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="cbor">
+<section id="appendix-A.3">
+        <h3 id="name-cbor">
+<a href="#name-cbor" class="section-name selfRef">CBOR</a>
+        </h3>
+<p id="appendix-A.3-1">According to <span>[<a href="#RFC9254" class="cite xref">RFC9254</a>]</span>, provenance information <span class="bcp14">MAY</span> be represented in CBOR using either YANG names (CBOR diagnostic notation) or YANG SIDs as map keys. The CBOR diagnostic notation when using name keys would be essentially similar to the JSON encoding presented in the previous section. Both representations are included in the examples below to provide a full reference.<a href="#appendix-A.3-1" class="pilcrow">¶</a></p>
+<p id="appendix-A.3-2">NOTE TO THE RFC EDITOR: The SID values shown below are illustrative and must be replaced by IANA-assigned values before publication.<a href="#appendix-A.3-2" class="pilcrow">¶</a></p>
+<p id="appendix-A.3-3">The first enclosing method will produce the following output, in CBOR diagnostic notation:<a href="#appendix-A.3-3" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-A.3-4">
+<pre>
+{
+  "ietf-interfaces:interfaces": {
+    "interface": [
+      {
+        "name": "GigabitEthernet1",
+        "type": "ianaift:ethernetCsmacd",
+        "admin-status": "up",
+        "oper-status": "up",
+        "last-change": "2024-02-03T11:22:41.081+00:00",
+        "if-index": 1,
+        "phys-address": "0c:00:00:37:d6:00",
+        "speed": 1000000000,
+        "statistics": {
+          "discontinuity-time": "2024-02-03T11:20:38+00:00",
+          "in-octets": 8157,
+          "in-unicast-pkts": 94,
+          "in-broadcast-pkts": 0,
+          "in-multicast-pkts": 0,
+          "in-discards": 0,
+          "in-errors": 0,
+          "in-unknown-protos": 0,
+          "out-octets": 89363,
+          "out-unicast-pkts": 209,
+          "out-broadcast-pkts": 0,
+          "out-multicast-pkts": 0,
+          "out-discards": 0,
+          "out-errors": 0
+        }
+      }
+    ],
+    "interfaces-provenance-augmented:interfaces-provenance": h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70'
+    }
+}
+</pre><a href="#appendix-A.3-4" class="pilcrow">¶</a>
+</div>
+<p id="appendix-A.3-5">Note that the provenance leaf in JSON would be represented in BASE64 value and in CBOR diagnostic is a byte string represented with an hexadecimal value.<a href="#appendix-A.3-5" class="pilcrow">¶</a></p>
+<p id="appendix-A.3-6">And the corresponding representation of the first enclosing method using YANG SIDs will be:<a href="#appendix-A.3-6" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-A.3-7">
+<pre>
+{
+  1500: {                      / ietf-interfaces:interfaces /
+    1501: [                     / interface list /
+      {
+        1502: "GigabitEthernet1",     / name /
+        1503: 1800,                   / type identityref /
+        1504: 1,                      / admin-status: up /
+        1505: 1,                      / oper-status: up /
+        1506: "2024-02-03T11:22:41.081+00:00", / last-change /
+        1507: 1,                      / if-index /
+        1508: "0c:00:00:37:d6:00",        / phys-address /
+        1509: 1000000000,             / speed /
+        1510: {                       / statistics /
+          1511: "2024-02-03T11:20:38+00:00",
+          1512: 8157,
+          1513: 94,
+          1514: 0,
+          1515: 0,
+          1516: 0,
+          1517: 0,
+          1518: 0,
+          1519: 89363,
+          1520: 209,
+          1521: 0,
+          1522: 0,
+          1523: 0,
+          1524: 0
+        }
+      }
+    ],
+    3162: h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70'   / provenance-signature leaf /
+  }
+}
+
+</pre><a href="#appendix-A.3-7" class="pilcrow">¶</a>
+</div>
+<p id="appendix-A.3-8">The following example illustrates the notification-based enclosing method (second method), represented in CBOR diagnostic notation.<a href="#appendix-A.3-8" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-A.3-9">
+<pre>
+{
+    "ietf-yp-notification:envelope": {
+        "event-time": "2013-12-21T00:01:00Z",
+        "contents": {
+            "ietf-yang-push:push-update": {
+                "id": 1011,
+                "datastore-contents": {
+                    "ietf-interfaces:interfaces-state": {
+                        "interface": [
+                            {
+                                "name": "GigabitEthernet1",
+                                "type": "iana-if-type:ethernetCsmacd",
+                                "admin-status": "up",
+                                "oper-status": "up",
+                                "last-change": "2024-02-03T11:22:41.081+00:00",
+                                "if-index": 1,
+                                "phys-address": "0c:00:00:37:d6:00",
+                                "speed": 1000000000,
+                                "statistics": {
+                                    "discontinuity-time": "2024-02-03T11:20:38+00:00",
+                                    "in-octets": 8157,
+                                    "in-unicast-pkts": 94,
+                                    "in-broadcast-pkts": 0,
+                                    "in-multicast-pkts": 0,
+                                    "in-discards": 0,
+                                    "in-errors": 0,
+                                    "in-unknown-protos": 0,
+                                    "out-octets": 89363,
+                                    "out-unicast-pkts": 209,
+                                    "out-broadcast-pkts": 0,
+                                    "out-multicast-pkts": 0,
+                                    "out-discards": 0,
+                                    "out-errors": 0
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        "ietf-yp-provenance:provenance": h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70'
+    }
+}
+</pre><a href="#appendix-A.3-9" class="pilcrow">¶</a>
+</div>
+<p id="appendix-A.3-10">And thhis would be the second enclosing method example in YANG SID notation:<a href="#appendix-A.3-10" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-A.3-11">
+<pre>
+{
+  2957: {                           / ietf-yp-notification:envelope /
+    2959: "2024-10-10T08:00:11.22Z", / event-time /
+    2958: {                           / contents /
+      4000: {                         / push-update /
+        4001: 1011,                   / id /
+        4002: {                       / datastore-contents /
+          1500: {                     / ietf-interfaces:interfaces /
+            1501: [                    / interface list /
+              {
+                1502: "GigabitEthernet1",    / name /
+                1503: 1800,                  / type identityref /
+                1504: 1,                     / admin-status: up /
+                1505: 1,                     / oper-status: up /
+                1506: "2024-02-03T11:22:41.081+00:00", / last-change /
+                1507: 1,                     / if-index /
+                1508: "0c:00:00:37:d6:00",       / phys-address /
+                1509: 1000000000,            / speed /
+                1510: {                     / statistics /
+                  1511: "2024-02-03T11:20:38+00:00", / discontinuity-time /
+                  1512: 8157,
+                  1513: 94,
+                  1514: 0,
+                  1515: 0,
+                  1516: 0,
+                  1517: 0,
+                  1518: 0,
+                  1519: 89363,
+                  1520: 209,
+                  1521: 0,
+                  1522: 0,
+                  1523: 0,
+                  1524: 0
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    3162: h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70'  / provenance-signature/
+  }
+}
+</pre><a href="#appendix-A.3-11" class="pilcrow">¶</a>
+</div>
+<p id="appendix-A.3-12">The following example illustrates the third enclosing method, represented in CBOR diagnostic notation.<a href="#appendix-A.3-12" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-A.3-13">
+<pre>
+{
+  "ietf-yang-instance-data:instance-data-set": {
+    "name": "interfaces-labTID-status",
+    "contact": "sofia.garciarincon.practicas@telefonica.com",
+    "timestamp": "Thu Jul 18 11:42:06 CEST 2024",
+    "content-data": {
+      "ietf-interfaces:interfaces": {
+        "interface": [
+          {
+            "name": "GigabitEthernet1",
+            "iana-if-type:type": "ianaift:ethernetCsmacd",
+            "admin-status": "up",
+            "oper-status": "up",
+            "last-change": "2024-02-03T11:22:41.081+00:00",
+            "if-index": 1,
+            "phys-address": "0c:00:00:37:d6:00",
+            "speed": 1000000000,
+            "statistics": {
+              "discontinuity-time": "2024-02-03T11:20:38+00:00",
+              "in-octets": 8157,
+              "in-unicast-pkts": 94,
+              "in-broadcast-pkts": 0,
+              "in-multicast-pkts": 0,
+              "in-discards": 0,
+              "in-errors": 0,
+              "in-unknown-protos": 0,
+              "out-octets": 89363,
+              "out-unicast-pkts": 209,
+              "out-broadcast-pkts": 0,
+              "out-multicast-pkts": 0,
+              "out-discards": 0,
+              "out-errors": 0
+            }
+          }
+        ]
+      }
+    },
+    "ietf-yang-instance-data-provenance:provenance":
+      h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70'
+  }
+}
+</pre><a href="#appendix-A.3-13" class="pilcrow">¶</a>
+</div>
+<p id="appendix-A.3-14">And this would be the third enclosing method using YANG SID notation:<a href="#appendix-A.3-14" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-A.3-15">
+<pre>
+{
+  3170: {                             / ietf-yang-instance-data:instance-data-set /
+    3171: "interfaces-labTID-status", / name /
+    3172: "sofia.garciarincon.practicas@telefonica.com", / contact /
+    3173: "Thu Jul 18 11:42:06 CEST 2024", / timestamp /
+    3174: {                             / content-data /
+      1500: {                           / ietf-interfaces:interfaces /
+        1501: [                          / interface list /
+          {
+            1502: "GigabitEthernet1",
+            1503: 1800,
+            1504: 1,
+            1505: 1,
+            1506: "2024-02-03T11:22:41.081+00:00",
+            1507: 1,
+            1508: "0c:00:00:37:d6:00",
+            1509: 1000000000,
+            1510: {
+              1511: "2024-02-03T11:20:38+00:00",
+              1512: 8157,
+              1513: 94,
+              1514: 0,
+              1515: 0,
+              1516: 0,
+              1517: 0,
+              1518: 0,
+              1519: 89363,
+              1520: 209,
+              1521: 0,
+              1522: 0,
+              1523: 0,
+              1524: 0
+            }
+          }
+        ]
+      }
+    },
+    3162: h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70'   / provenance-signature /
+  }
+}
+</pre><a href="#appendix-A.3-15" class="pilcrow">¶</a>
+</div>
+<p id="appendix-A.3-16">Note that there is no IANA registered SID for ietf-yang-instance-data:instance-data-set, so a provisional one is used to complete the example.<a href="#appendix-A.3-16" class="pilcrow">¶</a></p>
+<p id="appendix-A.3-17">Finaly, the following example illustrates the fourth and last enclosing method using CBOR diagonstic notation:<a href="#appendix-A.3-17" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-A.3-18">
+<pre>
+{
+  "ietf-interfaces:interfaces": {
+
+    "interface": [
+      {
+        "name": "GigabitEthernet1",
+        "iana-if-type:type": "ianaift:ethernetCsmacd",
+        "admin-status": "up",
+        "oper-status": "up",
+        "last-change": "2024-02-03T11:22:41.081+00:00",
+        "if-index": 1,
+        "phys-address": "0c:00:00:37:d6:00",
+        "speed": 1000000000,
+        "statistics": {
+          "discontinuity-time": "2024-02-03T11:20:38+00:00",
+          "in-octets": 8157,
+          "in-unicast-pkts": 94,
+          "in-broadcast-pkts": 0,
+          "in-multicast-pkts": 0,
+          "in-discards": 0,
+          "in-errors": 0,
+          "in-unknown-protos": 0,
+          "out-octets": 89363,
+          "out-unicast-pkts": 209,
+          "out-broadcast-pkts": 0,
+          "out-multicast-pkts": 0,
+          "out-discards": 0,
+          "out-errors": 0
+        }
+      }
+    ],
+
+    "@": {
+      "ypmd:provenance":
+        h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70'
+    }
+  }
+}
+</pre><a href="#appendix-A.3-18" class="pilcrow">¶</a>
+</div>
+<p id="appendix-A.3-19">While this last example uses YANG SID notation for the fourth enclosing method:<a href="#appendix-A.3-19" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-A.3-20">
+<pre>
+{
+  1500: {                             / ietf-interfaces:interfaces /
+    1501: [                              / interface list /
+      {
+        1502: "GigabitEthernet1",
+        1503: 1800,
+        1504: 1,
+        1505: 1,
+        1506: "2024-02-03T11:22:41.081+00:00",
+        1507: 1,
+        1508: "0c:00:00:37:d6:00",
+        1509: 1000000000,
+        1510: {
+          1511: "2024-02-03T11:20:38+00:00",
+          1512: 8157,
+          1513: 94,
+          1514: 0,
+          1515: 0,
+          1516: 0,
+          1517: 0,
+          1518: 0,
+          1519: 89363,
+          1520: 209,
+          1521: 0,
+          1522: 0,
+          1523: 0,
+          1524: 0
+        }
+      }
+    ],
+    3162: h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70'  / provenance-signature/
+  }
+}
+</pre><a href="#appendix-A.3-20" class="pilcrow">¶</a>
+</div>
+<p id="appendix-A.3-21">In the example above, the provenance-signature leaf is represented using the proposed assigned SID (3162). The representation of this leaf is the same whether it is added via the first enclosing method (as a direct augmentation of the interfaces container) or via the fourth enclosing method (as an annotation using the yp-provenance-metadata module). The only difference between these two methods is the semantic context and location of the leaf within the YANG data: in the first method it is part of the root container structure, while in the fourth method it is included as metadata in the @ annotation object. From the perspective of CBOR representation, SIDs are identical in both methods.<a href="#appendix-A.3-21" class="pilcrow">¶</a></p>
+<p id="appendix-A.3-22">NOTE TO THE RFC EDITOR: Replace the illustrative SID values with the final values allocated by IANA according to <span>[<a href="#RFC9595" class="cite xref">RFC9595</a>]</span>.<a href="#appendix-A.3-22" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="appendix-b-provisional-yang-sid-file-sid-for-ietf-yang-provenance">
+<section id="appendix-B">
+      <h2 id="name-appendix-b-provisional-yang">
+<a href="#name-appendix-b-provisional-yang" class="section-name selfRef">Appendix B. Provisional YANG SID File (.sid) for <code>ietf-yang-provenance</code></a>
+      </h2>
+<p id="appendix-B-1">The following <code>.sid</code> file is provided as a provisional example for implementers. It maps schema nodes defined in the <code>ietf-yang-provenance</code> module to numeric SIDs for use in CBOR compact encoding. These SIDs are provisional and will be replaced by IANA-assigned values upon publication of the RFC.<a href="#appendix-B-1" class="pilcrow">¶</a></p>
+<div class="sourcecode" id="appendix-B-2">
+<pre>&lt;CODE BEGINS&gt; file "ietf-yang-provenance@2025-05-09.yang"
+
+
+{
+    "ietf-sid-file:sid-file": {
+        "module-name": "ietf-yang-provenance",
+        "module-revision": "2025-05-09",
+        "sid-file-status": "unpublished",
+        "description": "Provisional SIDs for ietf-yang-provenance module",
+        "reference": "RFC-to-be: Applying COSE Signatures for YANG Data Provenance",
+        "dependency-revision": [],
+        "assignment-range": [
+            {
+                "entry-point": "3161",
+                "size": "20"
+            }
+        ],
+        "item": [
+            {
+                "status": "unstable",
+                "namespace": "module",
+                "identifier": "ietf-yang-provenance",
+                "sid": "3161"
+            },
+            {
+                "status": "unstable",
+                "namespace": "data",
+                "identifier": "/ietf-yang-provenance:provenance-signature",
+                "sid": "3162"
+            }
+        ]
+    }
+}
+
+&lt;CODE ENDS&gt;</pre><a href="#appendix-B-2" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="acknowledgments">
+<section id="appendix-C">
+      <h2 id="name-acknowledgments">
+<a href="#name-acknowledgments" class="section-name selfRef">Acknowledgments</a>
+      </h2>
+<p id="appendix-C-1">Thanks to Sofia Garcia (UC3M, sgarciarincon01@gmail.com) for being instrumental in demonstrating the feasibility of the proposed approach, providing a first proof of concept of YANG provenance signatures.<a href="#appendix-C-1" class="pilcrow">¶</a></p>
+<p id="appendix-C-2">This document is based on work partially funded by the EU Horizon Europe projects iTrust6G (grant 101139198), CYBERNEMO (grant 101168182), cPAID (grant 101168407), MARE (grant 101191436), and 6G-DALI (grant 101192750).<a href="#appendix-C-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="authors-addresses">
+<section id="appendix-D">
+      <h2 id="name-authors-addresses">
+<a href="#name-authors-addresses" class="section-name selfRef">Authors' Addresses</a>
+      </h2>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Diego Lopez</span></div>
+<div dir="auto" class="left"><span class="org">Telefonica</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:diego.r.lopez@telefonica.com" class="email">diego.r.lopez@telefonica.com</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Antonio Pastor</span></div>
+<div dir="auto" class="left"><span class="org">Telefonica</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:antonio.pastorperales@telefonica.com" class="email">antonio.pastorperales@telefonica.com</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Alex Huang Feng</span></div>
+<div dir="auto" class="left"><span class="org">INSA-Lyon</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:alex.huang-feng@insa-lyon.fr" class="email">alex.huang-feng@insa-lyon.fr</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Ana Mendez</span></div>
+<div dir="auto" class="left"><span class="org">Telefonica</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:ana.mendezperez@telefonica.com" class="email">ana.mendezperez@telefonica.com</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Henk Birkholz</span></div>
+<div dir="auto" class="left"><span class="org">Fraunhofer SIT</span></div>
+<div dir="auto" class="left"><span class="street-address">Rheinstrasse 75</span></div>
+<div dir="auto" class="left">
+<span class="postal-code">64295</span> <span class="locality">Darmstadt</span>
+</div>
+<div dir="auto" class="left"><span class="country-name">Germany</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:henk.birkholz@sit.fraunhofer.de" class="email">henk.birkholz@sit.fraunhofer.de</a>
+</div>
+</address>
+</section>
+</div>
+<script>const toc = document.getElementById("toc");
+toc.querySelector("h2").addEventListener("click", e => {
+  toc.classList.toggle("active");
+});
+toc.querySelector("nav").addEventListener("click", e => {
+  toc.classList.remove("active");
+});
+</script>
+</body>
+</html>
