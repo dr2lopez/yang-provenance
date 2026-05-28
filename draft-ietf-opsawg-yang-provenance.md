@@ -75,7 +75,7 @@ informative:
 
 --- abstract
 
-This document defines a mechanism based on COSE signatures to provide and verify the provenance of YANG data, so it is possible to verify the origin and integrity of a dataset, even when those data are going to be processed and/or applied in workflows where a crypto-enabled data transport directly from the original data source is not available. As the application of evidence-based OAM automation and the use of tools such as AI/ML grow, provenance validation becomes more relevant in all scenarios, in support of the assuring the origin and integrity of data. The use of compact signatures facilitates the inclusion of provenance strings in any YANG schema requiring them.
+This document defines a mechanism based on CBOR Object Signing and Encryption (COSE) signatures to provide and verify the provenance of YANG data, so it is possible to verify the origin and integrity of a dataset, even when those data are going to be processed and/or applied in workflows where a crypto-enabled data transport directly from the original data source is not available. As the application of evidence-based OAM automation and the use of tools such as AI/ML grow, provenance validation becomes more relevant in all scenarios, in support of the assuring the origin and integrity of data. The use of compact signatures facilitates the inclusion of provenance strings in any YANG schema requiring them.
 
 --- middle
 
@@ -105,7 +105,9 @@ The provenance mechanisms described in this document are designed to be flexible
 
 {::boilerplate bcp14-tagged}
 
-The term "data provenance" refers to a documented trail accounting for the origin of a piece of data and where it has moved from to where it is presently. The signature mechanism provided here can be recursively applied to allow this accounting for YANG data.
+The term "data provenance" refers to information describing the origin of a piece of data and, when available, the history of transformations or transfers it has undergone. 
+
+The signature mechanisms defined in this document provide integrity protection and origin authentication for YANG data at the time of signing. When applied iteratively by different entities along a data path, these signatures can contribute to building a provenance trail. However, such a trail is only as complete as the set of signatures present and its continuity is not guaranteed by these mechanisms alone.
 
 # Defining Provenance Elements
 
@@ -114,7 +116,7 @@ The provenance for a given YANG element MUST be convened by a leaf element, cont
 ~~~
 typedef provenance-signature {
      type binary;
-     description
+     descriptions
       "The provenance-signature type represents a digital signature
        corresponding to the associated YANG element. The signature is based
        on COSE and generated using a canonicalized version of the
@@ -163,6 +165,8 @@ The byte strings to be used as input to the signature and verification procedure
 * Applying the corresponding canonicalization method as described in the following section.
 
 In order to guarantee proper verification, the signature procedure MUST be the last action to be taken before the YANG construct being signed is made available, whatever the means (sent as a reply to a poll or a notification, written to a file or record, etc.), and verification SHOULD take place in advance of any processing by the consuming application. The actions to be taken if the verification fails are specific to the consuming application, but it is RECOMMENDED to at least issue an error warning.
+
+> **Note:** In deployments where YANG data is transported through message broker systems, verification can be applied after message deserialization and before instance data processing, consistently with the placement described in {{I-D.draft-ietf-nmop-yang-message-broker-integration}}. In such scenarios, additional schema validation steps (e.g., YANG schema validation performed at the broker level) may complement the provenance mechanism, further strengthening data integrity before application-level processing. The deployment architecture is out of scope for this document, as the provenance mechanism defined here is intentionally designed for general-purpose applicability across any YANG data processing system.
 
 ## Canonicalization
 
@@ -634,6 +638,21 @@ module ietf-yang-provenance-annotation {
 
 The provenance assessment mechanism described in this document relies on COSE {{RFC9052}} and the deterministic encoding or canonicalization procedures described by {{RFC8949}}, {{RFC8785}} and {{XMLSig}}. The security considerations made in these references are fully applicable here.
 
+The considered threat model assumes an  attacker with the ability to intercept, observe, copy, replay, or modify YANG data in transit or at rest.
+
+The mechanisms defined here protect against data tampering: any modification of signed YANG data will result in signature verification failure, providing integrity protection from the point of signing onward.  Additionally, the signature binds the data to the entity holding the corresponding private key, providing origin authentication for the signed data.
+
+The following threats are explicitly outside the scope of this mechanism:
+
+* If the signing entity's private key is compromised, an attacker can produce valid signatures; protection against key compromise must be addressed by the key management infrastructure (e.g., PKI, certificate revocation). 
+
+* These mechanisms do not guarantee that all intermediate steps in a data path provides a signature: a provenance trail is only as complete as the set of signatures that are present, and gaps in signing by intermediate entities are not detectable by these mechanisms alone. 
+
+* A legitimate entity with access to a valid private key may sign incorrect or malicious data; these mechanisms provide no protection against a signing entity that intentionally or unintentionally produces erroneous data.  
+
+* Finally, these mechanisms do not inherently guarantee the freshness of signed data; replay of previously signed valid data is not prevented unless additional mechanisms, such as timestamps or nonces bound to the signature context, are employed.
+
+
 The verification step depends on the association of the kid (Key ID) with the proper public key. This is a local matter for the verifier and its specification is out of the scope of this document. Similarly, key association with reliable data sources is a deployment decision, though a couple of deployment patterns can be considered, depending on the application scenario under consideration. On the one hand, identities may be associated to controller entities (a domain controller, a person in charge of operational aspects, an organizational unit managing an administrative domain, ec.) owning the private keys to be use in generating the provenance signatures for YANG data such as configurations or telemetry. Alternatively, individual devices may hold the identities and corresponding private keys to generate provenance signatures for locally originated data (e.g., telemetry updates). The use of certificates, PKI mechanisms, or any other secure out-of-band distribution of id-public key mappings is RECOMMENDED.
 
 # IANA Considerations
@@ -700,7 +719,7 @@ This document registers the following YANG modules in the "YANG Module Names" re
 
 ## YANG SID-file
 
-IANA is requested to register a new ".sid" file in the "IETF YANG SID Registry" {{RFC9595}}:
+IANA is requested to register a new ".sid" file in the "IETF YANG-SID Ranges" {{RFC9595}}:
 
 ~~~
 SID range entry point: TBD
