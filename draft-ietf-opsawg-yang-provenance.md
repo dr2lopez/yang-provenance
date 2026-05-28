@@ -65,7 +65,6 @@ normative:
  RFC9254:
  RFC9595:
  I-D.ietf-netconf-notif-envelope: I-D.ietf-netconf-notif-envelope
- I-D.ietf-nmop-yang-message-broker-integration: I-D.ietf-nmop-yang-message-broker-integration
  XMLSig:
   title: XML Signature Syntax and Processing Version 2.0
   target: https://www.w3.org/TR/xmldsig-core2/
@@ -73,6 +72,7 @@ normative:
 informative:
  RFC7223:
  YANGmanifest: I-D.ietf-opsawg-collected-data-manifest
+ I-D.ietf-nmop-yang-message-broker-integration: I-D.ietf-nmop-yang-message-broker-integration
 
 --- abstract
 
