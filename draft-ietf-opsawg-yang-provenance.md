@@ -65,6 +65,7 @@ normative:
  RFC9254:
  RFC9595:
  I-D.ietf-netconf-notif-envelope: I-D.ietf-netconf-notif-envelope
+ I-D.ietf-nmop-yang-message-broker-integration: I-D.ietf-nmop-yang-message-broker-integration
  XMLSig:
   title: XML Signature Syntax and Processing Version 2.0
   target: https://www.w3.org/TR/xmldsig-core2/
@@ -105,7 +106,7 @@ The provenance mechanisms described in this document are designed to be flexible
 
 {::boilerplate bcp14-tagged}
 
-The term "data provenance" refers to information describing the origin of a piece of data and, when available, the history of transformations or transfers it has undergone. 
+The term "data provenance" refers to information describing the origin of a piece of data and, when available, the history of transformations or transfers it has undergone.
 
 The signature mechanisms defined in this document provide integrity protection and origin authentication for YANG data at the time of signing. When applied iteratively by different entities along a data path, these signatures can contribute to building a provenance trail. However, such a trail is only as complete as the set of signatures present and its continuity is not guaranteed by these mechanisms alone.
 
@@ -644,11 +645,11 @@ The mechanisms defined here protect against data tampering: any modification of 
 
 The following threats are explicitly outside the scope of this mechanism:
 
-* If the signing entity's private key is compromised, an attacker can produce valid signatures; protection against key compromise must be addressed by the key management infrastructure (e.g., PKI, certificate revocation). 
+* If the signing entity's private key is compromised, an attacker can produce valid signatures; protection against key compromise must be addressed by the key management infrastructure (e.g., PKI, certificate revocation).
 
-* These mechanisms do not guarantee that all intermediate steps in a data path provides a signature: a provenance trail is only as complete as the set of signatures that are present, and gaps in signing by intermediate entities are not detectable by these mechanisms alone. 
+* These mechanisms do not guarantee that all intermediate steps in a data path provides a signature: a provenance trail is only as complete as the set of signatures that are present, and gaps in signing by intermediate entities are not detectable by these mechanisms alone.
 
-* A legitimate entity with access to a valid private key may sign incorrect or malicious data; these mechanisms provide no protection against a signing entity that intentionally or unintentionally produces erroneous data.  
+* A legitimate entity with access to a valid private key may sign incorrect or malicious data; these mechanisms provide no protection against a signing entity that intentionally or unintentionally produces erroneous data.
 
 * Finally, these mechanisms do not inherently guarantee the freshness of signed data; replay of previously signed valid data is not prevented unless additional mechanisms, such as timestamps or nonces bound to the signature context, are employed.
 
