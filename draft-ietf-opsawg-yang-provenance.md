@@ -116,7 +116,7 @@ The provenance for a given YANG element MUST be convened by a leaf element, cont
 ~~~
 typedef provenance-signature {
      type binary;
-     descriptions
+     description
       "The provenance-signature type represents a digital signature
        corresponding to the associated YANG element. The signature is based
        on COSE and generated using a canonicalized version of the
