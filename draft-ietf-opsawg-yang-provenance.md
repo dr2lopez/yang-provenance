@@ -72,7 +72,7 @@ normative:
 informative:
  RFC7223:
  YANGmanifest: I-D.ietf-opsawg-collected-data-manifest
- I-D.ietf-nmop-yang-message-broker-integration: I-D.ietf-nmop-yang-message-broker-integration
+ YANGmsgbroker: I-D.ietf-nmop-yang-message-broker-integration
 
 --- abstract
 
@@ -167,7 +167,7 @@ The byte strings to be used as input to the signature and verification procedure
 
 In order to guarantee proper verification, the signature procedure MUST be the last action to be taken before the YANG construct being signed is made available, whatever the means (sent as a reply to a poll or a notification, written to a file or record, etc.), and verification SHOULD take place in advance of any processing by the consuming application. The actions to be taken if the verification fails are specific to the consuming application, but it is RECOMMENDED to at least issue an error warning.
 
-> **Note:** In deployments where YANG data is transported through message broker systems, verification can be applied after message deserialization and before instance data processing, consistently with the placement described in {{?I-D.ietf-nmop-yang-message-broker-integration}}. In such scenarios, additional schema validation steps (e.g., YANG schema validation performed at the broker level) may complement the provenance mechanism, further strengthening data integrity before application-level processing. The deployment architecture is out of scope for this document, as the provenance mechanism defined here is intentionally designed for general-purpose applicability across any YANG data processing system.
+> **Note:** In deployments where YANG data are transported through message broker systems, verification can be applied after message deserialization and before instance data processing, consistently with the placement described in {{YANGmsgbroker}}. In such scenarios, additional schema validation steps (e.g., YANG schema validation performed at the broker level) may complement the provenance mechanism, further strengthening data integrity before application-level processing. The deployment architecture is out of scope for this document, as the provenance mechanisms defined here are intentionally designed for general-purpose applicability across any YANG data processing system.
 
 ## Canonicalization
 
