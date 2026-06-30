@@ -44,7 +44,7 @@ author:
    abbrev: Fraunhofer SIT
    email: henk.birkholz@sit.fraunhofer.de
    street: Rheinstrasse 75
-   code: '64295'
+   code: 64295
    city: Darmstadt
    country: Germany
 
@@ -128,7 +128,7 @@ typedef provenance-signature {
 }
 ~~~
 
-The use of this type is the proper method for identifying signature leafs, and therefore whenever this type is used for a leaf element, it MUST be considered a provenance signature element, to be generated or verified according to the procedures described in this section.
+The use of this type is the proper method for identifying signature leaf instances, and therefore whenever this type is used for a leaf element, it MUST be considered a provenance signature element, to be generated or verified according to the procedures described in this section.
 
 ## Provenance Signature Strings
 
@@ -369,7 +369,7 @@ This ordering is important because the provenance signature MUST cover the conte
 ### YANG Module
 
 The "ietf-yp-provenance" module augments "ietf-yp-notification" module {{I-D.ietf-netconf-notif-envelope}} adding the provenance leaf to the notification envelope structure.
-It also adds the 'notification-provenance' capability to allow clients to discover if provenance signatures are supported.
+It also adds the "notification-provenance" capability to allow clients to discover if provenance signatures are supported.
 
 ~~~
 <CODE BEGINS> file "ietf-yp-provenance@2026-06-30.yang"
