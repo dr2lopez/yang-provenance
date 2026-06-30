@@ -31,10 +31,10 @@ author:
    organization: Telefonica
    email: "antonio.pastorperales@telefonica.com"
  - initials: A.
-   surname: Huang Feng
+   surname: Huang-Feng
    fullname: Alex Huang Feng
-   organization: INSA-Lyon
-   email: "alex.huang-feng@insa-lyon.fr"
+   organization: Deutsche Telekom
+   email: "alex.huang-feng@t-systems.com"
  - name: Ana Mendez
    organization: Telefonica
    email: "ana.mendezperez@telefonica.com"
@@ -112,7 +112,7 @@ The signature mechanisms defined in this document provide integrity protection a
 
 # Defining Provenance Elements
 
-The provenance for a given YANG element MUST be convened by a leaf element, containing the COSE signature bitstring built according to the procedure defined below in this section. The provenance leaf MUST be of type provenance-signature, defined as follows:
+The provenance for a given YANG element MUST be convened by a leaf element, containing the COSE signature bitstring built according to the procedure defined below in this section. The provenance leaf MUST be of type "provenance-signature", defined as follows:
 
 ~~~
 typedef provenance-signature {
@@ -128,7 +128,7 @@ typedef provenance-signature {
 }
 ~~~
 
-The use of this type is the proper method for identifying signature leaves, and therefore whenever this type is used for a leaf element, it MUST be considered a provenance signature element, to be generated or verified according to the procedures described in this section.
+The use of this type is the proper method for identifying signature leafs, and therefore whenever this type is used for a leaf element, it MUST be considered a provenance signature element, to be generated or verified according to the procedures described in this section.
 
 ## Provenance Signature Strings
 
@@ -184,7 +184,7 @@ Signature generation and verification require a canonicalization method to be ap
 This module defines a provenance-signature type to be used in other YANG modules.
 
 ~~~
-<CODE BEGINS> file "ietf-yang-provenance@2025-05-09.yang"
+<CODE BEGINS> file "ietf-yang-provenance@2026-06-30.yang"
 module ietf-yang-provenance {
   yang-version 1.1;
   namespace
@@ -197,7 +197,7 @@ module ietf-yang-provenance {
      WG List:  <mailto:opsawg@ietf.org>
 
      Authors:  Alex Huang Feng
-               <mailto:alex.huang-feng@insa-lyon.fr>
+               <mailto:alex.huang-feng@t-systems.com>
                Diego Lopez
                <mailto:diego.r.lopez@telefonica.com>
                Antonio Pastor
@@ -209,7 +209,7 @@ module ietf-yang-provenance {
     "Defines a binary provenance-signature type to be used in other YANG
     modules.
 
-    Copyright (c) 2025 IETF Trust and the persons identified as
+    Copyright (c) 2026 IETF Trust and the persons identified as
     authors of the code.  All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -221,7 +221,7 @@ module ietf-yang-provenance {
     This version of this YANG module is part of RFC XXXX; see the RFC
     itself for full legal notices.";
 
-  revision 2025-05-09 {
+  revision 2026-06-30 {
     description
       "First revision";
     reference
@@ -244,7 +244,7 @@ module ietf-yang-provenance {
 
 # Enclosing Methods
 
-Once defined the procedures for generating and verifying the provenance signature string, let's consider how these signatures can be integrated with the associated YANG data by enclosing the signature in the data structure. This document considers four different enclosing methods, suitable for different stages of the YANG schema and usage patterns of the YANG data. The enclosing method defines not only how the provenance signature string is combined with the signed YANG data but also the specific procedure for selecting the specific YANG content to be processed when signing and verifying.
+Once defined the procedures for generating and verifying the provenance signature string, let us consider how these signatures can be integrated with the associated YANG data by enclosing the signature in the data structure. This document considers four different enclosing methods, suitable for different stages of the YANG schema and usage patterns of the YANG data. The enclosing method defines not only how the provenance signature string is combined with the signed YANG data but also the specific procedure for selecting the specific YANG content to be processed when signing and verifying.
 
 Appendix A includes a set of examples of the different enclosing methods, applied to the same YANG fragment, to illustrate their use.
 
@@ -343,17 +343,17 @@ The following is the YANG tree diagram {{RFC8340}} for the "ietf-yp-provenance" 
 module: ietf-yp-provenance
 
   augment /sysc:system-capabilities/notc:subscription-capabilities
-            /inotenv:notification-metadata/inotenv:metadata:
+            /iypn:notification-metadata/iypn:metadata:
     +--ro notification-provenance?   boolean
 
-  augment-structure /inotenv:envelope:
+  augment-structure /iypn:envelope:
     +-- provenance?   iyangprov:provenance-signature
 ~~~
 
 And the following is the full YANG tree diagram for the notification structure.
 
 ~~~
-module: ietf-notification
+module: ietf-yp-notification
 
   structure envelope:
     +-- event-time         yang:date-and-time
@@ -363,16 +363,16 @@ module: ietf-notification
     +-- contents?          <anydata>
 ~~~
 
-Unlike the first enclosing method, in this second enclosing method the provenance leaf is added by augmenting a structure (/inotenv:envelope). The provenance leaf is inserted before the contents leaf.
+Unlike the first enclosing method, in this second enclosing method the provenance leaf is added by augmenting a structure (/iypn:envelope). The provenance leaf is inserted before the contents leaf.
 This ordering is important because the provenance signature MUST cover the content of the notification but MUST NOT include itself in the signature computation. This ensures the signature remains valid and verifiable. YANG augmented structures typically respect the convention that the anydata node, when present, should appear as the last element in the structure. Therefore, any newly augmented elements are automatically placed before it.
 
 ### YANG Module
 
 The "ietf-yp-provenance" module augments "ietf-yp-notification" module {{I-D.ietf-netconf-notif-envelope}} adding the provenance leaf to the notification envelope structure.
-It also adds the notification-provenance capability to allow clients to discover if provenance signatures are supported.
+It also adds the 'notification-provenance' capability to allow clients to discover if provenance signatures are supported.
 
 ~~~
-<CODE BEGINS> file "ietf-yp-provenance@2025-05-09.yang"
+<CODE BEGINS> file "ietf-yp-provenance@2026-06-30.yang"
 module ietf-yp-provenance {
   yang-version 1.1;
   namespace
@@ -402,7 +402,7 @@ module ietf-yp-provenance {
       "RFC 8791: YANG Data Structure Extensions";
   }
   import ietf-yp-notification {
-    prefix inotenv;
+    prefix iypn;
     reference
       "RFC YYYY: Extensible YANG Model for YANG-Push Notifications";
   }
@@ -413,7 +413,7 @@ module ietf-yp-provenance {
      WG List:  <mailto:opsawg@ietf.org>
 
      Authors:  Alex Huang Feng
-               <mailto:alex.huang-feng@insa-lyon.fr>
+               <mailto:alex.huang-feng@t-systems.com>
                Diego Lopez
                <mailto:diego.r.lopez@telefonica.com>
                Antonio Pastor
@@ -423,7 +423,7 @@ module ietf-yp-provenance {
     "Defines a bynary provenance-signature type to be used in other YANG
     modules.
 
-    Copyright (c) 2025 IETF Trust and the persons identified as
+    Copyright (c) 2026 IETF Trust and the persons identified as
     authors of the code.  All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -435,25 +435,25 @@ module ietf-yp-provenance {
     This version of this YANG module is part of RFC XXXX; see the RFC
     itself for full legal notices.";
 
-  revision 2025-05-09 {
+  revision 2026-06-30 {
     description
       "First revision";
     reference
       "RFC XXXX: Applying COSE Signatures for YANG Data Provenance";
   }
 
-  sx:augment-structure "/inotenv:envelope" {
+  sx:augment-structure "/iypn:envelope" {
     leaf provenance {
       type iyangprov:provenance-signature;
       description
-        "COSE signature of the content of the Notification for
+        "COSE signature of the 'contents' element of the Notification for
         provenance verification.";
     }
   }
 
   augment "/sysc:system-capabilities"
         + "/notc:subscription-capabilities"
-        + "/inotenv:notification-metadata/inotenv:metadata" {
+        + "/iypn:notification-metadata/iypn:metadata" {
     description
       "Extensions to Notification Capabilities enabling clients to
       know whether the provenance signature is supported.";
@@ -501,27 +501,33 @@ The specific YANG content to be processed SHALL be generated by taking the conte
 This module defines the provenance signature element to be included as metadata of a YANG data instance.
 
 ~~~
-<CODE BEGINS> file "ietf-yang-instance-data-provenance@2025-07-07.yang"
+<CODE BEGINS> file "ietf-yang-instance-data-provenance@2026-06-30.yang"
 module ietf-yang-instance-data-provenance {
   yang-version 1.1;
   namespace "urn:ietf:params:xml:ns:yang:ietf-yang-instance-data-provenance";
-  prefix "yidprov";
+  prefix yidprov;
+
   import ietf-yang-instance-data {
-    prefix "id";
+    prefix id;
     reference
-     “RFC 9195 A File Format for YANG Instance Data”
+      "RFC 9195: A File Format for YANG Instance Data";
   }
+
   import ietf-yang-provenance {
     prefix iyangprov;
     reference
       "RFC XXXX: Applying COSE Signatures for YANG Data Provenance";
   }
+
   import ietf-yang-structure-ext {
     prefix sx;
     reference
       "RFC 8791: YANG Data Structure Extensions";
   }
-  organization "IETF OPSAWG (Operations and Management Area Working Group)";
+
+  organization
+    "IETF OPSAWG (Operations and Management Area Working Group)";
+
   contact
     "WG Web:   <https://datatracker.ietf.org/wg/opsawg/>
      WG List:  <mailto:opsawg@ietf.org>
@@ -530,31 +536,40 @@ module ietf-yang-instance-data-provenance {
                <mailto:ana.mendezperz@telefonica.com>
                Diego Lopez
                <mailto:diego.r.lopez@telefonica.com>";
+
   description
-        "Defines a binary provenance-signature type to be used as metadata
-         in a YANG data instance.
+    "This module augments YANG instance data to include a provenance
+     signature for the content-data block, enabling integrity and
+     authenticity verification of the dataset.
 
-         Copyright (c) 2025 IETF Trust and the persons identified as
-         authors of the code.  All rights reserved.
+     Copyright (c) 2026 IETF Trust and the persons identified as
+     authors of the code.  All rights reserved.
 
-         Redistribution and use in source and binary forms, with or without
-         modification, is permitted pursuant to, and subject to the license
-         terms contained in, the Revised BSD License set forth in Section
-         4.c of the IETF Trust's Legal Provisions Relating to IETF Documents
-         (https://trustee.ietf.org/license-info).
+     Redistribution and use in source and binary forms, with or without
+     modification, is permitted pursuant to, and subject to the license
+     terms contained in, the Revised BSD License set forth in Section
+     4.c of the IETF Trust's Legal Provisions Relating to IETF Documents
+     (https://trustee.ietf.org/license-info).
 
-         This version of this YANG module is part of RFC XXXX; see the RFC
-         itself for full legal notices.";
+     This version of this YANG module is part of RFC XXXX; see the RFC
+     itself for full legal notices.";
 
-  revision 2025-07-07 {
-    description "First revision.";
-    reference "RFC XXXX: Applying COSE Signatures for YANG Data Provenance";
+  revision 2026-06-30 {
+    description
+      "First revision.";
+    reference
+      "RFC XXXX: Applying COSE Signatures for YANG Data Provenance";
   }
+
   sx:augment-structure "/id:instance-data-set" {
+    description
+      "Adds a provenance signature to the instance data set envelope.";
     leaf provenance {
       type iyangprov:provenance-signature;
       description
-        "Provenance signature that applies to the full content-data block of an instance dataset.This signature can be used to verify the integrity and authenticity of the instance data.";
+        "Provenance signature that applies to the full content-data
+         block of an instance dataset. This signature can be used to
+         verify the integrity and authenticity of the instance data.";
     }
   }
 }
@@ -566,12 +581,12 @@ module ietf-yang-instance-data-provenance {
 The use of annotations as defined in {{RFC7952}} seems a natural enclosing method, dealing with the provenance signature string as metadata extension and not requiring modification of existing YANG schemas. The provenance-string annotation is defined as follows:
 
 ~~~
- md:annotation provenance {
-       type provenance-signature;
-       description
-         "This annotation contains a digital signature corresponding
-          to the YANG element in which it appears.";
-     }
+  md:annotation provenance {
+    type provenance-signature;
+    description
+      "This annotation contains a digital signature corresponding
+      to the YANG element in which it appears.";
+  }
 ~~~
 
 The specific YANG content to be processed SHALL be generated by eliminating the provenance annotation (encoded according to what is described in Section 5 of {{RFC7952}}) from the element it applies to, before invoking the corresponding canonicalization method. In application of the general recursion principle for provenance signature strings, any other provenance strings within the element to which the provenance-string applies SHALL be left as they appear, whatever the enclosing method used for them.
@@ -581,56 +596,66 @@ The specific YANG content to be processed SHALL be generated by eliminating the 
 This module defines a metadata annotation to include a provenance signature for a YANG element.
 
 ~~~
-<CODE BEGINS> file "ietf-yang-provenance-annotation@2024-06-30.yang"
+<CODE BEGINS> file "ietf-yang-provenance-annotation@2026-06-30.yang"
 module ietf-yang-provenance-annotation {
-     yang-version 1.1;
-     namespace
-       "urn:ietf:params:xml:ns:yang:ietf-yang-annotation";
-     prefix "ypmd";
-     import ietf-yang-metadata {
-       prefix "md";
-     }
-     organization "IETF OPSAWG (Operations and Management Area Working Group)";
-     contact
-       "WG Web:   <https://datatracker.ietf.org/wg/opsawg/>
-        WG List:  <mailto:opsawg@ietf.org>
+  yang-version 1.1;
+  namespace
+    "urn:ietf:params:xml:ns:yang:ietf-yang-provenance-annotation";
+  prefix ypmd;
 
-        Authors: Diego Lopez
-                 <mailto:diego.r.lopez@telefonica.com>
-                 Alex Huang Feng
-                 <mailto:alex.huang-feng@insa-lyon.fr>
-                 Antonio Pastor
-                 <mailto:antonio.pastorperales@telefonica.com>
-                 Henk Birkholz
-                 <mailto:henk.birkholz@sit.fraunhofer.de>";
-        description
-        "Defines a binary provenance-signature type to be used in YANG
-         metadata annotations
+  import ietf-yang-metadata {
+    prefix md;
+    reference
+      "RFC 7952: Defining and Using Metadata with YANG";
+  }
+  import ietf-yang-provenance {
+    prefix iyangprov;
+    reference
+      "RFC XXXX: Applying COSE Signatures for YANG Data Provenance";
+  }
 
-         Copyright (c) 2024 IETF Trust and the persons identified as
-         authors of the code.  All rights reserved.
+  organization "IETF OPSAWG (Operations and Management Area Working Group)";
+  contact
+    "WG Web:   <https://datatracker.ietf.org/wg/opsawg/>
+    WG List:  <mailto:opsawg@ietf.org>
 
-         Redistribution and use in source and binary forms, with or without
-         modification, is permitted pursuant to, and subject to the license
-         terms contained in, the Revised BSD License set forth in Section
-         4.c of the IETF Trust's Legal Provisions Relating to IETF Documents
-         (https://trustee.ietf.org/license-info).
+    Authors:  Diego Lopez
+              <mailto:diego.r.lopez@telefonica.com>
+              Alex Huang Feng
+              <mailto:alex.huang-feng@t-systems.com>
+              Antonio Pastor
+              <mailto:antonio.pastorperales@telefonica.com>
+              Henk Birkholz
+              <mailto:henk.birkholz@sit.fraunhofer.de>";
+    description
+      "Defines a binary provenance-signature type to be used in YANG
+      metadata annotations
 
-         This version of this YANG module is part of RFC XXXX; see the RFC
-         itself for full legal notices.";
+      Copyright (c) 2026 IETF Trust and the persons identified as
+      authors of the code.  All rights reserved.
 
-     revision 2024-06-30 {
-        description
-        "First revision";
-        reference
-        "RFC XXXX: Applying COSE Signatures for YANG Data Provenance";
-     }
-     md:annotation provenance {
-       type iyangprov:provenance-signature;
-       description
-         "This annotation contains the provenance signature for
-          the YANG element associated with it";
-     }
+      Redistribution and use in source and binary forms, with or without
+      modification, is permitted pursuant to, and subject to the license
+      terms contained in, the Revised BSD License set forth in Section
+      4.c of the IETF Trust's Legal Provisions Relating to IETF Documents
+      (https://trustee.ietf.org/license-info).
+
+      This version of this YANG module is part of RFC XXXX; see the RFC
+      itself for full legal notices.";
+
+  revision 2026-06-30 {
+    description
+      "First revision";
+    reference
+      "RFC XXXX: Applying COSE Signatures for YANG Data Provenance";
+  }
+
+  md:annotation provenance {
+    type iyangprov:provenance-signature;
+    description
+      "This annotation contains the provenance signature for
+      the YANG element associated with it";
+  }
 }
 <CODE ENDS>
 ~~~
@@ -681,7 +706,7 @@ This document registers the following URIs in the "IETF XML Registry" {{RFC3688}
 ~~~
 
 ~~~
-  URI: urn:ietf:params:xml:ns:yang:ietf-yang-annotation-pmd
+  URI: urn:ietf:params:xml:ns:yang:ietf-yang-provenance-annotation
   Registrant Contact: The IESG.
   XML: N/A; the requested URI is an XML namespace.
 ~~~
@@ -713,7 +738,7 @@ This document registers the following YANG modules in the "YANG Module Names" re
 
 ~~~
   name: ietf-yang-provenance-annotation
-  namespace: urn:ietf:params:xml:ns:yang:ietf-yang-annotation-pmd
+  namespace: urn:ietf:params:xml:ns:yang:ietf-yang-provenance-annotation
   prefix: ypmd
   reference: RFC XXXX
 ~~~
@@ -726,7 +751,7 @@ IANA is requested to register a new ".sid" file in the "IETF YANG-SID Ranges" {{
 SID range entry point: TBD
 SID range size: 20
 YANG module name: ietf-yang-provenance
-reference: RFC-to-be
+reference: RFC XXXX
 ~~~
 
 A ".sid" file is proposed in Appendix B.
@@ -979,7 +1004,7 @@ Finally, using the fourth enclosing method, the YANG instance would incorporate 
 ~~~
 <?xml version="1.0" encoding="UTF-8"?>
 <interfaces-state xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces"
-                  xmlns:ypmd="urn:ietf:params:xml:ns:yang:ietf-yang-annotation-pmd"
+                  xmlns:ypmd="urn:ietf:params:xml:ns:yang:ietf-yang-provenance-annotation"
                   ypmd:provenance=
                   "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAzen3Bm9AZoyXuetpoTB70SzZqKVxeu
                   OMW099sm+NXSqCfnqBKfXeuqDNEkuEr+E0XiAso986fbAHQCHbAJMOhw==">
@@ -1604,7 +1629,7 @@ The following `.sid` file is provided as a provisional example for implementers.
 {
     "ietf-sid-file:sid-file": {
         "module-name": "ietf-yang-provenance",
-        "module-revision": "2025-05-09",
+        "module-revision": "2026-30-06",
         "sid-file-status": "unpublished",
         "description": "Provisional SIDs for ietf-yang-provenance module",
         "reference": "RFC-to-be: Applying COSE Signatures for YANG Data Provenance",

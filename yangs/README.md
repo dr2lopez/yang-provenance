@@ -2,8 +2,8 @@
 
 
 ```shell
-$ pyang ietf-notification-provenance@2024-02-28.yang -f tree --tree-print-structures -p dependencies
-$ pyang dependencies/ietf-notification@2024-01-22.yang ietf-notification-provenance@2024-02-28.yang -f tree --tree-print-structures
+$ pyang ietf-yp-provenance@2026-06-30.yang -f tree --tree-print-structures -p dependencies --yang-line-length=69
+$ pyang dependencies/ietf-yp-notification@2026-05-11.yang ietf-yp-provenance@2026-06-30.yang -f tree --tree-print-structures --yang-line-length=69 -p dependencies
 ```
 
 ```shell
