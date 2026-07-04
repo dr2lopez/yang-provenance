@@ -32,7 +32,7 @@
     pycountry 24.6.1
     PyYAML 6.0.3
     requests 2.33.1
-    wcwidth 0.8.1
+    wcwidth 0.8.2
 -->
 <link href="draft-ietf-opsawg-yang-provenance.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
@@ -1051,11 +1051,11 @@ svg {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">yang-data-provenance</td>
-<td class="right">June 2026</td>
+<td class="right">July 2026</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Lopez, et al.</td>
-<td class="center">Expires 1 January 2027</td>
+<td class="center">Expires 5 January 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1068,12 +1068,12 @@ svg {
 <dd class="internet-draft">draft-ietf-opsawg-yang-provenance-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-06-30" class="published">30 June 2026</time>
+<time datetime="2026-07-04" class="published">4 July 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2027-01-01">1 January 2027</time></dd>
+<dd class="expires"><time datetime="2027-01-05">5 January 2027</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1139,7 +1139,7 @@ svg {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 1 January 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 5 January 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1184,6 +1184,11 @@ svg {
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1">
                 <p id="section-toc.1-1.3.2.1.1"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-provenance-signature-string" class="internal xref">Provenance Signature Strings</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1.2.1">
+                    <p id="section-toc.1-1.3.2.1.2.1.1"><a href="#section-3.1.1" class="auto internal xref">3.1.1</a>.  <a href="#name-use-of-countersignatures" class="internal xref">Use of Countersignatures</a></p>
+</li>
+                </ul>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2">
                 <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-signature-and-verification-" class="internal xref">Signature and Verification Procedures</a></p>
@@ -1299,6 +1304,7 @@ svg {
 <p id="section-1-3">The original use case for this provenance mechanism is associated with <span>[<a href="#YANGmanifest" class="cite xref">YANGmanifest</a>]</span>, in order to provide a proof of the origin and integrity of the provided metadata, and therefore the examples in this document use the modules described there, but it soon became clear that it could be extended to any YANG datamodel to support provenance evidence. An analysis of other potential use cases suggested the interest of defining an independent, generally applicable mechanism.<a href="#section-1-3" class="pilcrow">¶</a></p>
 <p id="section-1-4">Provenance verification by signatures incorporated in YANG data can be applied to any data processing pipeline, whether they rely on an online flow or use some kind of data store, such as data lakes or time-series databases. The application of recorded data for ML training or validation constitute the most relevant examples of these scenarios.<a href="#section-1-4" class="pilcrow">¶</a></p>
 <p id="section-1-5">This document provides a mechanism for including digital signatures within YANG data. It applies COSE <span>[<a href="#RFC9052" class="cite xref">RFC9052</a>]</span> to make the signature compact and reduce the resources required for calculating it. This mechanism is applicable to any serialization of the YANG data supporting a clear method for canonicalization, but this document considers three base ones: CBOR, JSON and XML.<a href="#section-1-5" class="pilcrow">¶</a></p>
+<p id="section-1-6">In some scenarios, multiple entities may need to provide cryptographic proof over the same provenance information to allow traceability of this content. For this purpose, this specification uses COSE counter signatures <span>[<a href="#RFC9338" class="cite xref">RFC9338</a>]</span>. Counter signatures enable traceability of provenance by allowing multiple entities to attest to the same data object over time.<a href="#section-1-6" class="pilcrow">¶</a></p>
 <div id="target-deployment-scenarios">
 <section id="section-1.1">
         <h3 id="name-target-deployment-scenarios">
@@ -1389,6 +1395,19 @@ signature /using as external data the content of the YANG
             <p id="section-3.1-4.5.1">The signature for the YANG element provenance is being established for, to be produced and verified according to the procedure described below for each one of the enclosing methods for the provenance string described below.<a href="#section-3.1-4.5.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
+<div id="use-of-countersignatures">
+<section id="section-3.1.1">
+          <h4 id="name-use-of-countersignatures">
+<a href="#section-3.1.1" class="section-number selfRef">3.1.1. </a><a href="#name-use-of-countersignatures" class="section-name selfRef">Use of Countersignatures</a>
+          </h4>
+<p id="section-3.1.1-1">The primary provenance signature is a COSE_Sign1 message generated over the canonicalized input defined above. Additional entities <span class="bcp14">MAY</span> subsequently apply countersignatures to this COSE_Sign1 message. These countersignatures are integrated within the existing COSE signature object and do not modify the pimary signature input or its value.<a href="#section-3.1.1-1" class="pilcrow">¶</a></p>
+<p id="section-3.1.1-2">COSE supports the inclusion of countersignatures as defined in <span>[<a href="#RFC9338" class="cite xref">RFC9338</a>]</span>. Countersignatures allow additional entities to provide cryptographic proof over an existing COSE signature without modifying the primary signature value. The inclusion of counter signatures does not alter the original COSE_Sign1 structure, nor the canonicalized input used to produce the original signature. Instead, they extend the COSE object by binding additional signers to the existing signed content.<a href="#section-3.1.1-2" class="pilcrow">¶</a></p>
+<p id="section-3.1.1-3">If the canonicalized input used for generating the primary signature is altered, the original signature will fail to validate. Since countersignatures are computed over the original COSE signature object, they remain bound to that original content. As a result, any modification to the underlying data or to the canonicalization process leads to a validation inconsistency across the chain of signatures. This allows verifiers to detect that the data has been altered and to identify the point in the sequence of signatures at which the inconsistency is introduced.<a href="#section-3.1.1-3" class="pilcrow">¶</a></p>
+<p id="section-3.1.1-4">In particular, adding counter signatures doesnot change the underlying canonicalized YANG content to which the original COSE_Sign1 signature applies. Countersignatures are composed with the existing COSE signature object, while preserving the primary signature and its association with the same signed content. As a result, the original signature remains unchanged, and every countersignature is added on top of it, binding additional signers to the same signed content. From an encoding perspective, the resulting COSE object, including any countersignatures, is carried within the same provenance leaf, without modifying the YANG data model or the enclosing methods defined in this document. Countersignatures <span class="bcp14">MUST</span> be encoded according to the mechanisms defined in <span>[<a href="#RFC9338" class="cite xref">RFC9338</a>]</span>, including the relevant countersignature structures.<a href="#section-3.1.1-4" class="pilcrow">¶</a></p>
+<p id="section-3.1.1-5">Provenance signature strings including countersignatures <span class="bcp14">SHALL</span> use full countersignatures according to the definitions in <span>[<a href="#RFC9338" class="cite xref">RFC9338</a>]</span>, with context "CounterSignature", and following the same structure as described above for the primary signature in what related to its protected, unprotected and signature fields. Counter signatures <span class="bcp14">SHALL</span> be included in the unprotected header of the COSE_Sign1 object.<a href="#section-3.1.1-5" class="pilcrow">¶</a></p>
+<p id="section-3.1.1-6">When multiple counter signatures are present, they <span class="bcp14">SHALL</span> be encoded as an array of COSE_Countersignature structures and carried within the COSE object using the appropriate header parameter defined in <span>[<a href="#RFC9338" class="cite xref">RFC9338</a>]</span>.<a href="#section-3.1.1-6" class="pilcrow">¶</a></p>
+</section>
+</div>
 </section>
 </div>
 <div id="signature-and-verification-procedures">
@@ -1404,6 +1423,17 @@ signature /using as external data the content of the YANG
 </li>
           <li class="normal" id="section-3.2-3.2">
             <p id="section-3.2-3.2.1">Applying the corresponding canonicalization method as described in the following section.<a href="#section-3.2-3.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.2-3.3">
+            <p id="section-3.2-3.3.1">When countersignatures are present, the same proceduras apply for the generation or verficiation of any countersignature, taking into account the following additinal processing rules:<a href="#section-3.2-3.3.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-3.2-3.3.2.1">
+                <p id="section-3.2-3.3.2.1.1">Each counter signature <span class="bcp14">MUST</span> be verifiable independently using the public key of the corresponding signer, as defined by the applicable key identifier carried by the countersignature structure.<a href="#section-3.2-3.3.2.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-3.2-3.3.2.2">
+                <p id="section-3.2-3.3.2.2.1">Verification of provenance information <span class="bcp14">MAY</span> include the validation of the primary signature, a subset of the countersignatures, or all of them, depending on the policy of the verifying entity.<a href="#section-3.2-3.3.2.2.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
 </li>
         </ul>
 <p id="section-3.2-4">In order to guarantee proper verification, the signature procedure <span class="bcp14">MUST</span> be the last action to be taken before the YANG construct being signed is made available, whatever the means (sent as a reply to a poll or a notification, written to a file or record, etc.), and verification <span class="bcp14">SHOULD</span> take place in advance of any processing by the consuming application. The actions to be taken if the verification fails are specific to the consuming application, but it is <span class="bcp14">RECOMMENDED</span> to at least issue an error warning.<a href="#section-3.2-4" class="pilcrow">¶</a></p>
@@ -2167,6 +2197,10 @@ reference: RFC XXXX
         <dd>
 <span class="refAuthor">Veillette, M., Ed.</span>, <span class="refAuthor">Petrov, I., Ed.</span>, <span class="refAuthor">Pelov, A.</span>, <span class="refAuthor">Bormann, C.</span>, and <span class="refAuthor">M. Richardson</span>, <span class="refTitle">"Encoding of Data Modeled with YANG in the Concise Binary Object Representation (CBOR)"</span>, <span class="seriesInfo">RFC 9254</span>, <span class="seriesInfo">DOI 10.17487/RFC9254</span>, <time datetime="2022-07" class="refDate">July 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9254">https://www.rfc-editor.org/rfc/rfc9254</a>&gt;</span>. </dd>
 <dd class="break"></dd>
+<dt id="RFC9338">[RFC9338]</dt>
+        <dd>
+<span class="refAuthor">Schaad, J.</span>, <span class="refTitle">"CBOR Object Signing and Encryption (COSE): Countersignatures"</span>, <span class="seriesInfo">STD 96</span>, <span class="seriesInfo">RFC 9338</span>, <span class="seriesInfo">DOI 10.17487/RFC9338</span>, <time datetime="2022-12" class="refDate">December 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9338">https://www.rfc-editor.org/rfc/rfc9338</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="RFC9595">[RFC9595]</dt>
         <dd>
 <span class="refAuthor">Veillette, M., Ed.</span>, <span class="refAuthor">Pelov, A., Ed.</span>, <span class="refAuthor">Petrov, I., Ed.</span>, <span class="refAuthor">Bormann, C.</span>, and <span class="refAuthor">M. Richardson</span>, <span class="refTitle">"YANG Schema Item iDentifier (YANG SID)"</span>, <span class="seriesInfo">RFC 9595</span>, <span class="seriesInfo">DOI 10.17487/RFC9595</span>, <time datetime="2024-07" class="refDate">July 2024</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9595">https://www.rfc-editor.org/rfc/rfc9595</a>&gt;</span>. </dd>
@@ -2194,7 +2228,7 @@ reference: RFC XXXX
 <dd class="break"></dd>
 <dt id="YANGmsgbroker">[YANGmsgbroker]</dt>
       <dd>
-<span class="refAuthor">Graf, T.</span> and <span class="refAuthor">A. Elhassany</span>, <span class="refTitle">"An Architecture for YANG-Push to Message Broker Integration"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-nmop-yang-message-broker-integration-12</span>, <time datetime="2026-05-13" class="refDate">13 May 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-nmop-yang-message-broker-integration-12">https://datatracker.ietf.org/doc/html/draft-ietf-nmop-yang-message-broker-integration-12</a>&gt;</span>. </dd>
+<span class="refAuthor">Graf, T.</span> and <span class="refAuthor">A. Elhassany</span>, <span class="refTitle">"An Architecture for YANG-Push to Message Broker Integration"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-nmop-yang-message-broker-integration-13</span>, <time datetime="2026-07-02" class="refDate">2 July 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-nmop-yang-message-broker-integration-13">https://datatracker.ietf.org/doc/html/draft-ietf-nmop-yang-message-broker-integration-13</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
 </section>
