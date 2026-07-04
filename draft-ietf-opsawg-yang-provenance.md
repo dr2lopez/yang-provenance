@@ -185,7 +185,7 @@ The byte strings to be used as input to the signature and verification procedure
 * When countersignatures are present, the same proceduras apply for the generation or verficiation of any countersignature, taking into account the following additinal processing rules:
 
   * Each counter signature MUST be verifiable independently using the public key of the corresponding signer, as defined by the applicable key identifier carried by the countersignature structure.
- 
+
   * Verification of provenance information MAY include the validation of the primary signature, a subset of the countersignatures, or all of them, depending on the policy of the verifying entity.
 
 In order to guarantee proper verification, the signature procedure MUST be the last action to be taken before the YANG construct being signed is made available, whatever the means (sent as a reply to a poll or a notification, written to a file or record, etc.), and verification SHOULD take place in advance of any processing by the consuming application. The actions to be taken if the verification fails are specific to the consuming application, but it is RECOMMENDED to at least issue an error warning.
