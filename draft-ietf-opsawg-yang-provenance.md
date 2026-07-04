@@ -63,6 +63,7 @@ normative:
  RFC9052:
  RFC9195:
  RFC9254:
+ RFC9338:
  RFC9595:
  I-D.ietf-netconf-notif-envelope: I-D.ietf-netconf-notif-envelope
  XMLSig:
@@ -91,6 +92,8 @@ The original use case for this provenance mechanism is associated with {{YANGman
 Provenance verification by signatures incorporated in YANG data can be applied to any data processing pipeline, whether they rely on an online flow or use some kind of data store, such as data lakes or time-series databases. The application of recorded data for ML training or validation constitute the most relevant examples of these scenarios.
 
 This document provides a mechanism for including digital signatures within YANG data. It applies COSE {{RFC9052}} to make the signature compact and reduce the resources required for calculating it. This mechanism is applicable to any serialization of the YANG data supporting a clear method for canonicalization, but this document considers three base ones: CBOR, JSON and XML.
+
+In some scenarios, multiple entities may need to provide cryptographic proof over the same provenance information to allow traceability of this content. For this purpose, this specification uses COSE counter signatures {{RFC9338}}. Counter signatures enable traceability of provenance by allowing multiple entities to attest to the same data object over time.
 
 ## Target Deployment Scenarios
 
@@ -155,6 +158,20 @@ The COSE_Sign1 procedure yields a bitstring when building the signature and expe
 
 * The signature for the YANG element provenance is being established for, to be produced and verified according to the procedure described below for each one of the enclosing methods for the provenance string described below.
 
+### Use of Countersignatures
+
+The primary provenance signature is a COSE_Sign1 message generated over the canonicalized input defined above. Additional entities MAY subsequently apply countersignatures to this COSE_Sign1 message. These countersignatures are integrated within the existing COSE signature object and do not modify the pimary signature input or its value.
+
+COSE supports the inclusion of countersignatures as defined in {{RFC9338}}. Countersignatures allow additional entities to provide cryptographic proof over an existing COSE signature without modifying the primary signature value. The inclusion of counter signatures does not alter the original COSE_Sign1 structure, nor the canonicalized input used to produce the original signature. Instead, they extend the COSE object by binding additional signers to the existing signed content.
+
+If the canonicalized input used for generating the primary signature is altered, the original signature will fail to validate. Since countersignatures are computed over the original COSE signature object, they remain bound to that original content. As a result, any modification to the underlying data or to the canonicalization process leads to a validation inconsistency across the chain of signatures. This allows verifiers to detect that the data has been altered and to identify the point in the sequence of signatures at which the inconsistency is introduced.
+
+In particular, adding counter signatures doesnot change the underlying canonicalized YANG content to which the original COSE_Sign1 signature applies. Countersignatures are composed with the existing COSE signature object, while preserving the primary signature and its association with the same signed content. As a result, the original signature remains unchanged, and every countersignature is added on top of it, binding additional signers to the same signed content. From an encoding perspective, the resulting COSE object, including any countersignatures, is carried within the same provenance leaf, without modifying the YANG data model or the enclosing methods defined in this document. Countersignatures MUST be encoded according to the mechanisms defined in {{RFC9338}}, including the relevant countersignature structures.
+
+Provenance signature strings including countersignatures SHALL use full countersignatures according to the definitions in {{RFC9338}}, with context "CounterSignature", and following the same structure as described above for the primary signature in what related to its protected, unprotected and signature fields. Counter signatures SHALL be included in the unprotected header of the COSE_Sign1 object.
+
+When multiple counter signatures are present, they SHALL be encoded as an array of COSE_Countersignature structures and carried within the COSE object using the appropriate header parameter defined in {{RFC9338}}.
+
 ## Signature and Verification Procedures
 
 To keep a concise signature and avoid the need for wrapping YANG constructs in COSE envelopes, the whole signature MUST be built and verified by means of externally supplied data, as defined in {{RFC9052, Section 4.3}}, with a \[nil\] payload.
@@ -164,6 +181,12 @@ The byte strings to be used as input to the signature and verification procedure
 * Selecting the exact YANG content to be used, according to the corresponding enclosing methods.
 
 * Applying the corresponding canonicalization method as described in the following section.
+
+* When countersignatures are present, the same proceduras apply for the generation or verficiation of any countersignature, taking into account the following additinal processing rules:
+
+  * Each counter signature MUST be verifiable independently using the public key of the corresponding signer, as defined by the applicable key identifier carried by the countersignature structure.
+ 
+  * Verification of provenance information MAY include the validation of the primary signature, a subset of the countersignatures, or all of them, depending on the policy of the verifying entity.
 
 In order to guarantee proper verification, the signature procedure MUST be the last action to be taken before the YANG construct being signed is made available, whatever the means (sent as a reply to a poll or a notification, written to a file or record, etc.), and verification SHOULD take place in advance of any processing by the consuming application. The actions to be taken if the verification fails are specific to the consuming application, but it is RECOMMENDED to at least issue an error warning.
 
