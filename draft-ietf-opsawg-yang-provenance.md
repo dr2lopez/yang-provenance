@@ -166,7 +166,7 @@ COSE supports the inclusion of countersignatures as defined in {{RFC9338}}. Coun
 
 If the canonicalized input used for generating the primary signature is altered, the original signature will fail to validate. Since countersignatures are computed over the original COSE signature object, they remain bound to that original content. As a result, any modification to the underlying data or to the canonicalization process leads to a validation inconsistency across the chain of signatures. This allows verifiers to detect that the data has been altered and to identify the point in the sequence of signatures at which the inconsistency is introduced.
 
-In particular, adding counter signatures doesnot change the underlying canonicalized YANG content to which the original COSE_Sign1 signature applies. Countersignatures are composed with the existing COSE signature object, while preserving the primary signature and its association with the same signed content. As a result, the original signature remains unchanged, and every countersignature is added on top of it, binding additional signers to the same signed content. From an encoding perspective, the resulting COSE object, including any countersignatures, is carried within the same provenance leaf, without modifying the YANG data model or the enclosing methods defined in this document. Countersignatures MUST be encoded according to the mechanisms defined in {{RFC9338}}, including the relevant countersignature structures.
+In particular, adding counter signatures does not change the underlying canonicalized YANG content to which the original COSE_Sign1 signature applies. Countersignatures are composed with the existing COSE signature object, while preserving the primary signature and its association with the same signed content. As a result, the original signature remains unchanged, and every countersignature is added on top of it, binding additional signers to the same signed content. From an encoding perspective, the resulting COSE object, including any countersignatures, is carried within the same provenance leaf, without modifying the YANG data model or the enclosing methods defined in this document. Countersignatures MUST be encoded according to the mechanisms defined in {{RFC9338}}, including the relevant countersignature structures.
 
 Provenance signature strings including countersignatures SHALL use full countersignatures according to the definitions in {{RFC9338}}, with context "CounterSignature", and following the same structure as described above for the primary signature in what related to its protected, unprotected and signature fields. Counter signatures SHALL be included in the unprotected header of the COSE_Sign1 object.
 
@@ -182,7 +182,7 @@ The byte strings to be used as input to the signature and verification procedure
 
 * Applying the corresponding canonicalization method as described in the following section.
 
-* When countersignatures are present, the same proceduras apply for the generation or verficiation of any countersignature, taking into account the following additinal processing rules:
+* When countersignatures are present, the same proceduras apply for the generation or verification of any countersignature, taking into account the following additinal processing rules:
 
   * Each counter signature MUST be verifiable independently using the public key of the corresponding signer, as defined by the applicable key identifier carried by the countersignature structure.
 
@@ -386,8 +386,7 @@ module: ietf-yp-notification
     +-- contents?          <anydata>
 ~~~
 
-Unlike the first enclosing method, in this second enclosing method the provenance leaf is added by augmenting a structure (/iypn:envelope). The provenance leaf is inserted before the contents leaf.
-This ordering is important because the provenance signature MUST cover the content of the notification but MUST NOT include itself in the signature computation. This ensures the signature remains valid and verifiable. YANG augmented structures typically respect the convention that the anydata node, when present, should appear as the last element in the structure. Therefore, any newly augmented elements are automatically placed before it.
+Unlike the first enclosing method, in this second enclosing method the provenance leaf is added by augmenting a structure (/inotenv:envelope).
 
 ### YANG Module
 
