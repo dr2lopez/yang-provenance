@@ -5,13 +5,13 @@
 Operations and Management Area Working Group                    D. Lopez
 Internet-Draft                                                 A. Pastor
 Intended status: Standards Track                              Telefonica
-Expires: 5 January 2027                                    A. Huang-Feng
+Expires: 7 January 2027                                    A. Huang-Feng
                                                         Deutsche Telekom
                                                                A. Mendez
                                                               Telefonica
                                                              H. Birkholz
                                                           Fraunhofer SIT
-                                                             4 July 2026
+                                                             6 July 2026
 
 
            Applying COSE Signatures for YANG Data Provenance
@@ -65,7 +65,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 5 January 2027.
+   This Internet-Draft will expire on 7 January 2027.
 
 Copyright Notice
 
@@ -313,7 +313,7 @@ typedef provenance-signature {
    altered and to identify the point in the sequence of signatures at
    which the inconsistency is introduced.
 
-   In particular, adding counter signatures doesnot change the
+   In particular, adding counter signatures does not change the
    underlying canonicalized YANG content to which the original
    COSE_Sign1 signature applies.  Countersignatures are composed with
    the existing COSE signature object, while preserving the primary
@@ -356,7 +356,7 @@ typedef provenance-signature {
       the following section.
 
    *  When countersignatures are present, the same proceduras apply for
-      the generation or verficiation of any countersignature, taking
+      the generation or verification of any countersignature, taking
       into account the following additinal processing rules:
 
       -  Each counter signature MUST be verifiable independently using
@@ -641,14 +641,7 @@ typedef provenance-signature {
 
    Unlike the first enclosing method, in this second enclosing method
    the provenance leaf is added by augmenting a structure
-   (/iypn:envelope).  The provenance leaf is inserted before the
-   contents leaf.  This ordering is important because the provenance
-   signature MUST cover the content of the notification but MUST NOT
-   include itself in the signature computation.  This ensures the
-   signature remains valid and verifiable.  YANG augmented structures
-   typically respect the convention that the anydata node, when present,
-   should appear as the last element in the structure.  Therefore, any
-   newly augmented elements are automatically placed before it.
+   (/inotenv:envelope).
 
 4.2.2.  YANG Module
 
@@ -1199,9 +1192,9 @@ typedef provenance-signature {
               Claise, B., Quilbeuf, J., Lopez, D., Martinez-Casanueva,
               I. D., and T. Graf, "A Data Manifest for Contextualized
               Telemetry Data", Work in Progress, Internet-Draft, draft-
-              ietf-opsawg-collected-data-manifest-10, 20 October 2025,
+              ietf-opsawg-collected-data-manifest-12, 6 July 2026,
               <https://datatracker.ietf.org/doc/html/draft-ietf-opsawg-
-              collected-data-manifest-10>.
+              collected-data-manifest-12>.
 
    [YANGmsgbroker]
               Graf, T. and A. Elhassany, "An Architecture for YANG-Push
