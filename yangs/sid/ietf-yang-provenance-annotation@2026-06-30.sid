@@ -1,0 +1,39 @@
+{
+  "ietf-sid-file:sid-file": {
+    "module-name": "ietf-yang-provenance-annotation",
+    "module-revision": "2026-06-30",
+    "sid-file-status": "unpublished",
+    "description": "Provisional SIDs for ietf-yang-provenance module",
+    "reference": "RFC-to-be: Applying COSE Signatures for YANG Data Provenance",
+    "dependency-revision": [
+      {
+        "module-name": "ietf-yang-metadata",
+        "module-revision": "2016-08-05"
+      },
+      {
+        "module-name": "ietf-yang-provenance",
+        "module-revision": "2026-06-30"
+      }
+    ],
+    "assignment-range": [
+      {
+        "entry-point": "61200",
+        "size": "100"
+      }
+    ],
+    "item": [
+      {
+        "namespace": "module",
+        "identifier": "ietf-yang-provenance-annotation",
+        "status": "unstable",
+        "sid": "61200"
+      },
+      {
+        "namespace": "annotation",
+        "identifier": "provenance",
+        "status": "unstable",
+        "sid": "61201"
+      }
+    ]
+  }
+}

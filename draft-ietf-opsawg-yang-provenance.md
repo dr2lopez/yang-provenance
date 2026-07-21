@@ -1645,41 +1645,11 @@ NOTE TO THE RFC EDITOR: Replace the illustrative SID values with the final value
 
 The following `.sid` file is provided as a provisional example for implementers. It maps schema nodes defined in the `ietf-yang-provenance` module to numeric SIDs for use in CBOR compact encoding. These SIDs are provisional and will be replaced by IANA-assigned values upon publication of the RFC.
 
+~~~ yang-sid
+{::include yangs/sid/ietf-yang-provenance@2026-06-30.sid}
 ~~~
-<CODE BEGINS> file "ietf-yang-provenance@2025-05-09.yang"
+{: sourcecode-markers="true" sourcecode-name="ietf-yang-provenance@2026-06-30.sid"}
 
-{
-    "ietf-sid-file:sid-file": {
-        "module-name": "ietf-yang-provenance",
-        "module-revision": "2026-30-06",
-        "sid-file-status": "unpublished",
-        "description": "Provisional SIDs for ietf-yang-provenance module",
-        "reference": "RFC-to-be: Applying COSE Signatures for YANG Data Provenance",
-        "dependency-revision": [],
-        "assignment-range": [
-            {
-                "entry-point": "3161",
-                "size": "20"
-            }
-        ],
-        "item": [
-            {
-                "status": "unstable",
-                "namespace": "module",
-                "identifier": "ietf-yang-provenance",
-                "sid": "3161"
-            },
-            {
-                "status": "unstable",
-                "namespace": "data",
-                "identifier": "/ietf-yang-provenance:provenance-signature",
-                "sid": "3162"
-            }
-        ]
-    }
-}
-<CODE ENDS>
-~~~
 
 # Acknowledgments
 {:numbered="false"}
