@@ -21,17 +21,17 @@ $ pyang --sid-generate-file 3160:20 ietf-yang-provenance@2026-06-30.yang -p ../d
 
 ```shell
 $ cd sid
-$ pyang --sid-generate-file 3180:20 ietf-yp-provenance@2026-06-30.yang -p ..:../dependencies
+$ pyang --sid-generate-file 61000:100 ietf-yp-provenance@2026-06-30.yang -p ..:../dependencies
 ```
 
 ```shell
 $ cd sid
-$ pyang --sid-generate-file 3200:20 ietf-yang-instance-data-provenance@2026-06-30.yang -p ..:../dependencies
+$ pyang --sid-generate-file 61100:100 ietf-yang-instance-data-provenance@2026-06-30.yang -p ..:../dependencies
 ```
 
 ```shell
 $ cd sid
-$ pyang --sid-generate-file 3220:20 ietf-yang-provenance-annotation@2026-06-30.yang -p ..:../dependencies
+$ pyang --sid-generate-file 61200:100 ietf-yang-provenance-annotation@2026-06-30.yang -p ..:../dependencies
 $ echo "TODO: add the annotation's SID assignment by hand, functionality missing"
 ```
 
