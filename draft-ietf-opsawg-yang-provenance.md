@@ -129,7 +129,7 @@ typedef provenance-signature {
        associated element.";
      reference
       "RFC 9052: CBOR Object Signing and Encryption (COSE): Structures and Process
-       draft-ietf-opsawg-yang-provenance";
+       RFC XXXX: Applying COSE Signatures for YANG Data Provenance.";
 }
 ~~~
 
@@ -331,7 +331,7 @@ module: ietf-data-collection-manifest
      .
 ~~~
 
-Note how, in the two examples, the element bearing the provenance signature appears at different positions in the enclosing element. And note that, for processing the element for signature generation and verification, the signature element MUST be eliminated from the enclosing element before applying the corresponding canonicalization method.
+Note how, in the two examples, the element bearing the provenance signature appears at different positions in the enclosing element. For processing the element for signature generation and verification, the signature element MUST be eliminated from the enclosing element before applying the corresponding canonicalization method.
 
 Note that, in application of the recursion mechanism described above, a provenance element could be included at the top of any of the collections, supporting the verification of the provenance of the collection itself (as provided by a specific collector), without interfering with the verification of the provenance of each of the collection elements. As an example, in the case of the platform manifests it would look like:
 
@@ -350,7 +350,7 @@ module: ietf-platform-manifest
        .
 ~~~
 
-Note here that, to generate the YANG content to be processed in the case of the collection the provenance leaves of the individual elements SHALL NOT be eliminated, as it SHALL be the case when generating the YANG content to be processed for each individual element in the collection.
+When generating YANG content to be processed in the case of the collection the provenance leaves of the individual elements SHALL NOT be eliminated, as it SHALL be the case when generating the YANG content to be processed for each individual element in the collection.
 
 ## Including a Provenance Signature in YANG-Push Notifications
 
@@ -652,7 +652,7 @@ module ietf-yang-provenance-annotation {
               <mailto:antonio.pastorperales@telefonica.com>
               Henk Birkholz
               <mailto:henk.birkholz@sit.fraunhofer.de>";
-    description
+  description
       "Defines a YANG metadata annotation for carrying provenance
        signatures on arbitrary YANG data elements.
 
@@ -973,7 +973,7 @@ The second enclosing method shows a notification with the provenance signature i
 </envelope>
 ~~~
 
-The third enclosing method, applicable if the instance is to be stored as YANG instance data at rest, by adding the corresponding metadata, would produce a results as shown below:
+The third enclosing method, applicable if the instance is to be stored as YANG instance data at rest, by adding the corresponding metadata, would produce the result shown below:
 
 ~~~
 <?xml version="1.0" encoding="UTF-8"?>
@@ -1649,12 +1649,12 @@ NOTE TO THE RFC EDITOR: Replace the illustrative SID values with the final value
 The following `.sid` file is provided as a provisional example for implementers. It maps schema nodes defined in the `ietf-yang-provenance` module to numeric SIDs for use in CBOR compact encoding. These SIDs are provisional and will be replaced by IANA-assigned values upon publication of the RFC.
 
 ~~~
-<CODE BEGINS> file "ietf-yang-provenance@2025-05-09.yang"
+<CODE BEGINS> file "ietf-yang-provenance@2026-06-30.sid"
 
 {
     "ietf-sid-file:sid-file": {
         "module-name": "ietf-yang-provenance",
-        "module-revision": "2026-30-06",
+        "module-revision": "2026-06-30",
         "sid-file-status": "unpublished",
         "description": "Provisional SIDs for ietf-yang-provenance module",
         "reference": "RFC-to-be: Applying COSE Signatures for YANG Data Provenance",
