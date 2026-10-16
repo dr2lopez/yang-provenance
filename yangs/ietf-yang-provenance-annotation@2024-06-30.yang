@@ -25,8 +25,8 @@ module ietf-yang-provenance-annotation {
                  Henk Birkholz
                  <mailto:henk.birkholz@sit.fraunhofer.de>";
         description
-        "Defines a binary provenance-signature type to be used in YANG
-         metadata annotations
+        "Defines a YANG metadata annotation for carrying provenance
+         signatures on arbitrary YANG data elements.
 
          Copyright (c) 2024 IETF Trust and the persons identified as
          authors of the code.  All rights reserved.

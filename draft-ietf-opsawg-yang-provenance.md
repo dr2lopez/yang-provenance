@@ -768,18 +768,34 @@ This document registers the following YANG modules in the "YANG Module Names" re
   reference: RFC XXXX
 ~~~
 
-## YANG SID-file
+## YANG SID Ranges
 
-IANA is requested to register a new ".sid" file in the "IETF YANG-SID Ranges" {{RFC9595}}:
+IANA is requested to allocate the following SID ranges in the "IETF
+YANG-SID Ranges" registry {{RFC9595}}:
 
 ~~~
-SID range entry point: TBD
-SID range size: 20
-YANG module name: ietf-yang-provenance
+SID range entry point: 2950
+SID range size: 5
+YANG module name: ietf-yp-provenance
 reference: RFC XXXX
 ~~~
 
-A ".sid" file is proposed in Appendix B.
+~~~
+SID range entry point: 2955
+SID range size: 5
+YANG module name: ietf-yang-instance-data-provenance
+reference: RFC XXXX
+~~~
+
+~~~
+SID range entry point: 2960
+SID range size: 5
+YANG module name: ietf-yang-provenance-annotation
+reference: RFC XXXX
+~~~
+
+No SID range is requested for ietf-yang-provenance because it only defines
+a typedef and does not define schema nodes that require SIDs.
 
 
 
@@ -1638,51 +1654,14 @@ While this last example uses YANG SID notation for the fourth enclosing method:
 }
 ~~~
 
-In the example above, the provenance-signature leaf is represented using the proposed assigned SID (3162). The representation of this leaf is the same whether it is added via the first enclosing method (as a direct augmentation of the interfaces container) or via the fourth enclosing method (as an annotation using the yp-provenance-metadata module). The only difference between these two methods is the semantic context and location of the leaf within the YANG data: in the first method it is part of the root container structure, while in the fourth method it is included as metadata in the @ annotation object. From the perspective of CBOR representation, SIDs are identical in both methods.
+In the example above, 3162 is an illustrative SID for the provenance
+signature. A provenance-signature typedef does not itself have a SID; the
+SID identifying a provenance leaf or annotation depends on the YANG module
+that defines it. Replace the illustrative SID values with the values
+assigned to the corresponding schema nodes.
 
 NOTE TO THE RFC EDITOR: Replace the illustrative SID values with the final values allocated by IANA according to {{RFC9595}}.
 
-
-# Appendix B. Provisional YANG SID File (.sid) for `ietf-yang-provenance`
-{:numbered="false"}
-
-The following `.sid` file is provided as a provisional example for implementers. It maps schema nodes defined in the `ietf-yang-provenance` module to numeric SIDs for use in CBOR compact encoding. These SIDs are provisional and will be replaced by IANA-assigned values upon publication of the RFC.
-
-~~~
-<CODE BEGINS> file "ietf-yang-provenance@2026-06-30.sid"
-
-{
-    "ietf-sid-file:sid-file": {
-        "module-name": "ietf-yang-provenance",
-        "module-revision": "2026-06-30",
-        "sid-file-status": "unpublished",
-        "description": "Provisional SIDs for ietf-yang-provenance module",
-        "reference": "RFC-to-be: Applying COSE Signatures for YANG Data Provenance",
-        "dependency-revision": [],
-        "assignment-range": [
-            {
-                "entry-point": "3161",
-                "size": "20"
-            }
-        ],
-        "item": [
-            {
-                "status": "unstable",
-                "namespace": "module",
-                "identifier": "ietf-yang-provenance",
-                "sid": "3161"
-            },
-            {
-                "status": "unstable",
-                "namespace": "data",
-                "identifier": "/ietf-yang-provenance:provenance-signature",
-                "sid": "3162"
-            }
-        ]
-    }
-}
-<CODE ENDS>
-~~~
 
 # Acknowledgments
 {:numbered="false"}
