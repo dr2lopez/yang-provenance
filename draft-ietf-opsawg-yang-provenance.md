@@ -1656,6 +1656,7 @@ In the examples above, 3XXX are illustrative SIDs for the provenance signature. 
 NOTE TO THE RFC EDITOR: Replace the illustrative SID values with the final values allocated by IANA according to {{RFC9595}}.
 
 # Appendix B. Provisional YANG SID Files (.sid)
+{:#yang-sid-files}
 {:numbered="false"}
 
 The following `.sid` files are provided for IANA allocation as specified in {{iana-considerations-sids}}.
