@@ -792,8 +792,7 @@ YANG module name: ietf-yang-provenance-annotation
 reference: RFC XXXX
 ~~~
 
-No SID range is requested for ietf-yang-provenance because it only defines
-a typedef and does not define schema nodes that require SIDs.
+No SID range is requested for ietf-yang-provenance because it only defines a typedef and does not define schema nodes that require SIDs.
 
 
 
@@ -1652,11 +1651,7 @@ While this last example uses YANG SID notation for the fourth enclosing method:
 }
 ~~~
 
-In the example above, 3162 is an illustrative SID for the provenance
-signature. A provenance-signature typedef does not itself have a SID; the
-SID identifying a provenance leaf or annotation depends on the YANG module
-that defines it. Replace the illustrative SID values with the values
-assigned to the corresponding schema nodes.
+In the example above, 3162 is an illustrative SID for the provenance signature. A provenance-signature typedef does not itself have a SID; the SID identifying a provenance leaf or annotation depends on the YANG module that defines it. Replace the illustrative SID values with the values assigned to the corresponding schema nodes.
 
 NOTE TO THE RFC EDITOR: Replace the illustrative SID values with the final values allocated by IANA according to {{RFC9595}}.
 
