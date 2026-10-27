@@ -10,14 +10,14 @@ date:
 consensus: true
 v: 3
 area: "Operations and Management"
-workgroup: "Operations and Management Area Working Group"
+workgroup: "Operations and Management Area"
 keyword:
  - provenance
  - signature
  - COSE
  - metadata
 venue:
-  group: "Operations and Management Area Working Group"
+  group: "Operations and Management Area"
   type: "Working Group"
   mail: "opsawg@ietf.org"
   arch: "https://mailarchive.ietf.org/arch/browse/opsawg/"
@@ -59,9 +59,11 @@ normative:
  RFC8340:
  RFC8641:
  RFC8785:
+ RFC8791:
  RFC8949:
  RFC9052:
  RFC9195:
+ RFC9196:
  RFC9254:
  RFC9338:
  RFC9595:
@@ -115,7 +117,7 @@ The signature mechanisms defined in this document provide integrity protection a
 
 # Defining Provenance Elements
 
-The provenance for a given YANG element MUST be convened by a leaf element, containing the COSE signature bitstring built according to the procedure defined below in this section. The provenance leaf MUST be of type "provenance-signature", defined as follows:
+The provenance for a given YANG element MUST be conveyed by a leaf element, containing the COSE signature bitstring built according to the procedure defined below in this section. The provenance leaf MUST be of type "provenance-signature", defined as follows:
 
 ~~~
 typedef provenance-signature {
@@ -127,7 +129,7 @@ typedef provenance-signature {
        associated element.";
      reference
       "RFC 9052: CBOR Object Signing and Encryption (COSE): Structures and Process
-       draft-ietf-opsawg-yang-provenance";
+       RFC XXXX: Applying COSE Signatures for YANG Data Provenance.";
 }
 ~~~
 
@@ -139,10 +141,10 @@ Provenance signature strings are COSE single signature messages with \[nil\] pay
 
 ~~~
 COSE_Sign1 = [
-protected /algorithm-identifier, kid, serialization-method/
-unprotected /algorithm-parameters/
-signature /using as external data the content of the YANG
-           (meta-)data without the signature leaf/
+protected /algorithm-identifier, kid/,
+unprotected /algorithm-parameters/,
+payload /nil/,
+signature /using as external data the content of the YANG (meta-)data without the signature leaf/
 ]
 ~~~
 
@@ -152,15 +154,13 @@ The COSE_Sign1 procedure yields a bitstring when building the signature and expe
 
 * The kid (Key ID), to be locally agreed, used and interpreted by the signer and the signature validator. URIs {{RFC3986}} and RFC822-style {{RFC5322}} identifiers are typical values to be used as kid.
 
-* The serialization-method, a string identifying the YANG serialization in use. It MUST be one of the three possible values "xml" (for XML serialization {{RFC7950}}), "json" (for JSON serialization {{RFC7951}}) or "cbor" (for CBOR serialization {{RFC9254}}).
-
 * The value algorithm-parameters, which MUST follow the COSE conventions for providing relevant parameters to the signing algorithm.
 
 * The signature for the YANG element provenance is being established for, to be produced and verified according to the procedure described below for each one of the enclosing methods for the provenance string described below.
 
 ### Use of Countersignatures
 
-The primary provenance signature is a COSE_Sign1 message generated over the canonicalized input defined above. Additional entities MAY subsequently apply countersignatures to this COSE_Sign1 message. These countersignatures are integrated within the existing COSE signature object and do not modify the pimary signature input or its value.
+The primary provenance signature is a COSE_Sign1 message generated over the canonicalized input defined above. Additional entities MAY subsequently apply countersignatures to this COSE_Sign1 message. These countersignatures are integrated within the existing COSE signature object and do not modify the primary signature input or its value.
 
 COSE supports the inclusion of countersignatures as defined in {{RFC9338}}. Countersignatures allow additional entities to provide cryptographic proof over an existing COSE signature without modifying the primary signature value. The inclusion of counter signatures does not alter the original COSE_Sign1 structure, nor the canonicalized input used to produce the original signature. Instead, they extend the COSE object by binding additional signers to the existing signed content.
 
@@ -182,7 +182,7 @@ The byte strings to be used as input to the signature and verification procedure
 
 * Applying the corresponding canonicalization method as described in the following section.
 
-* When countersignatures are present, the same proceduras apply for the generation or verification of any countersignature, taking into account the following additinal processing rules:
+* When countersignatures are present, the same procedures apply for the generation or verification of any countersignature, taking into account the following additional processing rules:
 
   * Each counter signature MUST be verifiable independently using the public key of the corresponding signer, as defined by the applicable key identifier carried by the countersignature structure.
 
@@ -277,7 +277,7 @@ This enclosing method requires a specific element in the YANG schema defining th
 
 When defining a provenance signature leaf element to appear in a YANG schema by means of this enclosing method, the provenance-signature leaf MAY be defined to be at any position in the enclosing element, but only one such leaf MUST be defined for this enclosing element. If the enclosing element contains other non-leaf elements, they MAY define their own provenance-signature leaf, according to the same rule. In this case, the provenance-signature leaves in the children elements are applicable to the specific child element where they are enclosed, while the provenance-signature leaf enclosed in the top-most element is applicable to the whole element contents, including the children provenance-signature leaf themselves. This allows for recursive provenance validation, data aggregation, and the application of provenance verification of relevant children elements at different stages of any data processing pipeline.
 
-The specific YANG content to be processed SHALL be generated by taking the whole enclosing element and eliminiating the leaf containing the provenance signature string.
+The specific YANG content to be processed SHALL be generated by taking the whole enclosing element and eliminating the leaf containing the provenance signature string.
 
 As example, let us consider the two modules proposed in {{YANGmanifest}}. For the platform-manifest module, the provenance for a platform would be provided by augmenting the current schema with the optional platform-provenance leaf shown below:
 
@@ -329,7 +329,7 @@ module: ietf-data-collection-manifest
      .
 ~~~
 
-Note how, in the two examples, the element bearing the provenance signature appears at different positions in the enclosing element. And note that, for processing the element for signature generation and verification, the signature element MUST be eliminated from the enclosing element before applying the corresponding canonicalization method.
+Note how, in the two examples, the element bearing the provenance signature appears at different positions in the enclosing element. For processing the element for signature generation and verification, the signature element MUST be eliminated from the enclosing element before applying the corresponding canonicalization method.
 
 Note that, in application of the recursion mechanism described above, a provenance element could be included at the top of any of the collections, supporting the verification of the provenance of the collection itself (as provided by a specific collector), without interfering with the verification of the provenance of each of the collection elements. As an example, in the case of the platform manifests it would look like:
 
@@ -348,7 +348,7 @@ module: ietf-platform-manifest
        .
 ~~~
 
-Note here that, to generate the YANG content to be processed in the case of the collection the provenance leafs of the indivual elements SHALL NOT be eliminated, as it SHALL be the case when generating the YANG content to be processed for each individual element in the collection.
+When generating YANG content to be processed in the case of the collection the provenance leaves of the individual elements SHALL NOT be eliminated, as it SHALL be the case when generating the YANG content to be processed for each individual element in the collection.
 
 ## Including a Provenance Signature in YANG-Push Notifications
 
@@ -442,8 +442,9 @@ module ietf-yp-provenance {
                <mailto:antonio.pastorperales@telefonica.com>";
 
   description
-    "Defines a bynary provenance-signature type to be used in other YANG
-    modules.
+    "Augments the YANG-Push notification envelope with a provenance
+     signature leaf for integrity and origin verification, and extends
+     notification capabilities to advertise provenance support.
 
     Copyright (c) 2026 IETF Trust and the persons identified as
     authors of the code.  All rights reserved.
@@ -555,7 +556,7 @@ module ietf-yang-instance-data-provenance {
      WG List:  <mailto:opsawg@ietf.org>
 
      Authors:  Ana Mendez
-               <mailto:ana.mendezperz@telefonica.com>
+               <mailto:ana.mendezperez@telefonica.com>
                Diego Lopez
                <mailto:diego.r.lopez@telefonica.com>";
 
@@ -649,9 +650,9 @@ module ietf-yang-provenance-annotation {
               <mailto:antonio.pastorperales@telefonica.com>
               Henk Birkholz
               <mailto:henk.birkholz@sit.fraunhofer.de>";
-    description
-      "Defines a binary provenance-signature type to be used in YANG
-      metadata annotations
+  description
+      "Defines a YANG metadata annotation for carrying provenance
+       signatures on arbitrary YANG data elements.
 
       Copyright (c) 2026 IETF Trust and the persons identified as
       authors of the code.  All rights reserved.
@@ -701,9 +702,10 @@ The following threats are explicitly outside the scope of this mechanism:
 * Finally, these mechanisms do not inherently guarantee the freshness of signed data; replay of previously signed valid data is not prevented unless additional mechanisms, such as timestamps or nonces bound to the signature context, are employed.
 
 
-The verification step depends on the association of the kid (Key ID) with the proper public key. This is a local matter for the verifier and its specification is out of the scope of this document. Similarly, key association with reliable data sources is a deployment decision, though a couple of deployment patterns can be considered, depending on the application scenario under consideration. On the one hand, identities may be associated to controller entities (a domain controller, a person in charge of operational aspects, an organizational unit managing an administrative domain, ec.) owning the private keys to be use in generating the provenance signatures for YANG data such as configurations or telemetry. Alternatively, individual devices may hold the identities and corresponding private keys to generate provenance signatures for locally originated data (e.g., telemetry updates). The use of certificates, PKI mechanisms, or any other secure out-of-band distribution of id-public key mappings is RECOMMENDED.
+The verification step depends on the association of the kid (Key ID) with the proper public key. This is a local matter for the verifier and its specification is out of the scope of this document. Similarly, key association with reliable data sources is a deployment decision, though a couple of deployment patterns can be considered, depending on the application scenario under consideration. On the one hand, identities may be associated to controller entities (a domain controller, a person in charge of operational aspects, an organizational unit managing an administrative domain, etc.) owning the private keys to be use in generating the provenance signatures for YANG data such as configurations or telemetry. Alternatively, individual devices may hold the identities and corresponding private keys to generate provenance signatures for locally originated data (e.g., telemetry updates). The use of certificates, PKI mechanisms, or any other secure out-of-band distribution of id-public key mappings is RECOMMENDED.
 
 # IANA Considerations
+{:#iana-considerations-sids}
 
 ## IETF XML Registry
 
@@ -765,20 +767,34 @@ This document registers the following YANG modules in the "YANG Module Names" re
   reference: RFC XXXX
 ~~~
 
-## YANG SID-file
+## YANG SID Ranges
 
-IANA is requested to register a new ".sid" file in the "IETF YANG-SID Ranges" {{RFC9595}}:
+IANA is requested to allocate the following SID ranges in the "IETF YANG-SID Ranges" registry {{RFC9595}}:
 
 ~~~
-SID range entry point: TBD
-SID range size: 20
-YANG module name: ietf-yang-provenance
+SID range entry point: 3000
+SID range size: 50
+YANG module name: ietf-yp-provenance
 reference: RFC XXXX
 ~~~
 
-A ".sid" file is proposed in Appendix B.
+~~~
+SID range entry point: 3050
+SID range size: 50
+YANG module name: ietf-yang-instance-data-provenance
+reference: RFC XXXX
+~~~
 
+~~~
+SID range entry point: 3100
+SID range size: 50
+YANG module name: ietf-yang-provenance-annotation
+reference: RFC XXXX
+~~~
 
+No SID range is requested for ietf-yang-provenance because it only defines a typedef and does not define schema nodes that require SIDs.
+
+The three ".sid" files are proposed in {{yang-sid-files}}.
 
 # Implementation Status
 
@@ -835,7 +851,7 @@ Using the first enclosing method, we will demonstrate how to augment the previou
 
 ~~~
 
-module interfaces-provenance-augmented {
+module example-interfaces-provenance-augmented {
   yang-version 1.1;
   namespace "urn:example:interfaces-provenance-augmented";
   prefix ifprov;
@@ -970,7 +986,7 @@ The second enclosing method shows a notification with the provenance signature i
 </envelope>
 ~~~
 
-The third enclosing method, applicable if the instance is to be stored as YANG instance data at rest, by adding the corresponding metadata, would produce a results as shown below:
+The third enclosing method, applicable if the instance is to be stored as YANG instance data at rest, by adding the corresponding metadata, would produce the result shown below:
 
 ~~~
 <?xml version="1.0" encoding="UTF-8"?>
@@ -1134,7 +1150,7 @@ Applying the first enclosing method, a provenance-signature leaf at the top elem
         }
       }
     ],
-    "interfaces-provenance-augmented:interfaces-provenance":
+    "example-interfaces-provenance-augmented:interfaces-provenance":
       "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAvzyFP5HP0nONaqTRxKmSqerrDS6C
        QXJSK+5NdprzQZLf0QsHtAi2pxzbuDJDy9kZoy1JTvNaJmMxGTLdm4ktug=="
   }
@@ -1319,7 +1335,7 @@ The first enclosing method will produce the following output, in CBOR diagnostic
         }
       }
     ],
-    "interfaces-provenance-augmented:interfaces-provenance": h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70'
+    "example-interfaces-provenance-augmented:interfaces-provenance": h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70'
     }
 }
 ~~~
@@ -1331,35 +1347,35 @@ And the corresponding representation of the first enclosing method using YANG SI
 ~~~
 {
   1500: {                      / ietf-interfaces:interfaces /
-    1501: [                     / interface list /
+    1: [                     / interface list /
       {
-        1502: "GigabitEthernet1",     / name /
-        1503: 1800,                   / type identityref /
-        1504: 1,                      / admin-status: up /
-        1505: 1,                      / oper-status: up /
-        1506: "2024-02-03T11:22:41.081+00:00", / last-change /
-        1507: 1,                      / if-index /
-        1508: "0c:00:00:37:d6:00",        / phys-address /
-        1509: 1000000000,             / speed /
-        1510: {                       / statistics /
-          1511: "2024-02-03T11:20:38+00:00",
-          1512: 8157,
-          1513: 94,
-          1514: 0,
-          1515: 0,
-          1516: 0,
-          1517: 0,
-          1518: 0,
-          1519: 89363,
-          1520: 209,
-          1521: 0,
-          1522: 0,
-          1523: 0,
-          1524: 0
+        1: "GigabitEthernet1",     / name /
+        2: 1800,                   / type identityref /
+        3: 1,                      / admin-status: up /
+        4: 1,                      / oper-status: up /
+        5: "2024-02-03T11:22:41.081+00:00", / last-change /
+        6: 1,                      / if-index /
+        7: "0c:00:00:37:d6:00",        / phys-address /
+        8: 1000000000,             / speed /
+        9: {                       / statistics /
+          1: "2024-02-03T11:20:38+00:00",
+          2: 8157,
+          3: 94,
+          4: 0,
+          5: 0,
+          6: 0,
+          7: 0,
+          8: 0,
+          9: 89363,
+          10: 209,
+          11: 0,
+          12: 0,
+          13: 0,
+          14: 0
         }
       }
     ],
-    3162: h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70'   / provenance-signature leaf /
+    "example-interfaces-provenance-augmented:interfaces-provenance": h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70'
   }
 }
 
@@ -1413,42 +1429,42 @@ The following example illustrates the notification-based enclosing method (secon
 }
 ~~~
 
-And thhis would be the second enclosing method example in YANG SID notation:
+And this would be the second enclosing method example in YANG SID notation:
 
 ~~~
 {
-  2957: {                           / ietf-yp-notification:envelope /
-    2959: "2024-10-10T08:00:11.22Z", / event-time /
-    2958: {                           / contents /
-      4000: {                         / push-update /
-        4001: 1011,                   / id /
-        4002: {                       / datastore-contents /
+  2958: {                           / ietf-yp-notification:envelope: 2958 /
+    2: "2024-10-10T08:00:11.22Z", / event-time: 2958 + 2 /
+    1: {                           / contents: 2958 + 1 /
+      "ietf-yang-push:push-update": {
+        "id": 1011,
+        "datastore-contents": {
           1500: {                     / ietf-interfaces:interfaces /
-            1501: [                    / interface list /
+            1: [                    / interface /
               {
-                1502: "GigabitEthernet1",    / name /
-                1503: 1800,                  / type identityref /
-                1504: 1,                     / admin-status: up /
-                1505: 1,                     / oper-status: up /
-                1506: "2024-02-03T11:22:41.081+00:00", / last-change /
-                1507: 1,                     / if-index /
-                1508: "0c:00:00:37:d6:00",       / phys-address /
-                1509: 1000000000,            / speed /
-                1510: {                     / statistics /
-                  1511: "2024-02-03T11:20:38+00:00", / discontinuity-time /
-                  1512: 8157,
-                  1513: 94,
-                  1514: 0,
-                  1515: 0,
-                  1516: 0,
-                  1517: 0,
-                  1518: 0,
-                  1519: 89363,
-                  1520: 209,
-                  1521: 0,
-                  1522: 0,
-                  1523: 0,
-                  1524: 0
+                1: "GigabitEthernet1",    / name /
+                2: 1800,                  / type identityref /
+                3: 1,                     / admin-status: up /
+                4: 1,                     / oper-status: up /
+                5: "2024-02-03T11:22:41.081+00:00", / last-change /
+                6: 1,                     / if-index /
+                7: "0c:00:00:37:d6:00",       / phys-address /
+                8: 1000000000,            / speed /
+                9: {                     / statistics /
+                  1: "2024-02-03T11:20:38+00:00", / discontinuity-time /
+                  2: 8157,
+                  3: 94,
+                  4: 0,
+                  5: 0,
+                  6: 0,
+                  7: 0,
+                  8: 0,
+                  9: 89363,
+                  10: 209,
+                  11: 0,
+                  12: 0,
+                  13: 0,
+                  14: 0
                 }
               }
             ]
@@ -1456,7 +1472,7 @@ And thhis would be the second enclosing method example in YANG SID notation:
         }
       }
     },
-    3162: h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70'  / provenance-signature/
+    44: h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70'  / provenance-signature 3002 - 2958 = 44/
   }
 }
 ~~~
@@ -1511,50 +1527,50 @@ And this would be the third enclosing method using YANG SID notation:
 
 ~~~
 {
-  3170: {                             / ietf-yang-instance-data:instance-data-set /
-    3171: "interfaces-labTID-status", / name /
-    3172: "sofia.garciarincon.practicas@telefonica.com", / contact /
-    3173: "Thu Jul 18 11:42:06 CEST 2024", / timestamp /
-    3174: {                             / content-data /
+  "ietf-yang-instance-data:instance-data-set": {
+    "name": "interfaces-labTID-status",
+    "contact": "sofia.garciarincon.practicas@telefonica.com",
+    "timestamp": "Thu Jul 18 11:42:06 CEST 2024",
+    "content-data": {
       1500: {                           / ietf-interfaces:interfaces /
-        1501: [                          / interface list /
+        1: [                          / interface/
           {
-            1502: "GigabitEthernet1",
-            1503: 1800,
-            1504: 1,
-            1505: 1,
-            1506: "2024-02-03T11:22:41.081+00:00",
-            1507: 1,
-            1508: "0c:00:00:37:d6:00",
-            1509: 1000000000,
-            1510: {
-              1511: "2024-02-03T11:20:38+00:00",
-              1512: 8157,
-              1513: 94,
-              1514: 0,
-              1515: 0,
-              1516: 0,
-              1517: 0,
-              1518: 0,
-              1519: 89363,
-              1520: 209,
-              1521: 0,
-              1522: 0,
-              1523: 0,
-              1524: 0
+            1: "GigabitEthernet1",    / name /
+            2: 1800,                  / type identityref /
+            3: 1,                     / admin-status: up /
+            4: 1,                     / oper-status: up /
+            5: "2024-02-03T11:22:41.081+00:00", / last-change /
+            6: 1,                     / if-index /
+            7: "0c:00:00:37:d6:00",       / phys-address /
+            8: 1000000000,            / speed /
+            9: {                     / statistics /
+              1: "2024-02-03T11:20:38+00:00", / discontinuity-time /
+              2: 8157,
+              3: 94,
+              4: 0,
+              5: 0,
+              6: 0,
+              7: 0,
+              8: 0,
+              9: 89363,
+              10: 209,
+              11: 0,
+              12: 0,
+              13: 0,
+              14: 0
             }
           }
         ]
       }
     },
-    3162: h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70'   / provenance-signature /
+    3051: h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70'   / provenance 3051 /
   }
 }
 ~~~
 
-Note that there is no IANA registered SID for ietf-yang-instance-data:instance-data-set, so a provisional one is used to complete the example.
+Note that there is no IANA registered SID for ietf-yang-instance-data:instance-data-set, so name-keys were used.
 
-Finaly, the following example illustrates the fourth and last enclosing method using CBOR diagonstic notation:
+Finally, the following example illustrates the fourth and last enclosing method using CBOR diagnostic notation:
 
 ~~~
 {
@@ -1602,87 +1618,201 @@ While this last example uses YANG SID notation for the fourth enclosing method:
 ~~~
 {
   1500: {                             / ietf-interfaces:interfaces /
-    1501: [                              / interface list /
+    1: [                              / interface list /
       {
-        1502: "GigabitEthernet1",
-        1503: 1800,
-        1504: 1,
-        1505: 1,
-        1506: "2024-02-03T11:22:41.081+00:00",
-        1507: 1,
-        1508: "0c:00:00:37:d6:00",
-        1509: 1000000000,
-        1510: {
-          1511: "2024-02-03T11:20:38+00:00",
-          1512: 8157,
-          1513: 94,
-          1514: 0,
-          1515: 0,
-          1516: 0,
-          1517: 0,
-          1518: 0,
-          1519: 89363,
-          1520: 209,
-          1521: 0,
-          1522: 0,
-          1523: 0,
-          1524: 0
+        1: "GigabitEthernet1",
+        2: 1800,
+        3: 1,
+        4: 1,
+        5: "2024-02-03T11:22:41.081+00:00",
+        6: 1,
+        7: "0c:00:00:37:d6:00",
+        8: 1000000000,
+        9: {
+          1: "2024-02-03T11:20:38+00:00",
+          2: 8157,
+          3: 94,
+          4: 0,
+          5: 0,
+          6: 0,
+          7: 0,
+          8: 0,
+          9: 89363,
+          10: 209,
+          11: 0,
+          12: 0,
+          13: 0,
+          14: 0
         }
       }
     ],
-    3162: h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70'  / provenance-signature/
+    3101: h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70'  / provenance /
+  }
+}
+
+
+~~~
+
+In the examples above, 3XXX are illustrative SIDs for the provenance signature. A provenance-signature typedef does not itself have a SID; the SID identifying a provenance leaf or annotation depends on the YANG module that defines it. Replace the illustrative SID values with the values assigned to the corresponding schema nodes.
+
+NOTE TO THE RFC EDITOR: Replace the illustrative SID values with the final values allocated by IANA according to {{RFC9595}}.
+
+# Appendix B. Provisional YANG SID Files (.sid)
+{:#yang-sid-files}
+{:numbered="false"}
+
+The following `.sid` files are provided for IANA allocation as specified in {{iana-considerations-sids}}.
+
+~~~
+{
+  "ietf-sid-file:sid-file": {
+    "module-name": "ietf-yp-provenance",
+    "module-revision": "2026-06-30",
+    "sid-file-status": "unpublished",
+    "description": "draft-ietf-opsawg-yang-provenance: Applying COSE Signatures for YANG Data Provenance",
+    "reference": "RFC XXXX: Applying COSE Signatures for YANG Data Provenance",
+    "dependency-revision": [
+      {
+        "module-name": "ietf-notification-capabilities",
+        "module-revision": "2022-02-17"
+      },
+      {
+        "module-name": "ietf-system-capabilities",
+        "module-revision": "2022-02-17"
+      },
+      {
+        "module-name": "ietf-yang-provenance",
+        "module-revision": "2026-06-30"
+      },
+      {
+        "module-name": "ietf-yang-structure-ext",
+        "module-revision": "2020-06-17"
+      },
+      {
+        "module-name": "ietf-yp-notification",
+        "module-revision": "2026-09-25"
+      }
+    ],
+    "assignment-range": [
+      {
+        "entry-point": "3000",
+        "size": "50"
+      }
+    ],
+    "item": [
+      {
+        "namespace": "module",
+        "identifier": "ietf-yp-provenance",
+        "status": "unstable",
+        "sid": "3000"
+      },
+      {
+        "namespace": "data",
+        "identifier": "/ietf-system-capabilities:system-capabilities/ietf-notification-capabilities:subscription-capabilities/ietf-yp-notification:notification-metadata/metadata/ietf-yp-provenance:notification-provenance",
+        "status": "unstable",
+        "sid": "3001"
+      },
+      {
+        "namespace": "data",
+        "identifier": "/ietf-yp-notification:envelope/ietf-yp-provenance:provenance",
+        "status": "unstable",
+        "sid": "3002"
+      }
+    ]
+  }
+}
+~~~
+~~~
+{
+  "ietf-sid-file:sid-file": {
+    "module-name": "ietf-yang-instance-data-provenance",
+    "module-revision": "2026-06-30",
+    "sid-file-status": "unpublished",
+    "description": "draft-ietf-opsawg-yang-provenance: Applying COSE Signatures for YANG Data Provenance"
+    "reference": "RFC XXXX: Applying COSE Signatures for YANG Data Provenance",
+    "dependency-revision": [
+      {
+        "module-name": "ietf-yang-instance-data",
+        "module-revision": "2022-02-17"
+      },
+      {
+        "module-name": "ietf-yang-provenance",
+        "module-revision": "2026-06-30"
+      },
+      {
+        "module-name": "ietf-yang-structure-ext",
+        "module-revision": "2020-06-17"
+      }
+    ],
+    "assignment-range": [
+      {
+        "entry-point": "3050",
+        "size": "50"
+      }
+    ],
+    "item": [
+      {
+        "namespace": "module",
+        "identifier": "ietf-yang-instance-data-provenance",
+        "status": "unstable",
+        "sid": "3050"
+      },
+      {
+        "namespace": "data",
+        "identifier": "/ietf-yang-instance-data:instance-data-set/ietf-yang-instance-data-provenance:provenance",
+        "status": "unstable",
+        "sid": "3051"
+      }
+    ]
   }
 }
 ~~~
 
-In the example above, the provenance-signature leaf is represented using the proposed assigned SID (3162). The representation of this leaf is the same whether it is added via the first enclosing method (as a direct augmentation of the interfaces container) or via the fourth enclosing method (as an annotation using the yp-provenance-metadata module). The only difference between these two methods is the semantic context and location of the leaf within the YANG data: in the first method it is part of the root container structure, while in the fourth method it is included as metadata in the @ annotation object. From the perspective of CBOR representation, SIDs are identical in both methods.
-
-NOTE TO THE RFC EDITOR: Replace the illustrative SID values with the final values allocated by IANA according to {{RFC9595}}.
-
-
-# Appendix B. Provisional YANG SID File (.sid) for `ietf-yang-provenance`
-{:numbered="false"}
-
-The following `.sid` file is provided as a provisional example for implementers. It maps schema nodes defined in the `ietf-yang-provenance` module to numeric SIDs for use in CBOR compact encoding. These SIDs are provisional and will be replaced by IANA-assigned values upon publication of the RFC.
-
 ~~~
-<CODE BEGINS> file "ietf-yang-provenance@2025-05-09.yang"
-
 {
-    "ietf-sid-file:sid-file": {
+  "ietf-sid-file:sid-file": {
+    "module-name": "ietf-yang-provenance-annotation",
+    "module-revision": "2026-06-30",
+    "sid-file-status": "unpublished",
+    "description": "draft-ietf-opsawg-yang-provenance: Applying COSE Signatures for YANG Data Provenance"
+    "reference": "RFC XXXX: Applying COSE Signatures for YANG Data Provenance",
+    "dependency-revision": [
+      {
+        "module-name": "ietf-yang-metadata",
+        "module-revision": "2016-08-05"
+      },
+      {
         "module-name": "ietf-yang-provenance",
-        "module-revision": "2026-30-06",
-        "sid-file-status": "unpublished",
-        "description": "Provisional SIDs for ietf-yang-provenance module",
-        "reference": "RFC-to-be: Applying COSE Signatures for YANG Data Provenance",
-        "dependency-revision": [],
-        "assignment-range": [
-            {
-                "entry-point": "3161",
-                "size": "20"
-            }
-        ],
-        "item": [
-            {
-                "status": "unstable",
-                "namespace": "module",
-                "identifier": "ietf-yang-provenance",
-                "sid": "3161"
-            },
-            {
-                "status": "unstable",
-                "namespace": "data",
-                "identifier": "/ietf-yang-provenance:provenance-signature",
-                "sid": "3162"
-            }
-        ]
-    }
+        "module-revision": "2026-06-30"
+      }
+    ],
+    "assignment-range": [
+      {
+        "entry-point": "3100",
+        "size": "50"
+      }
+    ],
+    "item": [
+      {
+        "namespace": "module",
+        "identifier": "ietf-yang-provenance-annotation",
+        "status": "unstable",
+        "sid": "3100"
+      },
+      {
+        "namespace": "annotation",
+        "identifier": "provenance",
+        "status": "unstable",
+        "sid": "3101"
+      }
+    ]
+  }
 }
-<CODE ENDS>
 ~~~
+
 
 # Acknowledgments
 {:numbered="false"}
-Thanks to Sofia Garcia (UC3M, sgarciarincon01@gmail.com) for being instrumental in demonstrating the feasibility of the proposed approach, providing a first proof of concept of YANG provenance signatures.
+Thanks to Sofia Garcia (UC3M, sgarciarincon01@gmail.com) for being instrumental in demonstrating the feasibility of the proposed approach, providing a first proof of concept of YANG provenance signatures. The authors would like to thank Vojtěch Vilímek for their review and valuable comments.
 
 This document is based on work partially funded by the EU Horizon Europe projects iTrust6G (grant 101139198), CYBERNEMO (grant 101168182), cPAID (grant 101168407), MARE (grant 101191436), and 6G-DALI (grant 101192750).
