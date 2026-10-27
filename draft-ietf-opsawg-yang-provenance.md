@@ -1375,7 +1375,7 @@ And the corresponding representation of the first enclosing method using YANG SI
         }
       }
     ],
-    "example-interfaces-provenance-augmented:interfaces-provenance": h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70' 
+    "example-interfaces-provenance-augmented:interfaces-provenance": h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70'
   }
 }
 
@@ -1436,9 +1436,9 @@ And this would be the second enclosing method example in YANG SID notation:
   2958: {                           / ietf-yp-notification:envelope: 2958 /
     2: "2024-10-10T08:00:11.22Z", / event-time: 2958 + 2 /
     1: {                           / contents: 2958 + 1 /
-      "ietf-yang-push:push-update": {                        
-        "id": 1011,                   
-        "datastore-contents": {                       
+      "ietf-yang-push:push-update": {
+        "id": 1011,
+        "datastore-contents": {
           1500: {                     / ietf-interfaces:interfaces /
             1: [                    / interface /
               {
@@ -1528,10 +1528,10 @@ And this would be the third enclosing method using YANG SID notation:
 ~~~
 {
   "ietf-yang-instance-data:instance-data-set": {
-    "name": "interfaces-labTID-status", 
-    "contact": "sofia.garciarincon.practicas@telefonica.com", 
-    "timestamp": "Thu Jul 18 11:42:06 CEST 2024", 
-    "content-data": { 
+    "name": "interfaces-labTID-status",
+    "contact": "sofia.garciarincon.practicas@telefonica.com",
+    "timestamp": "Thu Jul 18 11:42:06 CEST 2024",
+    "content-data": {
       1500: {                           / ietf-interfaces:interfaces /
         1: [                          / interface/
           {
