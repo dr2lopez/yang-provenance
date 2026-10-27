@@ -141,7 +141,7 @@ Provenance signature strings are COSE single signature messages with \[nil\] pay
 
 ~~~
 COSE_Sign1 = [
-protected /algorithm-identifier, kid, serialization-method/,
+protected /algorithm-identifier, kid/,
 unprotected /algorithm-parameters/,
 payload /nil/,
 signature /using as external data the content of the YANG (meta-)data without the signature leaf/
@@ -153,8 +153,6 @@ The COSE_Sign1 procedure yields a bitstring when building the signature and expe
 * The algorithm-identifier, which MUST follow COSE conventions and registries.
 
 * The kid (Key ID), to be locally agreed, used and interpreted by the signer and the signature validator. URIs {{RFC3986}} and RFC822-style {{RFC5322}} identifiers are typical values to be used as kid.
-
-* The serialization-method, a string identifying the YANG serialization in use. It MUST be one of the three possible values "xml" (for XML serialization {{RFC7950}}), "json" (for JSON serialization {{RFC7951}}) or "cbor" (for CBOR serialization {{RFC9254}}).
 
 * The value algorithm-parameters, which MUST follow the COSE conventions for providing relevant parameters to the signing algorithm.
 
