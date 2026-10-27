@@ -1,4 +1,4 @@
-module interfaces-provenance-augmented {
+module example-interfaces-provenance-augmented {
   yang-version 1.1;
   namespace "urn:example:interfaces-provenance-augmented";
   prefix ifprov;

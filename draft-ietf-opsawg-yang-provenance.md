@@ -10,14 +10,14 @@ date:
 consensus: true
 v: 3
 area: "Operations and Management"
-workgroup: "Operations and Management Area Working Group"
+workgroup: "Operations and Management Area"
 keyword:
  - provenance
  - signature
  - COSE
  - metadata
 venue:
-  group: "Operations and Management Area Working Group"
+  group: "Operations and Management Area"
   type: "Working Group"
   mail: "opsawg@ietf.org"
   arch: "https://mailarchive.ietf.org/arch/browse/opsawg/"
@@ -774,22 +774,22 @@ IANA is requested to allocate the following SID ranges in the "IETF
 YANG-SID Ranges" registry {{RFC9595}}:
 
 ~~~
-SID range entry point: 2950
-SID range size: 5
+SID range entry point: XXXX
+SID range size: X
 YANG module name: ietf-yp-provenance
 reference: RFC XXXX
 ~~~
 
 ~~~
-SID range entry point: 2955
-SID range size: 5
+SID range entry point: XXXX
+SID range size: X
 YANG module name: ietf-yang-instance-data-provenance
 reference: RFC XXXX
 ~~~
 
 ~~~
-SID range entry point: 2960
-SID range size: 5
+SID range entry point: XXXX
+SID range size: X
 YANG module name: ietf-yang-provenance-annotation
 reference: RFC XXXX
 ~~~
@@ -854,7 +854,7 @@ Using the first enclosing method, we will demonstrate how to augment the previou
 
 ~~~
 
-module interfaces-provenance-augmented {
+module example-interfaces-provenance-augmented {
   yang-version 1.1;
   namespace "urn:example:interfaces-provenance-augmented";
   prefix ifprov;
@@ -1153,7 +1153,7 @@ Applying the first enclosing method, a provenance-signature leaf at the top elem
         }
       }
     ],
-    "interfaces-provenance-augmented:interfaces-provenance":
+    "example-interfaces-provenance-augmented:interfaces-provenance":
       "0oRRowNjeG1sBGdlYzIua2V5ASag9lhAvzyFP5HP0nONaqTRxKmSqerrDS6C
        QXJSK+5NdprzQZLf0QsHtAi2pxzbuDJDy9kZoy1JTvNaJmMxGTLdm4ktug=="
   }
@@ -1338,7 +1338,7 @@ The first enclosing method will produce the following output, in CBOR diagnostic
         }
       }
     ],
-    "interfaces-provenance-augmented:interfaces-provenance": h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70'
+    "example-interfaces-provenance-augmented:interfaces-provenance": h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70'
     }
 }
 ~~~
