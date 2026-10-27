@@ -705,6 +705,7 @@ The following threats are explicitly outside the scope of this mechanism:
 The verification step depends on the association of the kid (Key ID) with the proper public key. This is a local matter for the verifier and its specification is out of the scope of this document. Similarly, key association with reliable data sources is a deployment decision, though a couple of deployment patterns can be considered, depending on the application scenario under consideration. On the one hand, identities may be associated to controller entities (a domain controller, a person in charge of operational aspects, an organizational unit managing an administrative domain, etc.) owning the private keys to be use in generating the provenance signatures for YANG data such as configurations or telemetry. Alternatively, individual devices may hold the identities and corresponding private keys to generate provenance signatures for locally originated data (e.g., telemetry updates). The use of certificates, PKI mechanisms, or any other secure out-of-band distribution of id-public key mappings is RECOMMENDED.
 
 # IANA Considerations
+{:#iana-considerations-sids}
 
 ## IETF XML Registry
 
@@ -768,33 +769,32 @@ This document registers the following YANG modules in the "YANG Module Names" re
 
 ## YANG SID Ranges
 
-IANA is requested to allocate the following SID ranges in the "IETF
-YANG-SID Ranges" registry {{RFC9595}}:
+IANA is requested to allocate the following SID ranges in the "IETF YANG-SID Ranges" registry {{RFC9595}}:
 
 ~~~
-SID range entry point: XXXX
-SID range size: X
+SID range entry point: 3000
+SID range size: 50
 YANG module name: ietf-yp-provenance
 reference: RFC XXXX
 ~~~
 
 ~~~
-SID range entry point: XXXX
-SID range size: X
+SID range entry point: 3050
+SID range size: 50
 YANG module name: ietf-yang-instance-data-provenance
 reference: RFC XXXX
 ~~~
 
 ~~~
-SID range entry point: XXXX
-SID range size: X
+SID range entry point: 3100
+SID range size: 50
 YANG module name: ietf-yang-provenance-annotation
 reference: RFC XXXX
 ~~~
 
 No SID range is requested for ietf-yang-provenance because it only defines a typedef and does not define schema nodes that require SIDs.
 
-
+The three ".sid" files are proposed in {{yang-sid-files}}.
 
 # Implementation Status
 
@@ -1433,9 +1433,9 @@ And this would be the second enclosing method example in YANG SID notation:
 
 ~~~
 {
-  2957: {                           / ietf-yp-notification:envelope /
-    2959: "2024-10-10T08:00:11.22Z", / event-time /
-    2958: {                           / contents /
+  2958: {                           / ietf-yp-notification:envelope: 2958 /
+    2960: "2024-10-10T08:00:11.22Z", / event-time: 2958 + 2 /
+    2959: {                           / contents: 2958 + 1 /
       4000: {                         / push-update /
         4001: 1011,                   / id /
         4002: {                       / datastore-contents /
@@ -1472,7 +1472,7 @@ And this would be the second enclosing method example in YANG SID notation:
         }
       }
     },
-    3162: h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70'  / provenance-signature/
+    3002: h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70'  / provenance-signature 3000 + 2/
   }
 }
 ~~~
@@ -1563,7 +1563,7 @@ And this would be the third enclosing method using YANG SID notation:
         ]
       }
     },
-    3162: h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70'   / provenance-signature /
+    3051: h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70'   / provenance-signature 3050 + 1 /
   }
 }
 ~~~
@@ -1646,18 +1646,170 @@ While this last example uses YANG SID notation for the fourth enclosing method:
         }
       }
     ],
-    3162: h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70'  / provenance-signature/
+    3101: h'd28451a30363786d6c04676563322e6b65790126a0f6584033f0f1dc755ce062fdd639ae5399d681c98e3cf5690112c9916a39c30418bc6149a4a3174e48c0b40acfa7cbfa4a5d590f5a878a628c840a072cc1d5c41b6b70'  / provenance-signature + 1/
   }
 }
 ~~~
 
-In the example above, 3162 is an illustrative SID for the provenance signature. A provenance-signature typedef does not itself have a SID; the SID identifying a provenance leaf or annotation depends on the YANG module that defines it. Replace the illustrative SID values with the values assigned to the corresponding schema nodes.
+In the examples above, 3XXX are illustrative SIDs for the provenance signature. A provenance-signature typedef does not itself have a SID; the SID identifying a provenance leaf or annotation depends on the YANG module that defines it. Replace the illustrative SID values with the values assigned to the corresponding schema nodes.
 
 NOTE TO THE RFC EDITOR: Replace the illustrative SID values with the final values allocated by IANA according to {{RFC9595}}.
+
+# Appendix B. Provisional YANG SID Files (.sid)
+{:numbered="false"}
+
+The following `.sid` files are provided for IANA allocation as specified in {{iana-considerations-sids}}.
+
+~~~
+{
+  "ietf-sid-file:sid-file": {
+    "module-name": "ietf-yp-provenance",
+    "module-revision": "2026-06-30",
+    "sid-file-status": "unpublished",
+    "description": "draft-ietf-opsawg-yang-provenance: Applying COSE Signatures for YANG Data Provenance",
+    "reference": "RFC XXXX: Applying COSE Signatures for YANG Data Provenance",
+    "dependency-revision": [
+      {
+        "module-name": "ietf-notification-capabilities",
+        "module-revision": "2022-02-17"
+      },
+      {
+        "module-name": "ietf-system-capabilities",
+        "module-revision": "2022-02-17"
+      },
+      {
+        "module-name": "ietf-yang-provenance",
+        "module-revision": "2026-06-30"
+      },
+      {
+        "module-name": "ietf-yang-structure-ext",
+        "module-revision": "2020-06-17"
+      },
+      {
+        "module-name": "ietf-yp-notification",
+        "module-revision": "2026-09-25"
+      }
+    ],
+    "assignment-range": [
+      {
+        "entry-point": "3000",
+        "size": "50"
+      }
+    ],
+    "item": [
+      {
+        "namespace": "module",
+        "identifier": "ietf-yp-provenance",
+        "status": "unstable",
+        "sid": "3000"
+      },
+      {
+        "namespace": "data",
+        "identifier": "/ietf-system-capabilities:system-capabilities/ietf-notification-capabilities:subscription-capabilities/ietf-yp-notification:notification-metadata/metadata/ietf-yp-provenance:notification-provenance",
+        "status": "unstable",
+        "sid": "3001"
+      },
+      {
+        "namespace": "data",
+        "identifier": "/ietf-yp-notification:envelope/ietf-yp-provenance:provenance",
+        "status": "unstable",
+        "sid": "3002"
+      }
+    ]
+  }
+}
+~~~
+~~~
+{
+  "ietf-sid-file:sid-file": {
+    "module-name": "ietf-yang-instance-data-provenance",
+    "module-revision": "2026-06-30",
+    "sid-file-status": "unpublished",
+    "description": "draft-ietf-opsawg-yang-provenance: Applying COSE Signatures for YANG Data Provenance"
+    "reference": "RFC XXXX: Applying COSE Signatures for YANG Data Provenance",
+    "dependency-revision": [
+      {
+        "module-name": "ietf-yang-instance-data",
+        "module-revision": "2022-02-17"
+      },
+      {
+        "module-name": "ietf-yang-provenance",
+        "module-revision": "2026-06-30"
+      },
+      {
+        "module-name": "ietf-yang-structure-ext",
+        "module-revision": "2020-06-17"
+      }
+    ],
+    "assignment-range": [
+      {
+        "entry-point": "3050",
+        "size": "50"
+      }
+    ],
+    "item": [
+      {
+        "namespace": "module",
+        "identifier": "ietf-yang-instance-data-provenance",
+        "status": "unstable",
+        "sid": "3050"
+      },
+      {
+        "namespace": "data",
+        "identifier": "/ietf-yang-instance-data:instance-data-set/ietf-yang-instance-data-provenance:provenance",
+        "status": "unstable",
+        "sid": "3051"
+      }
+    ]
+  }
+}
+~~~
+
+~~~
+{
+  "ietf-sid-file:sid-file": {
+    "module-name": "ietf-yang-provenance-annotation",
+    "module-revision": "2026-06-30",
+    "sid-file-status": "unpublished",
+    "description": "draft-ietf-opsawg-yang-provenance: Applying COSE Signatures for YANG Data Provenance"
+    "reference": "RFC XXXX: Applying COSE Signatures for YANG Data Provenance",
+    "dependency-revision": [
+      {
+        "module-name": "ietf-yang-metadata",
+        "module-revision": "2016-08-05"
+      },
+      {
+        "module-name": "ietf-yang-provenance",
+        "module-revision": "2026-06-30"
+      }
+    ],
+    "assignment-range": [
+      {
+        "entry-point": "3100",
+        "size": "50"
+      }
+    ],
+    "item": [
+      {
+        "namespace": "module",
+        "identifier": "ietf-yang-provenance-annotation",
+        "status": "unstable",
+        "sid": "3100"
+      },
+      {
+        "namespace": "annotation",
+        "identifier": "provenance",
+        "status": "unstable",
+        "sid": "3101"
+      }
+    ]
+  }
+}
+~~~
 
 
 # Acknowledgments
 {:numbered="false"}
-Thanks to Sofia Garcia (UC3M, sgarciarincon01@gmail.com) for being instrumental in demonstrating the feasibility of the proposed approach, providing a first proof of concept of YANG provenance signatures.
+Thanks to Sofia Garcia (UC3M, sgarciarincon01@gmail.com) for being instrumental in demonstrating the feasibility of the proposed approach, providing a first proof of concept of YANG provenance signatures. The authors would like to thank Vojtěch Vilímek for their review and valuable comments.
 
 This document is based on work partially funded by the EU Horizon Europe projects iTrust6G (grant 101139198), CYBERNEMO (grant 101168182), cPAID (grant 101168407), MARE (grant 101191436), and 6G-DALI (grant 101192750).
