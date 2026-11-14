@@ -5,13 +5,13 @@
 Operations and Management Area                                  D. Lopez
 Internet-Draft                                                 A. Pastor
 Intended status: Standards Track                              Telefonica
-Expires: 30 April 2027                                     A. Huang-Feng
+Expires: 18 May 2027                                       A. Huang-Feng
                                                         Deutsche Telekom
                                                                A. Mendez
                                                               Telefonica
                                                              H. Birkholz
                                                           Fraunhofer SIT
-                                                         27 October 2026
+                                                        14 November 2026
 
 
            Applying COSE Signatures for YANG Data Provenance
@@ -64,7 +64,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 30 April 2027.
+   This Internet-Draft will expire on 18 May 2027.
 
 Copyright Notice
 
@@ -778,8 +778,7 @@ signature /using as external data the content of the YANG (meta-)data without th
    This module defines the provenance signature element to be included
    as metadata of a YANG data instance.
 
-   <CODE BEGINS>
-     file "ietf-yang-instance-data-provenance@2026-06-30.yang"
+   <CODE BEGINS> file "ietf-yang-instance-data-provenance@2026-06-30.yang"
    module ietf-yang-instance-data-provenance {
      yang-version 1.1;
      namespace "urn:ietf:params:xml:ns:yang:ietf-yang-instance-data-provenance";
@@ -1099,9 +1098,9 @@ signature /using as external data the content of the YANG (meta-)data without th
               Feng, A. H., Francois, P., Graf, T., and B. Claise,
               "Extensible YANG Model for YANG-Push Notifications", Work
               in Progress, Internet-Draft, draft-ietf-netconf-notif-
-              envelope-06, 14 September 2026,
+              envelope-07, 31 October 2026,
               <https://datatracker.ietf.org/doc/html/draft-ietf-netconf-
-              notif-envelope-06>.
+              notif-envelope-07>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -1267,34 +1266,34 @@ XML
    the previous ietf-interfaces YANG module by defining it in the new
    example module below:
 
-module example-interfaces-provenance-augmented {
-  yang-version 1.1;
-  namespace "urn:example:interfaces-provenance-augmented";
-  prefix ifprov;
+   module example-interfaces-provenance-augmented {
+     yang-version 1.1;
+     namespace "urn:example:interfaces-provenance-augmented";
+     prefix ifprov;
 
-  import ietf-interfaces {
-    prefix if;
-  }
-  import ietf-yang-provenance {
-    prefix iyangprov;
-  }
+     import ietf-interfaces {
+       prefix if;
+     }
+     import ietf-yang-provenance {
+       prefix iyangprov;
+     }
 
-  description
-    "Augments ietf-interfaces with provenance information";
+     description
+       "Augments ietf-interfaces with provenance information";
 
-  revision "2025-10-08" {
-    description
-      "Initial revision of the augment module adding provenance information to ietf-interfaces.";
-  }
+     revision "2025-10-08" {
+       description
+         "Initial revision of the augment module adding provenance information to ietf-interfaces.";
+     }
 
-  augment "/if:interfaces" {
-    leaf interfaces-provenance {
-      type iyangprov:provenance-signature;
-      description
-        "Signature proving provenance of the interface configuration";
-    }
-  }
-}
+     augment "/if:interfaces" {
+       leaf interfaces-provenance {
+         type iyangprov:provenance-signature;
+         description
+           "Signature proving provenance of the interface configuration";
+       }
+     }
+   }
 
    The following tree diagram illustrates the augmentation of the ietf-
    interfaces module with a provenance-signature at the root container:
